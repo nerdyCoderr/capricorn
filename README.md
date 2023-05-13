@@ -88,3 +88,21 @@ nvm install lts/hydrogen
 ```
 
 ## Clone repo to /var/www/
+
+## Setup pm2
+
+```
+npm install pm2 -g
+```
+
+```
+pm2 start index.js --name capricorn
+```
+
+```
+pm2 startup
+```
+
+```
+pm2 save
+```
