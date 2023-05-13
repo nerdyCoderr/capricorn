@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Form, Input } from 'antd';
 import './RegistrationForm.scss';
+import userContext from '../../context/userContext';
 
 const RegistrationForm = ({ submitHandler, formfields }) => {
   // const [form] = Form.useForm(); // create a form instance
-
+  const { data } = useContext(userContext);
   const validateMessages = {
     required: '${label} is required!',
     types: {
@@ -33,7 +34,7 @@ const RegistrationForm = ({ submitHandler, formfields }) => {
       return Promise.reject(new Error('The two passwords do not match.'));
     },
   });
-
+  console.log(data);
   return (
     <div className='registration-form-container container'>
       <Form
@@ -92,6 +93,19 @@ const RegistrationForm = ({ submitHandler, formfields }) => {
         >
           <Input />
         </Form.Item>
+        {!data?.role && (
+          <Form.Item
+            name='ref_code'
+            label='Ref Code'
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+        )}
         <Form.Item
           name='password'
           label='password'

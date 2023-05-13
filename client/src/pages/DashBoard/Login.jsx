@@ -1,13 +1,16 @@
+/* eslint-disable no-undef */
 import React, { useContext } from 'react';
 import { Button, Form, Input } from 'antd';
 import './Login.scss';
 import { userLogin } from '../../api/request';
 import { useNavigate, Link } from 'react-router-dom';
 import userContext from '../../context/userContext';
+// import config from '../../api/config';
 
 const Login = () => {
   const navigate = useNavigate();
   const { setData } = useContext(userContext);
+  // eslint-disable-next-line no-undef
 
   const submitHandler = (values) => {
     console.log(values);
@@ -31,6 +34,7 @@ const Login = () => {
       navigate('/dashboard');
     }
   };
+
   return (
     <>
       <div className='login-container'>
@@ -43,6 +47,7 @@ const Login = () => {
                 className=' img-fluid'
               />
             </div>
+
             <h6 className='title'>Capricorn</h6>
           </div>
           <div className='login-form'>

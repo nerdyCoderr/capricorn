@@ -28,7 +28,7 @@ const registerUserAccount = (params, callback = null) => {
   const newToken = token();
 
   api
-    .post('/users/user_signup', JSON.stringify(params), {
+    .post('/users/signup', JSON.stringify(params), {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': newToken,
