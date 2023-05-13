@@ -16,17 +16,27 @@ dotenv.config();
 
     const hashedPassword = await bcrypt.hash("password", 10);
     const superAdmin = new User({
-      first_name: "Japheth Louie",
-      last_name: "Gofredo",
-      phone_number: "09487674385",
+      first_name: "Super",
+      last_name: "Seed",
+      phone_number: "777",
       role: "super-admin",
       username: "super",
       password: hashedPassword,
     });
 
+    const admin = new User({
+      first_name: "Japheth Louie",
+      last_name: "Gofredo",
+      phone_number: "000",
+      role: "admin",
+      username: "admin",
+      password: hashedPassword,
+    });
+
     // console.log(superAdmin);
     await superAdmin.save();
-    console.log("Super-admin user created.");
+    await admin.save();
+    console.log("Super-admin and Admin created.");
 
     mongoose.connection.close();
   } catch (error) {
