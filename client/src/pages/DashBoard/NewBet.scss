@@ -1,0 +1,42 @@
+@import '../../index.scss';
+.newBet {
+  .ant-form-item-required::before {
+    display: none !important;
+  }
+  .ant-form-item-explain-error {
+    color: white;
+  }
+
+  .form-select {
+    max-width: 250px;
+    margin: 1rem 0;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+  .ant-btn {
+    background-color: $backgroundColorButton;
+    color: $fontColorButton;
+  }
+  .btn:hover {
+    background-color: $backgroundColorButton;
+    color: #294cc7;
+  }
+  h1 {
+    text-shadow: 1px 1px 2px #000000;
+  }
+  h6 {
+    color: $fontColorPrimary;
+    font-weight: 500;
+  }
+  .betForm {
+    width: 15rem;
+    margin: auto;
+
+    label {
+      color: $fontColorPrimary;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+  }
+}
