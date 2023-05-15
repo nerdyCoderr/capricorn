@@ -41,14 +41,14 @@ io.on("connection", (socket) => {
     const { role } = await authenticateSocket(token);
 
     if (!role) {
-      socket.emit("watchlist", { message: "Authentication failed" });
+      socket.emit("watchlist", { error: "Authentication failed" });
       return;
     }
 
     const allowedRoles = ["super-admin", "admin", "user"];
     if (!authorizeSocket(role, allowedRoles)) {
       socket.emit("watchlist", {
-        message: "Forbidden: You do not have permission to perform this action",
+        error: "Forbidden: You do not have permission to perform this action",
       });
       return;
     }
@@ -61,19 +61,19 @@ io.on("connection", (socket) => {
 
     const existingSession = loginCache.get(username);
     if (existingSession) {
-      socket.emit("login", "User is already connected");
+      socket.emit("login", { error: "User is already connected" });
       return;
     }
 
     const user = await User.findOne({ username });
     if (!user) {
-      socket.emit("login", "Invalid credentials");
+      socket.emit("login", { error: "Invalid credentials" });
       return;
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      socket.emit("login", "Invalid credentials");
+      socket.emit("login", { error: "Invalid credentials" });
       return;
     }
 
