@@ -102,12 +102,12 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("logout", () => {
+  socket.on("logout", (data) => {
     console.log("User logged out");
 
     for (const username of loginCache.keys()) {
       const userSocketId = loginCache.get(username);
-      if (userSocketId === socket.id) {
+      if (userSocketId === data) {
         loginCache.del(username);
         break;
       }
