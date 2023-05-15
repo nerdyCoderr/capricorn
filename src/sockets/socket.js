@@ -102,6 +102,18 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("logout", () => {
+    console.log("A user disconnected");
+
+    for (const username of loginCache.keys()) {
+      const userSocketId = loginCache.get(username);
+      if (userSocketId === socket.id) {
+        loginCache.del(username);
+        break;
+      }
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("A user disconnected");
 
