@@ -119,7 +119,7 @@ exports.createBet = async (req, res) => {
       bet: new_bets,
     });
 
-    io.emit("watchlist:update", getWatchlist(generateCacheKey()));
+    io.emit("watchlist", getWatchlist(generateCacheKey()));
   } catch (error) {
     try {
       await Transaction.deleteOne({ _id: transaction._id });
