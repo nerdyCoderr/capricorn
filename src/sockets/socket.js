@@ -103,7 +103,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("logout", () => {
-    console.log("A user disconnected");
+    console.log("User logged out");
 
     for (const username of loginCache.keys()) {
       const userSocketId = loginCache.get(username);
