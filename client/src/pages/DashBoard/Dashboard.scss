@@ -1,0 +1,62 @@
+@import '../../index.scss';
+
+.dashboard {
+  .dashboard-header {
+    position: relative;
+    .logo {
+      max-width: 15rem;
+      margin: auto;
+    }
+    .title {
+      transform: translateY(-50%);
+      position: relative;
+      color: white;
+      font-size: 4rem;
+      text-align: center;
+      text-shadow: 1px 1px 2px #000000;
+    }
+  }
+  .dashboard-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+
+    h3 {
+      color: #f1e8e8;
+    }
+    .card {
+      justify-content: center;
+      margin: 1rem;
+      min-width: 150px;
+      text-align: center;
+      background-color: #534c5e;
+      color: #d0efb1;
+      p {
+        font-size: 1rem;
+        margin-bottom: 0;
+      }
+      .card-body {
+        padding: 1.5rem -0 0 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 375.98px) {
+  .dashboard {
+    .dashboard-content {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+
+      .card {
+        height: 120px;
+        width: 50%;
+        width: calc(50% - 1rem); /* Subtract the margin from the width */
+        margin: 0.5rem; /* Half the margin size */
+        box-sizing: border-box;
+      }
+    }
+  }
+}

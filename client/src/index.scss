@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300&display=swap');
+* {
+  font-family: 'Roboto', sans-serif;
+}
+body {
+  background-color: #d0efb1;
+}
+
+$backgroundColor: #50a3a2;
+$backgroundColor2: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+$backgroundColor3: -moz-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+$backgroundColor4: -o-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+$backgroundColor5: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+
+$backgroundColorSecondary: #534c5e;
+$backgroundColorSecondary: #534c5e;
+
+$fontColorPrimary: #534c5e;
+
+$backgroundColorButton: #534c5e;
+$fontColorButton: white;
