@@ -44,6 +44,12 @@ exports.createBet = async (req, res) => {
       });
     }
 
+    if (bet_type.bet_amt < bet.bet_amt) {
+      return res.status(400).json({
+        message: `Invalid bet amount (${bet.bet_amt}) for ${bet.bet_type}: bet amount should be less than or equal to ${bet_type.bet_amt}`,
+      });
+    }
+
     const watch_list = getWatchlist(generateCacheKey());
     const watch_list_key = createWatchlistKeyObject(bet);
 
