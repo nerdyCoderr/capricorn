@@ -103,7 +103,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("logout", (data) => {
-    console.log("🚀 ~ file: socket.js:106 ~ socket.on ~ data:", data);
     console.log("User logged out");
 
     for (const username of loginCache.keys()) {
