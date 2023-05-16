@@ -13,8 +13,15 @@ import GlassLayout from '../../components/Layout/GlassLayout';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { data } = useContext(userContext);
+  const { data, socket } = useContext(userContext);
   console.log(data);
+
+  const logout = () => {
+    console.log(data.socketID);
+    socket.emit('logout', data.socketID);
+
+    navigate('/');
+  };
   return (
     <GlassLayout>
       <div className='dashboard'>
@@ -114,7 +121,7 @@ const Dashboard = () => {
               </Card.Title>
             </Card.Body>
           </Card>
-          <Card className='p-2' onClick={() => navigate('/')}>
+          <Card className='p-2' onClick={logout}>
             <div className='text-center'>
               <GiPowerButton size={40} />
             </div>

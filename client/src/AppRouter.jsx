@@ -11,7 +11,8 @@ import BetList from './pages/DashBoard/BetList';
 import userContext from './context/userContext';
 import CreateUserAccountByAdmin from './pages/DashBoard/CreateUserAccountByAdmin';
 import BetListSearch from './pages/DashBoard/BetListSearch';
-
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import io from 'socket.io-client';
 const AppRouter = () => {
   const [data, setData] = useState({
     user: {},
@@ -21,23 +22,77 @@ const AppRouter = () => {
     username: '',
   });
 
+  const [socket, setSocket] = useState(null);
+
+  React.useEffect(() => {
+    const newsocket = io('http://localhost:3002?');
+
+    setSocket(newsocket);
+    return () => newsocket.disconnect();
+  }, []);
   return (
-    <userContext.Provider value={{ data, setData }}>
+    <userContext.Provider value={{ data, setData, socket }}>
       <BrowserRouter>
         <Routes>
-          <Route path='/dashboard' element={<Dashboard />} />
+          <Route
+            path='/dashboard'
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path='/hits' element={<Hits />} />
-          <Route path='/history' element={<History />} />
-          <Route path='/new-bet' element={<NewBets />} />
+          <Route
+            path='/hits'
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <Hits />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/history'
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <History />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/new-bet'
+            element={
+              // <ProtectedRoute isAuth={data && data.isAuth}>
+              <NewBets />
+              // </ProtectedRoute>
+            }
+          />
 
-          <Route path='/transaction-list' element={<BetList />} />
-          <Route path='/bet-list' element={<BetListSearch />} />
+          <Route
+            path='/transaction-list'
+            element={
+              // <ProtectedRoute isAuth={data && data.isAuth}>
+              <BetList />
+              // </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/bet-list'
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <BetListSearch />
+              </ProtectedRoute>
+            }
+          />
           <Route path='/' element={<Login />} />
           <Route path='/registration' element={<Registration />} />
           <Route
             path='/create-user-account-by-admin'
-            element={<CreateUserAccountByAdmin />}
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <CreateUserAccountByAdmin />
+              </ProtectedRoute>
+            }
           />
         </Routes>
       </BrowserRouter>

@@ -1,39 +1,53 @@
 /* eslint-disable no-undef */
-import React, { useContext } from 'react';
-import { Button, Form, Input } from 'antd';
+import React, { useContext, useEffect } from 'react';
+import { Button, Form, Input, message } from 'antd';
 import './Login.scss';
-import { userLogin } from '../../api/request';
-import { useNavigate, Link } from 'react-router-dom';
+
+import { useNavigate } from 'react-router-dom';
 import userContext from '../../context/userContext';
-// import config from '../../api/config';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setData } = useContext(userContext);
-  // eslint-disable-next-line no-undef
+
+  const { setData, socket } = useContext(userContext);
 
   const submitHandler = (values) => {
-    console.log(values);
-    userLogin(values, callback);
+    console.log('check');
+
+    socket.emit('login', values);
   };
 
-  const callback = async (res) => {
-    const { data, status } = await res;
-    setData((prev) => {
-      return {
-        ...prev,
-        role: data.role,
-        ref_code: data.ref_code,
-        username: data.username,
+  useEffect(() => {
+    if (socket) {
+      const logincred = (data) => {
+        if (data.message) {
+          message.success(data?.message);
+          setData((prev) => {
+            return {
+              ...prev,
+              role: data.role,
+              ref_code: data.ref_code,
+              username: data.username,
+              isAuth: true,
+              socket: socket,
+              socketID: socket.id,
+            };
+          });
+          localStorage.setItem('socketToken', `${data.token}`);
+          localStorage.setItem('token', `Bearer ${data.token}`);
+          navigate('/dashboard');
+        } else {
+          message.error(data?.error);
+        }
       };
-    });
-    console.log(data);
-    if (status === 200) {
-      localStorage.setItem('socketToken', `${data.token}`);
-      localStorage.setItem('token', `Bearer ${data.token}`);
-      navigate('/dashboard');
+
+      socket.on('login', logincred);
+
+      return () => {
+        socket.off('login');
+      };
     }
-  };
+  }, [socket]);
 
   return (
     <>
@@ -88,9 +102,12 @@ const Login = () => {
               </Form.Item>
 
               <Form.Item className='text-center'>
-                <Link to='/registration' onClick className='sign-up'>
+                <div
+                  onClick={() => navigate('registration')}
+                  className='sign-up'
+                >
                   Sign Up!
-                </Link>
+                </div>
               </Form.Item>
             </Form>
           </div>

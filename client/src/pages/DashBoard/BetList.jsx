@@ -18,6 +18,7 @@ const BetList = () => {
   const nav = useNavigate();
   const [dataTable, setDataTabble] = useState([]);
   const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
   const [username, setUsername] = useState('');
   const [trans_no, setTrans_no] = useState('');
   const [isTable2Open, setIsTable2Open] = useState(false);
@@ -75,10 +76,18 @@ const BetList = () => {
     onNext,
     onChangeDate,
     callbackresponse,
+    dateSearch,
   } = usePagination(params, dataTable, getBetList, null, dateparams);
 
   const handleColumnClick = (row) => {
     setData(row.original);
+  };
+  const handleColumnClick2 = (row) => {
+    setData2(row.original);
+  };
+  const onCancel3 = () => {
+    setIsTable2Open(true);
+    setIsTablethreeOpen(false);
   };
   useEffect(() => {
     const { data } = callbackresponse;
@@ -115,17 +124,20 @@ const BetList = () => {
             actionHandlertwo={actionHandlertwo}
             actioncall={getBetList}
             data={data}
-            handleColumnClick={handleColumnClick}
+            dateSearch={dateSearch}
+            handleColumnClick={handleColumnClick2}
           />
         )}
         {isTablethreeOpen && (
           <TableThreeModal
+            dateSearch={dateSearch}
             actioncall={getBetList}
             isTablethreeOpen={isTablethreeOpen}
             setIsTablethreeOpen={setIsTablethreeOpen}
             setIsTable2Open={setIsTable2Open}
             trans_no={trans_no}
-            data={data}
+            data={data2}
+            onCancel={onCancel3}
           />
         )}
         <h6 onClick={() => nav('/dashboard')}>Back</h6>

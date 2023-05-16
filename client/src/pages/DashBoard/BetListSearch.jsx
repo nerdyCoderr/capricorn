@@ -19,6 +19,7 @@ const BetListSearch = () => {
 
   const nav = useNavigate();
   const [dataTable, setDataTabble] = useState([]);
+  const [data, setData] = useState([]);
   const [username, setUsername] = useState('');
   const [trans_no, setTrans_no] = useState('');
   const [filter, setFilter] = useState({
@@ -75,10 +76,12 @@ const BetListSearch = () => {
     console.log(row);
 
     if (column.Header === 'Transaction No.') {
+      setData(row?.original);
       setTrans_no(row?.original?.trans_id);
       setIsTablethreeOpen(true);
     }
     if (column.Header === 'Fullname') {
+      setData(row?.original);
       setUsername(row?.original?.user_id);
       setIsTable2Open(true);
     }
@@ -147,9 +150,12 @@ const BetListSearch = () => {
     const data = `${params}?page=1&bet_type_id=${filter.type}&trans_no=${filter.trans_no}&bet_num=${filter.number}&batch_type=${filter.batch_type}&createdAt=${dateSearch}`;
     getBetList(data, callbackfilter);
   };
-
+  const onCancel3 = () => {
+    setIsTablethreeOpen(false);
+  };
   useEffect(() => {
     const { data } = callbackresponse;
+
     const reconstructedList = data?.map((data) => {
       return {
         bet_type: data?.bet_type?.bet_type,
@@ -159,6 +165,9 @@ const BetListSearch = () => {
         fullname: data?.user?.first_name + ' ' + data?.user?.last_name,
         user_id: data?.user?._id,
         trans_id: data?.transaction?._id,
+        username: data?.user?.username,
+        first_name: data?.user?.first_name,
+        last_name: data?.user?.last_name,
       };
     });
     const newdata = { ...callbackresponse, data: reconstructedList };
@@ -172,6 +181,7 @@ const BetListSearch = () => {
       <div>
         {isTable2Open && (
           <TabletwoModal
+            data={data}
             isTable2Open={isTable2Open}
             setIsTable2Open={setIsTable2Open}
             username={username}
@@ -185,6 +195,8 @@ const BetListSearch = () => {
             isTablethreeOpen={isTablethreeOpen}
             setIsTablethreeOpen={setIsTablethreeOpen}
             trans_no={trans_no}
+            data={data}
+            onCancel={onCancel3}
           />
         )}
         <h6 onClick={() => nav('/dashboard')}>Back</h6>

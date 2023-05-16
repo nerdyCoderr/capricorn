@@ -2,7 +2,7 @@ import { Button, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Table from '../Table/Table';
 import usePagination from '../../hooks/usePagination';
-
+import moment from 'moment';
 const TabletwoModal = ({
   isTable2Open,
   setIsTable2Open,
@@ -11,6 +11,7 @@ const TabletwoModal = ({
   actioncall,
   data,
   handleColumnClick,
+  dateSearch,
 }) => {
   const [dataTable, setDataTabble] = useState([]);
   const columns = React.useMemo(
@@ -30,16 +31,20 @@ const TabletwoModal = ({
     ],
     [],
   );
+  const dateFormat = 'YYYY-MM-DD';
+  const currentDate = moment(dateSearch).format(dateFormat);
 
   const params = '2';
   const otherparams = `&_id=${username}`;
+
+  const dateparams = `&createdAt=${currentDate}`;
   const {
     onPrevious,
     onFirst,
     onLast,
     onNext,
     callbackresponse,
-  } = usePagination(params, dataTable, actioncall, otherparams);
+  } = usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
   useEffect(() => {
     const { data } = callbackresponse;

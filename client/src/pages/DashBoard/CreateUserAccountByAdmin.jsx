@@ -39,7 +39,11 @@ const CreateUserAccountByAdmin = () => {
       <h6 onClick={() => nav('/dashboard')}>Back</h6>
       <h1 className='text-center'>Create User Account</h1>
 
-      <RegistrationForm formfields={formfields} submitHandler={submitHandler} />
+      <RegistrationForm
+        formfields={formfields}
+        submitHandler={submitHandler}
+        // place={true}
+      />
     </div>
   );
 };

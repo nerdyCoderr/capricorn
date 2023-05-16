@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Button, Input, Select } from 'antd';
 import { MdArrowBackIos } from 'react-icons/md';
 import Moment from 'moment';
@@ -13,12 +13,10 @@ import userContext from '../../context/userContext';
 
 const NewBets = () => {
   const token = localStorage.getItem('socketToken');
-  const { data } = useContext(userContext);
-  console.log(data);
-  const socket = io(
-    `https://1a77-2405-8d40-4d00-937f-d567-4275-a572-35c2.ngrok-free.app?token=${token}`,
-    { autoConnect: false },
-  );
+
+  const socket = io(`http://localhost:3002?token=${token}`, {
+    autoConnect: false,
+  });
   const date = new Date();
   const nav = useNavigate();
   const formatDate = Moment(date).format('MMMM Do YYYY');
@@ -70,47 +68,40 @@ const NewBets = () => {
     [],
   );
   const submitHandler = () => {
-    let new_bet_number;
-    new_bet_number = formData.bet_number.toString();
-    if (
-      formData.bet_number < 10 &&
-      formData.bet_type === betTypeOptions[0].bet_type
-    ) {
-      new_bet_number = '0' + formData.bet_number.toString();
+    const { bet_number, bet_type } = formData;
+    let new_bet_number = parseInt(bet_number);
+
+    let prefix = '';
+    if (new_bet_number < 10) {
+      switch (bet_type) {
+        case 'L2':
+          prefix = '0';
+          break;
+        case 'L3':
+          prefix = '00';
+          break;
+        case '4D':
+          prefix = '000';
+          break;
+        default:
+          break;
+      }
+    } else if (new_bet_number < 100) {
+      switch (bet_type) {
+        case 'L3':
+          prefix = '0';
+          break;
+        case '4D':
+          prefix = '00';
+          break;
+        default:
+          break;
+      }
+    } else if (new_bet_number < 1000 && bet_type === '4D') {
+      prefix = '0';
     }
-    if (
-      formData.bet_number < 10 &&
-      formData.bet_type === betTypeOptions[1].bet_type
-    ) {
-      new_bet_number = '00' + formData.bet_number.toString();
-    }
-    if (
-      formData.bet_number >= 10 &&
-      formData.bet_number < 100 &&
-      formData.bet_type === betTypeOptions[1].bet_type
-    ) {
-      new_bet_number = '0' + formData.bet_number.toString();
-    }
-    if (
-      formData.bet_number < 10 &&
-      formData.bet_type === betTypeOptions[3].bet_type
-    ) {
-      new_bet_number = '000' + formData.bet_number.toString();
-    }
-    if (
-      formData.bet_number >= 10 &&
-      formData.bet_number < 100 &&
-      formData.bet_type === betTypeOptions[3].bet_type
-    ) {
-      new_bet_number = '00' + formData.bet_number.toString();
-    }
-    if (
-      formData.bet_number >= 100 &&
-      formData.bet_number < 1000 &&
-      formData.bet_type === betTypeOptions[4].bet_type
-    ) {
-      new_bet_number = '0' + formData.bet_number.toString();
-    }
+
+    new_bet_number = prefix + bet_number;
 
     const newdata = {
       id: Math.floor(Math.random() * 1000000),
@@ -168,44 +159,22 @@ const NewBets = () => {
   }, [dataTable]);
 
   const onTypeChange = (value) => {
-    switch (value) {
-      case betTypeOptions[0].bet_type:
-        setBetnumberRestrictionInput(2);
-        setFormData((prev) => {
-          return {
-            ...prev,
-            bet_type: value,
-            win_amt: betTypeOptions[0].win_multiplier,
-            amt_const: betTypeOptions[0].amt_const,
-          };
-        });
-        break;
-      case betTypeOptions[1].bet_type:
-        setBetnumberRestrictionInput(3);
-        setFormData((prev) => {
-          return {
-            ...prev,
-            bet_type: value,
-            win_amt: betTypeOptions[1].win_multiplier,
-            amt_const: betTypeOptions[1].amt_const,
-          };
-        });
-        break;
-      case betTypeOptions[2].bet_type:
-        setBetnumberRestrictionInput(4);
-        setFormData((prev) => {
-          return {
-            ...prev,
-            bet_type: value,
-            win_amt: betTypeOptions[3].win_multiplier,
-            amt_const: betTypeOptions[3].amt_const,
-          };
-        });
-        break;
+    betTypeOptions.find((item) => {
+      if (item.bet_type === value) {
+        const countNumber = item.upper.toString().length;
+        setBetnumberRestrictionInput(countNumber);
 
-      default:
-        break;
-    }
+        return setFormData((prev) => {
+          return {
+            ...prev,
+            bet_type: value,
+            win_amt: item.win_multiplier,
+            amt_const: item.amt_const,
+          };
+        });
+      }
+      return;
+    });
   };
 
   const validateMinimumAmount = (_, value, callback) => {
@@ -236,7 +205,6 @@ const NewBets = () => {
     if (status === 400) {
       console.log('check');
       if (dataTable) {
-        
         const newdata = dataTable.filter((bet) => {
           for (let value in limitbet) {
             let betArr = value.split(':');

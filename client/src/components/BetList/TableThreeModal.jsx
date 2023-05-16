@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Table from '../Table/Table';
 import { Button, Modal } from 'antd';
-
+import moment from 'moment';
 import usePagination from '../../hooks/usePagination';
 import './TableThreeModal.scss';
 function TableThreeModal({
   isTablethreeOpen,
   setIsTablethreeOpen,
-  setIsTable2Open,
   actioncall,
   trans_no,
   data,
+  onCancel,
+  dateSearch,
 }) {
   const [dataTable, setDataTabble] = useState([]);
   const params = '3';
+  const dateFormat = 'YYYY-MM-DD';
+  const currentDate = moment(dateSearch).format(dateFormat);
 
+  const dateparams = `&createdAt=${currentDate}`;
   const otherparams = `&transaction_id=${trans_no}`;
   const columns = React.useMemo(
     () => [
@@ -45,7 +49,7 @@ function TableThreeModal({
     onLast,
     onNext,
     callbackresponse,
-  } = usePagination(params, dataTable, actioncall, otherparams, '');
+  } = usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
   useEffect(() => {
     const { data } = callbackresponse;
@@ -73,10 +77,7 @@ function TableThreeModal({
       width={1000}
       title={`Transaction No: ${data?.trans_no}`}
       open={isTablethreeOpen}
-      onCancel={() => {
-        setIsTable2Open(true);
-        setIsTablethreeOpen(false);
-      }}
+      onCancel={onCancel}
       footer={[
         <Button size='middle' key='submit' type='primary' onClick={handleOk}>
           OK
