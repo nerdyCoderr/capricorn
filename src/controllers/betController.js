@@ -78,15 +78,20 @@ exports.createBet = async (req, res) => {
       if (!existingTrans_no) {
         isUnique = true;
         let total_amount = 0;
+        let total_win_amount = 0;
 
         for (const bet of bets) {
+          bet_type = await BetType.findOne({ bet_type: bet.bet_type });
           total_amount += parseInt(bet.bet_amt);
+          total_win_amount +=
+            parseInt(bet.bet_amt) * parseInt(bet_type.win_multiplier);
         }
 
         transaction = new Transaction({
           trans_no: new_trans_no,
           user: user._id,
           total_amount: total_amount,
+          total_win_amount,
           status: "pending",
         });
 
@@ -426,79 +431,198 @@ exports.getSuperBets = async (req, res) => {
 };
 
 exports.getAdminBets = async (req, res) => {
+  // empty vars
+  let transact_query = {};
+  let user_query = {};
+  let bet_query = {};
+  let bet_type_query = {};
   let query = {};
   let aggregateQuery;
-  let createdAt = req.query.createdAt;
 
-  const page = parseInt(req.query.page) || 1;
-  const page_limit = parseInt(req.query.limit) || 10;
-  const ref_code = req.user.ref_code;
-  const batch_id = req.query.batch_id;
+  // query params
+  let from = req.query.from;
+  let to = req.query.to;
+  let page = parseInt(req.query?.page) || 1;
+  let page_limit = parseInt(req.query?.limit) || 10;
+  let batch_id = parseInt(req.query?.batch_id);
+  let sort_dir = parseInt(req.query?.sort_dir) || -1;
+  let bet_type = req.query.bet_type;
+  let bet_number = parseInt(req.query?.bet_num);
+  let bet_result = req.query.bet_result;
+  let transaction_num = req.query.trans_no;
+  const table = parseInt(req.params?.table);
 
-  if (!req.params.table) {
+  // user specific
+  let user_id;
+  let ref_code;
+  let role = req.user.role;
+  if (role === "admin") {
+    user_id = req.query.user_id
+      ? new mongoose.Types.ObjectId(req.query.user_id)
+      : null;
+    ref_code = req.user.ref_code;
+
+    if (table < 1 && table > 4) {
+      return res.status(400).json({ message: "Invalid table" });
+    }
+  } else if (role === "user") {
+    user_id = req.user.id;
+    ref_code = req.user.ref_code;
+
+    if (table < 2 && table > 4) {
+      return res.status(400).json({ message: "Invalid table" });
+    }
+  }
+
+  //filter, sort and validation
+  if (!table) {
     return res.status(400).json({ message: "No table provided" });
   }
 
-  const table = parseInt(req.params.table);
-
-  if (table < 1 && table > 3) {
-    return res.status(400).json({ message: "Invalid table" });
+  if (!from && !to) {
+    from = getCurrentDateString();
+    to = getCurrentDateString();
   }
 
-  try {
+  const startOfDay = new Date(from);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(to);
+  endOfDay.setHours(23, 59, 59, 999);
+  const createdAt = { $gte: startOfDay, $lte: endOfDay };
+
+  if (table === 1) {
+    if (user_id) {
+      user_query["user._id"] = user_id;
+    }
+
     if (ref_code) {
-      query.ref_code = ref_code;
+      user_query["user.ref_code"] = ref_code;
     }
 
     if (batch_id) {
-      query.batch_id = parseInt(batch_id);
+      transact_query.batch_id = batch_id;
     }
 
-    if (!createdAt) {
-      createdAt = getCurrentDateString();
+    transact_query.createdAt = createdAt;
+  } else if (table === 2) {
+    if (!user_id) {
+      return res.status(400).json({ message: "No user_id provided" });
     }
 
-    const specificDate = new Date(createdAt);
-    const startOfDay = new Date(specificDate);
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(specificDate);
-    endOfDay.setHours(23, 59, 59, 999);
+    if (batch_id) {
+      query.batch_id = batch_id;
+    }
 
-    query.createdAt = { $gte: startOfDay, $lte: endOfDay };
+    query.user = new mongoose.Types.ObjectId(user_id);
+    query.createdAt = createdAt;
+  } else if (table === 3 || table === 4) {
+    if (!transaction_num && table === 3) {
+      return res.status(400).json({ message: "No trans_no provided" });
+    } else if (transaction_num) {
+      const trans_no = await Transaction.findOne({
+        trans_no: transaction_num,
+      });
+      bet_query.transaction = trans_no?._id;
+    }
 
+    if (role === "user" && user_id !== "") {
+      bet_query.user = new mongoose.Types.ObjectId(user_id);
+    }
+
+    if (batch_id) {
+      bet_query.batch_id = batch_id;
+    }
+
+    if (bet_type) {
+      const betType = await BetType.findOne({ bet_type: bet_type });
+
+      bet_type_query["bet_type._id"] = betType?._id;
+    }
+
+    if (bet_number) {
+      bet_query.bet_num = bet_number;
+    }
+
+    if (bet_result) {
+      bet_query.result = bet_result;
+    }
+
+    bet_query.ref_code = ref_code;
+    bet_query.createdAt = createdAt;
+  }
+
+  try {
     if (table === 1) {
-      aggregateQuery = Bet.aggregate([
-        { $match: query },
+      aggregateQuery = Transaction.aggregate([
+        // distinct by user
+        // filter by transaction (createdAt, batch_id), by user (username, ref_code)
+        {
+          $match: transact_query,
+        },
         {
           $lookup: {
-            from: "users", // the name of the User collection (make sure it's correct)
+            from: "users",
             localField: "user",
             foreignField: "_id",
             as: "user",
           },
         },
-        { $unwind: "$user" },
+        {
+          $unwind: {
+            path: "$user",
+          },
+        },
         {
           $project: {
-            "user.password": 0, // Exclude the password field from the user object
+            "user.password": 0,
+          },
+        },
+        {
+          $match: user_query,
+        },
+        {
+          $lookup: {
+            from: "transactions",
+            localField: "user._id",
+            foreignField: "user",
+            as: "transactions",
+          },
+        },
+        {
+          $addFields: {
+            total_amount: {
+              $sum: "$transactions.total_amount",
+            },
+            total_win_amount: {
+              $sum: "$transactions.total_win_amount",
+            },
+            actual_win_amount: {
+              $sum: "$transactions.actual_win_amount",
+            },
+            latest_transaction: {
+              $max: "$transactions.createdAt",
+            },
           },
         },
         {
           $group: {
-            _id: "$user",
-            first_name: { $first: "$user.first_name" },
-            last_name: { $first: "$user.last_name" },
-            total_bet_amt: { $sum: "$bet_amt" },
+            _id: "$user._id",
+            user: { $first: "$user" },
+            // transactions: { $first: "$transactions" },
+            total_amount: { $first: "$total_amount" },
+            total_win_amount: {
+              $first: "$total_win_amount",
+            },
+            actual_win_amount: {
+              $first: "$actual_win_amount",
+            },
+            latest_transaction: {
+              $first: "$latest_transaction",
+            },
           },
         },
         {
-          $project: {
-            _id: 0,
-            user: "$_id",
-            first_name: 1,
-            last_name: 1,
-            total_bet_amt: 1,
-          },
+          $sort: { latest_transaction: sort_dir },
         },
         {
           $facet: {
@@ -507,160 +631,94 @@ exports.getAdminBets = async (req, res) => {
               { $limit: page_limit },
             ],
             totalCount: [{ $count: "count" }],
+            grandTotalAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$total_amount" },
+                },
+              },
+            ],
+            grandTotalWinAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$total_win_amount" },
+                },
+              },
+            ],
+            grandActualWinAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$actual_win_amount" },
+                },
+              },
+            ],
           },
         },
       ]);
     } else if (table === 2) {
-      if (!req.query._id) {
-        return res.status(400).json({ message: "No _id provided" });
-      }
-
-      query.user = new mongoose.Types.ObjectId(req.query._id);
-
-      aggregateQuery = Bet.aggregate([
-        { $match: query },
-        {
-          $lookup: {
-            from: "transactions",
-            localField: "transaction",
-            foreignField: "_id",
-            as: "transaction",
-          },
-        },
-        { $unwind: "$transaction" },
-        {
-          $lookup: {
-            from: "users",
-            localField: "user",
-            foreignField: "_id",
-            as: "user",
-          },
-        },
-        { $unwind: "$user" },
-        {
-          $group: {
-            _id: "$transaction._id",
-            trans_no: { $first: "$transaction.trans_no" },
-            total_bet_amt: { $sum: "$bet_amt" },
-            user: { $first: "$user" },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            transaction_id: "$_id",
-            trans_no: 1,
-            total_bet_amt: 1,
-            user: {
-              _id: "$user._id",
-              first_name: "$user.first_name",
-              last_name: "$user.last_name",
-              username: "$user.username",
-            },
-          },
-        },
-        {
-          $facet: {
-            paginatedResults: [
-              { $skip: page_limit * (page - 1) },
-              { $limit: page_limit },
-            ],
-            totalCount: [{ $count: "count" }],
-          },
-        },
-      ]);
-    } else if (table === 3) {
-      if (!req.query.transaction_id) {
-        return res.status(400).json({ message: "No transaction_id provided" });
-      }
-
-      query.transaction = new mongoose.Types.ObjectId(req.query.transaction_id);
-
-      aggregateQuery = Bet.aggregate([
-        { $match: query },
-        {
-          $lookup: {
-            from: "users",
-            localField: "user",
-            foreignField: "_id",
-            as: "user",
-          },
-        },
-        {
-          $project: {
-            user: {
-              password: 0,
-            },
-          },
-        },
-        { $unwind: "$user" },
-        {
-          $lookup: {
-            from: "transactions",
-            localField: "transaction",
-            foreignField: "_id",
-            as: "transaction",
-          },
-        },
-        { $unwind: "$transaction" },
-        {
-          $lookup: {
-            from: "bettypes",
-            localField: "bet_type",
-            foreignField: "_id",
-            as: "bet_type",
-          },
-        },
-        { $unwind: "$bet_type" },
-        {
-          $facet: {
-            paginatedResults: [
-              { $skip: page_limit * (page - 1) },
-              { $limit: page_limit },
-            ],
-            totalCount: [{ $count: "count" }],
-          },
-        },
-      ]);
-    } else if (table === 4) {
-      if (req.query.bet_type_id) {
-        query.bet_type = new mongoose.Types.ObjectId(req.query.bet_type_id);
-      }
-
-      if (req.query.bet_num) {
-        query.bet_num = parseInt(req.query.bet_num);
-      }
-
-      if (req.query.trans_no) {
-        const trans_no = await Transaction.findOne({
-          trans_no: req.query.trans_no,
-        });
-        query.transaction = trans_no._id;
-      }
-
-      // for user
-
-      // let user = {};
-      // if (req.query.first_name) {
-      //   user.first_name = req.query.first_name;
-      // }
-
-      // if (req.query.last_name) {
-      //   user.last_name = req.query.last_name;
-      // }
-
-      // // const userData = await User.find(user);
-
-      // // //map the userData to query.user
-      // // query.user = userData.map(
-      // //   (user) => new mongoose.Types.ObjectId(user._id)
-      // // );
-
-      // // query.user = userData ? new mongoose.Types.ObjectId(userData._id) : "";
-
-      aggregateQuery = Bet.aggregate([
+      aggregateQuery = Transaction.aggregate([
+        // distinct by transaction
+        // filter by transaction (createdAt, batch_id), by user (username, ref_code)
         {
           $match: query,
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $unwind: {
+            path: "$user",
+          },
+        },
+        {
+          $sort: { createdAt: sort_dir },
+        },
+        {
+          $facet: {
+            paginatedResults: [
+              { $skip: page_limit * (page - 1) },
+              { $limit: page_limit },
+            ],
+            totalCount: [{ $count: "count" }],
+            grandTotalAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$total_amount" },
+                },
+              },
+            ],
+            grandTotalWinAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$total_win_amount" },
+                },
+              },
+            ],
+            grandActualWinAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$actual_win_amount" },
+                },
+              },
+            ],
+          },
+        },
+      ]);
+    } else if (table === 3 || table === 4) {
+      aggregateQuery = Bet.aggregate([
+        {
+          $match: bet_query,
         },
         {
           $lookup: {
@@ -672,6 +730,9 @@ exports.getAdminBets = async (req, res) => {
         },
         {
           $unwind: "$bet_type",
+        },
+        {
+          $match: bet_type_query,
         },
         {
           $lookup: {
@@ -696,12 +757,44 @@ exports.getAdminBets = async (req, res) => {
           $unwind: "$transaction",
         },
         {
+          $sort: {
+            createdAt: sort_dir,
+          },
+        },
+        {
           $facet: {
             paginatedResults: [
               { $skip: page_limit * (page - 1) },
               { $limit: page_limit },
             ],
             totalCount: [{ $count: "count" }],
+            grandTotalAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$bet_amt" },
+                },
+              },
+            ],
+            grandTotalWinAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$win_amt" },
+                },
+              },
+            ],
+            grandActualWinAmount: [
+              {
+                $match: { result: true },
+              },
+              {
+                $group: {
+                  _id: null,
+                  total: { $sum: "$win_amt" },
+                },
+              },
+            ],
           },
         },
       ]);
@@ -710,6 +803,9 @@ exports.getAdminBets = async (req, res) => {
     const result = await aggregateQuery.exec();
     const data = result[0].paginatedResults;
     const total = result[0].totalCount[0]?.count || 0;
+    const grandTotalAmount = result[0].grandTotalAmount[0]?.total || 0;
+    const grandTotalWinAmount = result[0].grandTotalWinAmount[0]?.total || 0;
+    const grandActualWinAmount = result[0].grandActualWinAmount[0]?.total || 0;
 
     const totalPages = Math.ceil(total / page_limit);
 
@@ -720,9 +816,9 @@ exports.getAdminBets = async (req, res) => {
     res.status(200).json({
       message:
         table === 1
-          ? "Bet/s distinct by user fetched successfully with pagination"
+          ? "User/s who made transaction/s fetched successfully with pagination"
           : table === 2
-          ? "Bet/s distinct by transaction fetched successfully with pagination"
+          ? "Transaction/s per user fetched successfully with pagination"
           : table === 3
           ? `Bet/s with trans_no ${req.query.trans_no} fetched successfully with pagination`
           : "Bet/s distinct by admin fetched successfully with pagination",
@@ -730,11 +826,14 @@ exports.getAdminBets = async (req, res) => {
       totalPages,
       currentPage: page,
       page_limit,
-      data,
       links: paginationLinks,
+      grandTotalAmount,
+      grandTotalWinAmount,
+      grandActualWinAmount,
+      data,
     });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     res
       .status(500)
       .json({ message: "Error getting bet/s", error: error.message });

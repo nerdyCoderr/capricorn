@@ -23,7 +23,7 @@ const BetSchema = new mongoose.Schema(
     bet_num: { type: Number, required: true },
     bet_amt: { type: Number, required: true },
     win_amt: { type: Number, required: true },
-    result: { type: Boolean, default: null },
+    result: { type: Boolean, default: false },
     paid: { type: Boolean, default: false },
     claimed: { type: Boolean, default: false },
   },
