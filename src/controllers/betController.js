@@ -448,7 +448,7 @@ exports.getAdminBets = async (req, res) => {
   let sort_dir = parseInt(req.query?.sort_dir) || -1;
   let bet_type = req.query.bet_type;
   let bet_number = parseInt(req.query?.bet_num);
-  let bet_result = req.query.bet_result;
+  let bet_result = parseInt(req.query?.bet_result);
   let transaction_num = req.query.trans_no;
   const table = parseInt(req.params?.table);
 
@@ -501,6 +501,10 @@ exports.getAdminBets = async (req, res) => {
 
     if (batch_id) {
       transact_query.batch_id = batch_id;
+      console.log(
+        "🚀 ~ file: betController.js:508 ~ exports.getAdminBets= ~ transact_query:",
+        transact_query
+      );
     }
 
     transact_query.createdAt = createdAt;
@@ -543,8 +547,8 @@ exports.getAdminBets = async (req, res) => {
       bet_query.bet_num = bet_number;
     }
 
-    if (bet_result) {
-      bet_query.result = bet_result;
+    if (!isNaN(bet_result)) {
+      bet_query.result = Boolean(bet_result);
     }
 
     bet_query.ref_code = ref_code;
