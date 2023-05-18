@@ -501,10 +501,6 @@ exports.getAdminBets = async (req, res) => {
 
     if (batch_id) {
       transact_query.batch_id = batch_id;
-      console.log(
-        "🚀 ~ file: betController.js:508 ~ exports.getAdminBets= ~ transact_query:",
-        transact_query
-      );
     }
 
     transact_query.createdAt = createdAt;
