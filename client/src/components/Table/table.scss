@@ -49,6 +49,10 @@
   }
 }
 
+.table-wrap {
+  overflow: scroll;
+}
+
 @media (max-width: 575.98px) {
   .table-container {
     th {

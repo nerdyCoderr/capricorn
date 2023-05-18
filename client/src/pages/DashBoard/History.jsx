@@ -6,8 +6,11 @@ import { getBetListUser } from '../../api/request';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import usePagination from '../../hooks/usePagination';
-import { Button, DatePicker } from 'antd';
+import { Button } from 'antd';
+import moment from 'moment';
 import TableThreeModal from '../../components/BetList/TableThreeModal';
+import useFilter from '../../hooks/useFilter';
+import Filter from '../../components/Filter/Filter';
 const History = () => {
   dayjs.extend(customParseFormat);
   const nav = useNavigate();
@@ -15,6 +18,8 @@ const History = () => {
   const [transNO, setTransNo] = useState();
   const [isTablethreeOpen, setIsTablethreeOpen] = useState(false);
   const [data, setData] = useState([]);
+  const [totalCountTable, setTotalCountTable] = useState(0);
+
   const columns = React.useMemo(
     () => [
       {
@@ -22,7 +27,7 @@ const History = () => {
         accessor: 'trans_no', // accessor is the "key" in the data
       },
       {
-        Header: 'Total Bet No.',
+        Header: 'Total Bet Amount',
         accessor: 'total_bet_amt', // accessor is the "key" in the data
       },
       {
@@ -34,11 +39,22 @@ const History = () => {
   );
 
   const dateFormat = 'YYYY-MM-DD';
-  const now = new Date();
-  const dateString = now.toISOString().slice(0, 10);
+
+  const currentDate = moment().format(dateFormat);
 
   const params = '2';
-  const dateparams = `&date_created=${dateString}`;
+  const dateparams = `&from=${currentDate}&to=${currentDate}`;
+
+  const {
+    setFilter,
+    filterHandler,
+    onBatchChange,
+    onChangeTo,
+    onChangeFrom,
+    resetHandler,
+    filter,
+    callbackfilterRes,
+  } = useFilter(params, currentDate);
 
   const {
     isloading,
@@ -46,9 +62,8 @@ const History = () => {
     onFirst,
     onLast,
     onNext,
-    onChangeDate,
+
     callbackresponse,
-    dateSearch,
     errorResponse,
   } = usePagination(params, dataTable, getBetListUser, '', dateparams);
 
@@ -56,7 +71,7 @@ const History = () => {
     setIsTablethreeOpen(true);
     setTransNo(trans_no);
   };
-
+  const filterType = 'transaction_history';
   const handleColumnClick = (row) => {
     setData(row.original);
   };
@@ -65,43 +80,53 @@ const History = () => {
     setIsTablethreeOpen(false);
   };
 
-  useEffect(() => {
-    const { data } = callbackresponse;
+  const processResponseData = (response) => {
+    const { data, total } = response;
+    setTotalCountTable(total);
 
-    console.log(data);
     const reconstructedList = data?.map((data) => {
       return {
-        total_bet_amt: data?.total_bet_amt,
+        total_bet_amt: data?.total_amount,
         trans_no: data?.trans_no,
         action: (
           <div className='text-center'>
             {' '}
-            <Button onClick={() => actionHandler(data?.transaction_id)}>
-              View{' '}
-            </Button>
+            <Button onClick={() => actionHandler(data?.trans_no)}>View </Button>
           </div>
         ),
       };
     });
-    const newdata = { ...callbackresponse, data: reconstructedList };
-    setDataTabble(newdata);
+    return { ...response, data: reconstructedList };
+  };
+  useEffect(() => {
+    setDataTabble(processResponseData(callbackresponse));
   }, [callbackresponse]);
 
+  useEffect(() => {
+    if (callbackfilterRes) {
+      const processedData = processResponseData(callbackfilterRes);
+      setDataTabble(processResponseData(processedData));
+    }
+  }, [callbackfilterRes]);
+
+  useEffect(() => {}, [callbackfilterRes]);
   return (
     <div className='historycontainer '>
       <h6 onClick={() => nav('/dashboard')}>Back</h6>
       <h1 className='text-center'>Transaction History</h1>
-      <div>
-        <h5 style={{ letterSpacing: '0.8px' }}>Filter:</h5>
-        <DatePicker
-          onChange={onChangeDate}
-          defaultValue={dayjs(dateString, dateFormat)}
-          format={dateFormat}
-        />
-      </div>
+      <Filter
+        filterType={filterType}
+        setFilter={setFilter}
+        filterHandler={filterHandler}
+        onBatchChange={onBatchChange}
+        onChangeTo={onChangeTo}
+        onChangeFrom={onChangeFrom}
+        resetHandler={resetHandler}
+        filter={filter}
+      />
       {isTablethreeOpen && (
         <TableThreeModal
-          dateSearch={dateSearch}
+          dateSearch={filter}
           isTablethreeOpen={isTablethreeOpen}
           actioncall={getBetListUser}
           setIsTablethreeOpen={setIsTablethreeOpen}
@@ -120,6 +145,7 @@ const History = () => {
         isloading={isloading}
         handleColumnClick={handleColumnClick}
         errorResponse={errorResponse}
+        totalCountTable={totalCountTable}
       />
     </div>
   );

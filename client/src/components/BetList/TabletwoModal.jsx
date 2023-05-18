@@ -2,7 +2,7 @@ import { Button, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Table from '../Table/Table';
 import usePagination from '../../hooks/usePagination';
-import moment from 'moment';
+
 const TabletwoModal = ({
   isTable2Open,
   setIsTable2Open,
@@ -14,6 +14,7 @@ const TabletwoModal = ({
   dateSearch,
 }) => {
   const [dataTable, setDataTabble] = useState([]);
+  const [totalCountTable, setTotalCountTable] = useState(0);
   const columns = React.useMemo(
     () => [
       {
@@ -31,13 +32,11 @@ const TabletwoModal = ({
     ],
     [],
   );
-  const dateFormat = 'YYYY-MM-DD';
-  const currentDate = moment(dateSearch).format(dateFormat);
 
   const params = '2';
-  const otherparams = `&_id=${username}`;
+  const otherparams = `&user_id=${username}`;
 
-  const dateparams = `&createdAt=${currentDate}`;
+  const dateparams = `&from=${dateSearch?.from}&to=${dateSearch?.to}`;
   const {
     onPrevious,
     onFirst,
@@ -47,16 +46,16 @@ const TabletwoModal = ({
   } = usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
   useEffect(() => {
-    const { data } = callbackresponse;
-    console.log(data);
+    const { data, total } = callbackresponse;
+    setTotalCountTable(total);
     const reconstructedList = data?.map((data) => {
       return {
-        total_bet_amt: data?.total_bet_amt,
+        total_bet_amt: data?.total_amount,
         trans_no: data?.trans_no,
         action: (
           <div className='text-center'>
             {' '}
-            <Button onClick={() => actionHandlertwo(data?.transaction_id)}>
+            <Button onClick={() => actionHandlertwo(data?.trans_no)}>
               View{' '}
             </Button>
           </div>
@@ -100,6 +99,7 @@ const TabletwoModal = ({
         onFirst={onFirst}
         onLast={onLast}
         handleColumnClick={handleColumnClick}
+        totalCountTable={totalCountTable}
       />
     </Modal>
   );

@@ -1,82 +1,70 @@
-import { useEffect, useState } from "react";
-import moment from "moment";
+import { useEffect, useState } from 'react';
+import config from '../api/config';
+// import moment from 'moment';
 
 const usePagination = (
   params,
   dataTablelink,
   actioncall,
   otherparams = null,
-  dateparams = null
+  dateparams = null,
 ) => {
-  const dateFormat = "YYYY-MM-DD";
-  const currentDate = moment().format(dateFormat);
-
-  const [callbackresponse, setCallbackResponse] = useState("check");
+  const [callbackresponse, setCallbackResponse] = useState('check');
   const [isloading, setIsloading] = useState(false);
-  const [dateSearch, setDateSearch] = useState(currentDate);
+
   const [errorResponse, setErrorResposne] = useState(null);
-  const onPrevious = () => {
-    const urlpage = dataTablelink?.links?.previous;
+
+  const urlLinkData = (key) => {
+    const urlpage = dataTablelink?.links?.[key] ?? config.base_url;
+
     const url = new URL(urlpage);
     const searchParams = url.searchParams;
-    const page = searchParams.get("page");
-    const createdAt = searchParams.get("createdAt");
+    const additionalParams = otherparams ?? '';
+
+    const queryParams = {
+      page: searchParams.get('page'),
+      from: searchParams.get('from'),
+      to: searchParams.get('to'),
+      trans_no: searchParams.get('trans_no'),
+      bet_result: searchParams.get('bet_result'),
+      bet_type: searchParams.get('bet_type'),
+      bet_num: searchParams.get('bet_num'),
+      batch_id: searchParams.get('batch_id'),
+    };
+
+    const newParams = `${params}?page=${queryParams.page}${
+      queryParams.from ? `&from=${queryParams.from}` : ''
+    }${queryParams.to ? `&to=${queryParams.to}` : ''}${
+      queryParams.bet_type ? `&bet_type=${queryParams.bet_type}` : ''
+    }${queryParams.bet_num ? `&bet_num=${queryParams.bet_num}` : ''}${
+      queryParams.bet_result ? `&bet_result=${queryParams.bet_result}` : ''
+    }${queryParams.trans_no ? `&trans_no=${queryParams.trans_no}` : ''}${
+      queryParams.batch_id ? `&batch_id=${queryParams.batch_id}` : ''
+    }${additionalParams}`;
+
     setIsloading(true);
-    const newparams = `${params}?page=${page}${
-      createdAt ? `&createdAt=${createdAt}` : ""
-    }${otherparams ?? ""}`;
-    actioncall(newparams, callbackPagination);
+    actioncall(newParams, callbackPagination);
+  };
+
+  const onPrevious = () => {
+    urlLinkData('previous');
   };
 
   const onFirst = () => {
-    const urlpage = dataTablelink?.links?.first;
-    const url = new URL(urlpage);
-    const searchParams = url.searchParams;
-    const page = searchParams.get("page");
-    const createdAt = searchParams.get("createdAt");
-    setIsloading(true);
-    const newparams = `${params}?page=${page}${
-      createdAt ? `&createdAt=${createdAt}` : ""
-    }${otherparams ?? ""}`;
-    actioncall(newparams, callbackPagination);
+    urlLinkData('first');
   };
 
   const onNext = () => {
-    const urlpage = dataTablelink?.links?.next;
-
-    const url = new URL(urlpage);
-    const searchParams = url.searchParams;
-    const page = searchParams.get("page");
-    const createdAt = searchParams.get("createdAt");
-    const bet_type_id = searchParams.get("bet_type_id");
-    const bet_num = searchParams.get("bet_num");
-    const batch_type = searchParams.get("batch_type");
-    setIsloading(true);
-    const newparams = `${params}?page=${page}${
-      createdAt ? `&createdAt=${createdAt}` : ""
-    }${bet_type_id ? `&bet_type_id=${bet_type_id}` : ""}${
-      bet_num ? `&bet_num=${bet_num}` : ""
-    }${batch_type ? `&batch_type=${batch_type}` : ""}${otherparams ?? ""}`;
-    actioncall(newparams, callbackPagination);
+    urlLinkData('next');
   };
 
   const onLast = () => {
-    const urlpage = dataTablelink?.links?.last;
-    const url = new URL(urlpage);
-    const searchParams = url.searchParams;
-    const page = searchParams.get("page");
-    const createdAt = searchParams.get("createdAt");
-
-    setIsloading(true);
-    const newparams = `${params}?page=${page}${
-      createdAt ? `&createdAt=${createdAt}` : ""
-    }${otherparams ?? ""}`;
-    actioncall(newparams, callbackPagination);
+    urlLinkData('last');
   };
 
   const callbackPagination = async (res) => {
     if (!res?.data) {
-      setErrorResposne("No Intertnet");
+      setErrorResposne('No Intertnet');
       setIsloading(false);
       return;
     }
@@ -94,16 +82,8 @@ const usePagination = (
     setIsloading(false);
   };
 
-  const onChangeDate = (date, dateString) => {
-    setDateSearch(dateString);
-    setIsloading(true);
-    console.log("cehcfk");
-    const newparams = `${params}?page=1&createdAt=${dateString}`;
-    actioncall(newparams, callbackPagination);
-  };
-
   useEffect(() => {
-    const newparams = `${params}?page=1${otherparams ?? ""}${dateparams ?? ""}`;
+    const newparams = `${params}?page=1${otherparams ?? ''}${dateparams ?? ''}`;
     setIsloading(true);
 
     actioncall(newparams, callbackPagination);
@@ -111,12 +91,11 @@ const usePagination = (
 
   return {
     isloading,
-    onChangeDate,
+
     onPrevious,
     onFirst,
     onLast,
     onNext,
-    dateSearch,
     callbackresponse,
     errorResponse,
   };

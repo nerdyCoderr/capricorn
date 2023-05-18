@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Table from '../Table/Table';
 import { Button, Modal } from 'antd';
-import moment from 'moment';
+
 import usePagination from '../../hooks/usePagination';
 import './TableThreeModal.scss';
 function TableThreeModal({
@@ -14,12 +14,11 @@ function TableThreeModal({
   dateSearch,
 }) {
   const [dataTable, setDataTabble] = useState([]);
+  const [totalCountTable, setTotalCountTable] = useState(0);
   const params = '3';
-  const dateFormat = 'YYYY-MM-DD';
-  const currentDate = moment(dateSearch).format(dateFormat);
 
-  const dateparams = `&createdAt=${currentDate}`;
-  const otherparams = `&transaction_id=${trans_no}`;
+  const dateparams = `&from=${dateSearch?.from}&to=${dateSearch?.to}`;
+  const otherparams = `&trans_no=${trans_no}`;
   const columns = React.useMemo(
     () => [
       {
@@ -52,8 +51,8 @@ function TableThreeModal({
   } = usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
   useEffect(() => {
-    const { data } = callbackresponse;
-    console.log(data);
+    const { data, total } = callbackresponse;
+    setTotalCountTable(total);
     const reconstructedList = data?.map((data) => {
       return {
         bet_type: data?.bet_type?.bet_type,
@@ -94,6 +93,7 @@ function TableThreeModal({
           onPrevious={onPrevious}
           onFirst={onFirst}
           onLast={onLast}
+          totalCountTable={totalCountTable}
         />
       )}
     </Modal>

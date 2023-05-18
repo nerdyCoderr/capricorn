@@ -1,7 +1,17 @@
 .betlistcontainer {
   background-color: #008080;
 
-  height: 100vh;
+  min-height: 500px;
   color: #d0efb1;
   padding: 1rem;
+
+  :where(.css-dev-only-do-not-override-1mqg3i0).ant-input-disabled,
+  :where(.css-dev-only-do-not-override-1mqg3i0).ant-input[disabled] {
+    color: black;
+    background-color: white;
+    border-color: #d9d9d9;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 1;
+  }
 }
