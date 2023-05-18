@@ -153,12 +153,7 @@ const getBetList = (params, callback = null) => {
       callback(res);
     })
     .catch((err) => {
-      if (err) {
-        message.error(err.response.data.message);
-        if (err.response.status === 401 || err.response.status === 422) {
-          callback(err.response);
-        }
-      }
+      callback(err.response);
     });
 };
 

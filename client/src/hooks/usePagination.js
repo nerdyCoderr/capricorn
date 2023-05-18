@@ -14,7 +14,7 @@ const usePagination = (
   const [callbackresponse, setCallbackResponse] = useState('check');
   const [isloading, setIsloading] = useState(false);
   const [dateSearch, setDateSearch] = useState(currentDate);
-
+  const [errorResponse, setErrorResposne] = useState(null);
   const onPrevious = () => {
     const urlpage = dataTablelink?.links?.previous;
     const url = new URL(urlpage);
@@ -75,9 +75,23 @@ const usePagination = (
   };
 
   const callbackPagination = async (res) => {
-    const { data } = await res;
+    if (!res?.data) {
+      setErrorResposne('No Intertnet');
+      setIsloading(false);
+      return;
+    }
+    const { data, status } = await res;
+    if (status === 200 || status === 201) {
+      setCallbackResponse(data);
+    }
+    if (status === 404) {
+      setErrorResposne(res.statusText);
+    }
+    if (status === 204) {
+      setErrorResposne(res.statusText);
+    }
+    console.log(res);
     setIsloading(false);
-    setCallbackResponse(data);
   };
 
   const onChangeDate = (date, dateString) => {
@@ -104,6 +118,7 @@ const usePagination = (
     onNext,
     dateSearch,
     callbackresponse,
+    errorResponse,
   };
 };
 

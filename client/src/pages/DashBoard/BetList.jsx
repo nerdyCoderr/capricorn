@@ -24,6 +24,25 @@ const BetList = () => {
   const [isTable2Open, setIsTable2Open] = useState(false);
   const [isTablethreeOpen, setIsTablethreeOpen] = useState(false);
 
+  const dateFormat = 'YYYY-MM-DD';
+  const currentDate = moment().format(dateFormat);
+
+  const params = '1';
+
+  const dateparams = `&createdAt=${currentDate}`;
+
+  const {
+    isloading,
+    onPrevious,
+    onFirst,
+    onLast,
+    onNext,
+    onChangeDate,
+    callbackresponse,
+    dateSearch,
+    errorResponse,
+  } = usePagination(params, dataTable, getBetList, null, dateparams);
+
   const columns = React.useMemo(
     () => [
       {
@@ -62,23 +81,6 @@ const BetList = () => {
     setTrans_no(trans_no);
   };
 
-  const dateFormat = 'YYYY-MM-DD';
-  const currentDate = moment().format(dateFormat);
-
-  const params = '1';
-
-  const dateparams = `&createdAt=${currentDate}`;
-  const {
-    isloading,
-    onPrevious,
-    onFirst,
-    onLast,
-    onNext,
-    onChangeDate,
-    callbackresponse,
-    dateSearch,
-  } = usePagination(params, dataTable, getBetList, null, dateparams);
-
   const handleColumnClick = (row) => {
     setData(row.original);
   };
@@ -110,9 +112,7 @@ const BetList = () => {
     const newdata = { ...callbackresponse, data: reconstructedList };
     setDataTabble(newdata);
   }, [callbackresponse]);
-  useEffect(() => {
-    console.log('c');
-  }, []);
+
   return (
     <div className='betlistcontainer'>
       <div>
@@ -159,6 +159,7 @@ const BetList = () => {
           onLast={onLast}
           isloading={isloading}
           handleColumnClick={handleColumnClick}
+          errorResponse={errorResponse}
         />
       </div>
     </div>

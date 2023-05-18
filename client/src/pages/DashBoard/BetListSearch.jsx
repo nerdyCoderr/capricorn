@@ -105,6 +105,7 @@ const BetListSearch = () => {
     onChangeDate,
     callbackresponse,
     dateSearch,
+    errorResponse,
   } = usePagination(params, dataTable, getBetList, null, dateparams);
   console.log(callbackresponse);
 
@@ -187,6 +188,7 @@ const BetListSearch = () => {
             username={username}
             actionHandlertwo={actionHandlertwo}
             actioncall={getBetList}
+            dateSearch={dateSearch}
           />
         )}
         {isTablethreeOpen && (
@@ -197,6 +199,7 @@ const BetListSearch = () => {
             trans_no={trans_no}
             data={data}
             onCancel={onCancel3}
+            dateSearch={dateSearch}
           />
         )}
         <h6 onClick={() => nav('/dashboard')}>Back</h6>
@@ -284,6 +287,7 @@ const BetListSearch = () => {
           onLast={onLast}
           isloading={isloading}
           handleColumnClick={handleColumnClick}
+          errorResponse={errorResponse}
         />
       </div>
     </div>

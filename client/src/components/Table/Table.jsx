@@ -19,6 +19,7 @@ const Table = ({
   onPrevious,
   onLast,
   handleColumnClick = undefined,
+  errorResponse = null,
 }) => {
   const { data: rawData, links, currentPage } = dataTable;
   const data = React.useMemo(() => {
@@ -52,7 +53,7 @@ const Table = ({
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {isloading ? (
+          {isloading && (
             <tr className='text-center' style={{ height: '100px' }}>
               <td colSpan={columns.length}>
                 <Spin tip='Table is Loading' size='large'>
@@ -60,7 +61,15 @@ const Table = ({
                 </Spin>
               </td>
             </tr>
-          ) : (
+          )}
+          {!isloading && errorResponse && (
+            <td className='text-center' colSpan={columns.length}>
+              {errorResponse}
+            </td>
+          )}
+          {!isloading &&
+            !errorResponse &&
+            rows.length > 0 &&
             rows.map((row, id) => {
               prepareRow(row);
               return (
@@ -86,7 +95,11 @@ const Table = ({
                   })}
                 </tr>
               );
-            })
+            })}
+          {!isloading && !errorResponse && rows.length === 0 && (
+            <td className='text-center' colSpan={columns.length}>
+              Table is Empty
+            </td>
           )}
         </tbody>
       </table>

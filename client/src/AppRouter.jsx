@@ -13,6 +13,7 @@ import CreateUserAccountByAdmin from './pages/DashBoard/CreateUserAccountByAdmin
 import BetListSearch from './pages/DashBoard/BetListSearch';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import io from 'socket.io-client';
+import config from './api/config';
 const AppRouter = () => {
   const [data, setData] = useState({
     user: {},
@@ -25,7 +26,7 @@ const AppRouter = () => {
   const [socket, setSocket] = useState(null);
 
   React.useEffect(() => {
-    const newsocket = io('http://localhost:3002?');
+    const newsocket = io(config.websocket_url);
 
     setSocket(newsocket);
     return () => newsocket.disconnect();

@@ -14,7 +14,7 @@ const History = () => {
   const [dataTable, setDataTabble] = useState([]);
   const [transNO, setTransNo] = useState();
   const [isTablethreeOpen, setIsTablethreeOpen] = useState(false);
-
+  const [data, setData] = useState([]);
   const columns = React.useMemo(
     () => [
       {
@@ -49,11 +49,20 @@ const History = () => {
     onChangeDate,
     callbackresponse,
     dateSearch,
+    errorResponse,
   } = usePagination(params, dataTable, getBetListUser, '', dateparams);
 
   const actionHandler = (trans_no) => {
     setIsTablethreeOpen(true);
     setTransNo(trans_no);
+  };
+
+  const handleColumnClick = (row) => {
+    setData(row.original);
+  };
+
+  const onCancel3 = () => {
+    setIsTablethreeOpen(false);
   };
 
   useEffect(() => {
@@ -97,6 +106,8 @@ const History = () => {
           actioncall={getBetListUser}
           setIsTablethreeOpen={setIsTablethreeOpen}
           trans_no={transNO}
+          data={data}
+          onCancel={onCancel3}
         />
       )}
       <Table
@@ -107,6 +118,8 @@ const History = () => {
         onFirst={onFirst}
         onLast={onLast}
         isloading={isloading}
+        handleColumnClick={handleColumnClick}
+        errorResponse={errorResponse}
       />
     </div>
   );
