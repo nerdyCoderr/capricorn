@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
-import moment from 'moment';
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 const usePagination = (
   params,
   dataTablelink,
   actioncall,
   otherparams = null,
-  dateparams = null,
+  dateparams = null
 ) => {
-  const dateFormat = 'YYYY-MM-DD';
+  const dateFormat = "YYYY-MM-DD";
   const currentDate = moment().format(dateFormat);
 
-  const [callbackresponse, setCallbackResponse] = useState('check');
+  const [callbackresponse, setCallbackResponse] = useState("check");
   const [isloading, setIsloading] = useState(false);
   const [dateSearch, setDateSearch] = useState(currentDate);
   const [errorResponse, setErrorResposne] = useState(null);
@@ -19,12 +19,12 @@ const usePagination = (
     const urlpage = dataTablelink?.links?.previous;
     const url = new URL(urlpage);
     const searchParams = url.searchParams;
-    const page = searchParams.get('page');
-    const createdAt = searchParams.get('createdAt');
+    const page = searchParams.get("page");
+    const createdAt = searchParams.get("createdAt");
     setIsloading(true);
     const newparams = `${params}?page=${page}${
-      createdAt ? `&createdAt=${createdAt}` : ''
-    }${otherparams ?? ''}`;
+      createdAt ? `&createdAt=${createdAt}` : ""
+    }${otherparams ?? ""}`;
     actioncall(newparams, callbackPagination);
   };
 
@@ -32,12 +32,12 @@ const usePagination = (
     const urlpage = dataTablelink?.links?.first;
     const url = new URL(urlpage);
     const searchParams = url.searchParams;
-    const page = searchParams.get('page');
-    const createdAt = searchParams.get('createdAt');
+    const page = searchParams.get("page");
+    const createdAt = searchParams.get("createdAt");
     setIsloading(true);
     const newparams = `${params}?page=${page}${
-      createdAt ? `&createdAt=${createdAt}` : ''
-    }${otherparams ?? ''}`;
+      createdAt ? `&createdAt=${createdAt}` : ""
+    }${otherparams ?? ""}`;
     actioncall(newparams, callbackPagination);
   };
 
@@ -46,17 +46,17 @@ const usePagination = (
 
     const url = new URL(urlpage);
     const searchParams = url.searchParams;
-    const page = searchParams.get('page');
-    const createdAt = searchParams.get('createdAt');
-    const bet_type_id = searchParams.get('bet_type_id');
-    const bet_num = searchParams.get('bet_num');
-    const batch_type = searchParams.get('batch_type');
+    const page = searchParams.get("page");
+    const createdAt = searchParams.get("createdAt");
+    const bet_type_id = searchParams.get("bet_type_id");
+    const bet_num = searchParams.get("bet_num");
+    const batch_type = searchParams.get("batch_type");
     setIsloading(true);
     const newparams = `${params}?page=${page}${
-      createdAt ? `&createdAt=${createdAt}` : ''
-    }${bet_type_id ? `&bet_type_id=${bet_type_id}` : ''}${
-      bet_num ? `&bet_num=${bet_num}` : ''
-    }${batch_type ? `&batch_type=${batch_type}` : ''}${otherparams ?? ''}`;
+      createdAt ? `&createdAt=${createdAt}` : ""
+    }${bet_type_id ? `&bet_type_id=${bet_type_id}` : ""}${
+      bet_num ? `&bet_num=${bet_num}` : ""
+    }${batch_type ? `&batch_type=${batch_type}` : ""}${otherparams ?? ""}`;
     actioncall(newparams, callbackPagination);
   };
 
@@ -64,19 +64,19 @@ const usePagination = (
     const urlpage = dataTablelink?.links?.last;
     const url = new URL(urlpage);
     const searchParams = url.searchParams;
-    const page = searchParams.get('page');
-    const createdAt = searchParams.get('createdAt');
+    const page = searchParams.get("page");
+    const createdAt = searchParams.get("createdAt");
 
     setIsloading(true);
     const newparams = `${params}?page=${page}${
-      createdAt ? `&createdAt=${createdAt}` : ''
-    }${otherparams ?? ''}`;
+      createdAt ? `&createdAt=${createdAt}` : ""
+    }${otherparams ?? ""}`;
     actioncall(newparams, callbackPagination);
   };
 
   const callbackPagination = async (res) => {
     if (!res?.data) {
-      setErrorResposne('No Intertnet');
+      setErrorResposne("No Intertnet");
       setIsloading(false);
       return;
     }
@@ -97,13 +97,13 @@ const usePagination = (
   const onChangeDate = (date, dateString) => {
     setDateSearch(dateString);
     setIsloading(true);
-    console.log('cehcfk');
+    console.log("cehcfk");
     const newparams = `${params}?page=1&createdAt=${dateString}`;
     actioncall(newparams, callbackPagination);
   };
 
   useEffect(() => {
-    const newparams = `${params}?page=1${otherparams ?? ''}${dateparams ?? ''}`;
+    const newparams = `${params}?page=1${otherparams ?? ""}${dateparams ?? ""}`;
     setIsloading(true);
 
     actioncall(newparams, callbackPagination);

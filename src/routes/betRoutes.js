@@ -19,7 +19,7 @@ userBetRouter.get(
   "/bets/:table",
   authenticate,
   authorize(["user"]),
-  betController.getUserBets
+  betController.getAdminBets
 );
 
 userBetRouter.get(
