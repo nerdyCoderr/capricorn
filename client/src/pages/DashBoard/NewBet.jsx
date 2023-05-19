@@ -381,7 +381,7 @@ const NewBets = () => {
               className='w-100'
               type='primary'
               htmlType='submit'
-              // disabled={isBetLimit}
+              // disabled={isBetLimit} s
             >
               SUBMIT
             </Button>
