@@ -5,3 +5,4 @@ ngrok.exe
 src/playground-1.mongodb.js
 
 .env
+client/.env

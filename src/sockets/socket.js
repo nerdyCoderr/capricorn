@@ -313,8 +313,8 @@ io.on("connection", (socket) => {
           let s = io.sockets.sockets.get(id);
           let user = s.user;
           if (user) {
-            const data = getWatchlist(generateCacheKey());
-            callback(data);
+            const watch = getWatchlist(generateCacheKey());
+            callback(watch);
             lastEmitTime = Date.now();
             return;
           }
