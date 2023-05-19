@@ -231,7 +231,7 @@ io.on("connection", (socket) => {
           let user = s.user;
           if (user && user.username === username) {
             callback({ error: "User is already connected" });
-            socket.emit("login", { error: "User is already connected" });
+            // socket.emit("login", { error: "User is already connected" });
             return;
           }
         }
@@ -240,14 +240,14 @@ io.on("connection", (socket) => {
       const user = await User.findOne({ username });
       if (!user) {
         callback({ error: "Invalid credentials" });
-        socket.emit("login", { error: "Invalid credentials" });
+        // socket.emit("login", { error: "Invalid credentials" });
         return;
       }
 
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         callback({ error: "Invalid credentials" });
-        socket.emit("login", { error: "Invalid credentials" });
+        // socket.emit("login", { error: "Invalid credentials" });
         return;
       }
 
@@ -284,29 +284,28 @@ io.on("connection", (socket) => {
         ref_code: user.ref_code ? user.ref_code : null,
         username: user.username,
       });
-      socket.emit("login", {
-        message: "Logged in successfully",
-        token,
-        id: user._id,
-        role: user.role,
-        ref_code: user.ref_code ? user.ref_code : null,
-        username: user.username,
-      });
+      // socket.emit("login", {
+      //   message: "Logged in successfully",
+      //   token,
+      //   id: user._id,
+      //   role: user.role,
+      //   ref_code: user.ref_code ? user.ref_code : null,
+      //   username: user.username,
+      // });
     } catch (error) {
       console.log(error);
-      // callback({ error: error });
+      callback({ error: error });
       socket.emit("login", { error: error });
       return;
     }
   });
 
-  socket.on("logout", (data) => {
+  socket.on("logout", () => {
     console.log(`$User ${socket.id} logged out`);
-
     socket.disconnect();
   });
 
-  socket.on("watchlist", async (data) => {
+  socket.on("watchlist", async (data, callback) => {
     try {
       let room = io.of("/").adapter.rooms.get("watchlist");
       if (room) {
@@ -315,7 +314,7 @@ io.on("connection", (socket) => {
           let user = s.user;
           if (user) {
             const data = getWatchlist(generateCacheKey());
-            s.emit("watchlist", data);
+            callback(data);
             lastEmitTime = Date.now();
             return;
           }
@@ -327,7 +326,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("admin:transactionOverview", async (data) => {
+  socket.on("admin:transactionOverview", async (data, callback) => {
     try {
       let room = io.of("/").adapter.rooms.get("transactionOverview");
       if (room) {
@@ -336,7 +335,7 @@ io.on("connection", (socket) => {
           let user = s.user;
           if (user) {
             const data = await getTransactionOverview(user.username);
-            s.emit("admin:transactionOverview", data);
+            callback(data);
             lastEmitTime = Date.now();
             return;
           }
