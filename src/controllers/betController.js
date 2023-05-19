@@ -1,6 +1,7 @@
 const Bet = require("../models/Bet");
 const User = require("../models/User");
 const Transaction = require("../models/Transaction");
+const WinNumber = require("../models/WinningNumber");
 const generatePaginationLinks = require("../utils/generatePaginationLinks");
 const getCurrentDateString = require("../utils/getCurrentDateString");
 const generateTrans_no = require("../utils/generateTrans_no");
@@ -1027,5 +1028,123 @@ exports.getUserBets = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error getting bet/s", error: error.message });
+  }
+};
+
+exports.createWinNumber = async (req, res) => {
+  const { win_nums } = req.body;
+  let winningNums = [];
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    if (!win_nums) {
+      throw new Error("Win numbers not provided");
+    }
+
+    for (const [index, win_num] of win_nums.entries()) {
+      const { createdAt, batch_id, bet_type, bet_num } = win_num;
+
+      if (!(createdAt && batch_id && bet_type && bet_num)) {
+        throw new Error(
+          `Object at index ${index} does not have all required properties.`
+        );
+      }
+
+      const startOfDay = new Date(createdAt);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(createdAt);
+      endOfDay.setHours(23, 59, 59, 999);
+      const createdAt_ = { $gte: startOfDay, $lte: endOfDay };
+
+      let query = {
+        createdAt: createdAt_,
+        batch_id: batch_id,
+        bet_type: new mongoose.Types.ObjectId(bet_type),
+        bet_num: bet_num,
+      };
+
+      const findWinNumber = await WinNumber.findOne(query).session(session);
+
+      if (findWinNumber) {
+        throw new Error("Win number already exists");
+      }
+
+      query.createdAt = startOfDay;
+      const winNumber = await WinNumber.create([query], { session });
+      console.log(
+        "🚀 ~ file: betController.js:1076 ~ exports.createWinNumber= ~ winNumber:",
+        winNumber
+      );
+      winningNums.push(winNumber);
+      query.createdAt = createdAt_;
+      const winningBets = await Bet.find(query).session(session);
+      console.log(
+        "🚀 ~ file: betController.js:1084 ~ exports.createWinNumber= ~ winningBets:",
+        winningBets
+      );
+
+      if (!winningBets) {
+        console.log("No winning bets found");
+        continue;
+      }
+
+      const transactionIds = winningBets.map((bet) => bet.transaction);
+
+      const testbetupdate = await Bet.updateMany(
+        {
+          _id: { $in: winningBets.map((bet) => bet._id) },
+        },
+        {
+          $set: { result: true },
+        },
+        { session }
+      );
+      console.log(
+        "🚀 ~ file: betController.js:1101 ~ exports.createWinNumber= ~ testbetupdate:",
+        testbetupdate
+      );
+
+      for (const transactionId of transactionIds) {
+        const winSum = await Bet.aggregate([
+          {
+            $match: {
+              transaction: new mongoose.Types.ObjectId(transactionId),
+              result: true,
+            },
+          },
+          {
+            $group: {
+              _id: "$transaction",
+              totalWinAmt: { $sum: "$win_amt" },
+            },
+          },
+        ]).session(session);
+
+        if (winSum[0] && winSum[0].totalWinAmt) {
+          await Transaction.updateOne(
+            { _id: transactionId },
+            { actual_win_amount: winSum[0].totalWinAmt },
+            { session }
+          );
+        }
+      }
+    }
+
+    await session.commitTransaction();
+
+    return res.status(201).json({
+      message: "Win number created successfully",
+      winningNums,
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "Error creating win number", error: error.message });
+  } finally {
+    session.endSession();
   }
 };

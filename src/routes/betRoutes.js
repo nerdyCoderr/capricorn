@@ -2,6 +2,7 @@ const express = require("express");
 const userBetRouter = express.Router();
 const adminBetRouter = express.Router();
 const superBetRouter = express.Router();
+const superWinNumRouter = express.Router();
 
 const betController = require("../controllers/betController");
 const { authenticate, authorize } = require("../utils/authMiddleware");
@@ -51,4 +52,17 @@ superBetRouter.get(
   authorize(["super-admin"]),
   betController.getSuperBets
 );
-module.exports = { userBetRouter, adminBetRouter, superBetRouter };
+
+superWinNumRouter.post(
+  "/win-numbers",
+  authenticate,
+  authorize(["super-admin"]),
+  betController.createWinNumber
+);
+
+module.exports = {
+  userBetRouter,
+  adminBetRouter,
+  superBetRouter,
+  superWinNumRouter,
+};
