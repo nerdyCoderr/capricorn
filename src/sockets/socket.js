@@ -13,6 +13,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const loginCache = new NodeCache({ stdTTL: 0 });
 const transOverviewCache = new NodeCache({ stdTTL: 0 });
 
+const changeStream = Transaction.watch();
+let lastEmitTime = Date.now();
+
 const authenticateSocket = async (token) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -46,135 +49,140 @@ function batchID() {
 }
 
 const getTransactionOverview = async (username) => {
-  const user = await User.findOne({ username: username });
-  const from = getCurrentDateString();
-  const to = getCurrentDateString();
+  try {
+    const user = await User.findOne({ username: username });
+    const from = getCurrentDateString();
+    const to = getCurrentDateString();
 
-  const startOfDay = new Date(from);
-  startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(to);
-  endOfDay.setHours(23, 59, 59, 999);
-  const createdAt = { $gte: startOfDay, $lte: endOfDay };
+    const startOfDay = new Date(from);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(to);
+    endOfDay.setHours(23, 59, 59, 999);
+    const createdAt = { $gte: startOfDay, $lte: endOfDay };
 
-  let transact_query = {};
-  transact_query.createdAt = createdAt;
-  transact_query.batch_id = batchID();
+    let transact_query = {};
+    transact_query.createdAt = createdAt;
+    transact_query.batch_id = batchID();
 
-  let user_query = {};
-  user_query["user.ref_code"] = user.ref_code;
+    let user_query = {};
+    user_query["user.ref_code"] = user.ref_code;
 
-  const aggregateQuery = Transaction.aggregate([
-    // distinct by user
-    // filter by transaction (createdAt, batch_id), by user (username, ref_code)
-    {
-      $match: transact_query,
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "user",
-        foreignField: "_id",
-        as: "user",
+    const aggregateQuery = Transaction.aggregate([
+      // distinct by user
+      // filter by transaction (createdAt, batch_id), by user (username, ref_code)
+      {
+        $match: transact_query,
       },
-    },
-    {
-      $unwind: {
-        path: "$user",
-      },
-    },
-    {
-      $project: {
-        "user.password": 0,
-      },
-    },
-    {
-      $match: user_query,
-    },
-    {
-      $lookup: {
-        from: "transactions",
-        localField: "user._id",
-        foreignField: "user",
-        as: "transactions",
-      },
-    },
-    {
-      $addFields: {
-        total_amount: {
-          $sum: "$transactions.total_amount",
-        },
-        total_win_amount: {
-          $sum: "$transactions.total_win_amount",
-        },
-        actual_win_amount: {
-          $sum: "$transactions.actual_win_amount",
-        },
-        latest_transaction: {
-          $max: "$transactions.createdAt",
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
         },
       },
-    },
-    {
-      $group: {
-        _id: "$user._id",
-        user: { $first: "$user" },
-        // transactions: { $first: "$transactions" },
-        total_amount: { $first: "$total_amount" },
-        total_win_amount: {
-          $first: "$total_win_amount",
-        },
-        actual_win_amount: {
-          $first: "$actual_win_amount",
-        },
-        latest_transaction: {
-          $first: "$latest_transaction",
+      {
+        $unwind: {
+          path: "$user",
         },
       },
-    },
-    {
-      $facet: {
-        totalCount: [{ $count: "count" }],
-        grandTotalAmount: [
-          {
-            $group: {
-              _id: null,
-              total: { $sum: "$total_amount" },
-            },
+      {
+        $project: {
+          "user.password": 0,
+        },
+      },
+      {
+        $match: user_query,
+      },
+      {
+        $lookup: {
+          from: "transactions",
+          localField: "user._id",
+          foreignField: "user",
+          as: "transactions",
+        },
+      },
+      {
+        $addFields: {
+          total_amount: {
+            $sum: "$transactions.total_amount",
           },
-        ],
-        grandTotalWinAmount: [
-          {
-            $group: {
-              _id: null,
-              total: { $sum: "$total_win_amount" },
-            },
+          total_win_amount: {
+            $sum: "$transactions.total_win_amount",
           },
-        ],
-        grandActualWinAmount: [
-          {
-            $group: {
-              _id: null,
-              total: { $sum: "$actual_win_amount" },
-            },
+          actual_win_amount: {
+            $sum: "$transactions.actual_win_amount",
           },
-        ],
+          latest_transaction: {
+            $max: "$transactions.createdAt",
+          },
+        },
       },
-    },
-  ]);
+      {
+        $group: {
+          _id: "$user._id",
+          user: { $first: "$user" },
+          // transactions: { $first: "$transactions" },
+          total_amount: { $first: "$total_amount" },
+          total_win_amount: {
+            $first: "$total_win_amount",
+          },
+          actual_win_amount: {
+            $first: "$actual_win_amount",
+          },
+          latest_transaction: {
+            $first: "$latest_transaction",
+          },
+        },
+      },
+      {
+        $facet: {
+          totalCount: [{ $count: "count" }],
+          grandTotalAmount: [
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$total_amount" },
+              },
+            },
+          ],
+          grandTotalWinAmount: [
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$total_win_amount" },
+              },
+            },
+          ],
+          grandActualWinAmount: [
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$actual_win_amount" },
+              },
+            },
+          ],
+        },
+      },
+    ]);
 
-  const result = await aggregateQuery.exec();
-  const total = result[0].totalCount[0]?.count || 0;
-  const grandTotalAmount = result[0].grandTotalAmount[0]?.total || 0;
-  const grandTotalWinAmount = result[0].grandTotalWinAmount[0]?.total || 0;
-  const grandActualWinAmount = result[0].grandActualWinAmount[0]?.total || 0;
+    const result = await aggregateQuery.exec();
+    const total = result[0].totalCount[0]?.count || 0;
+    const grandTotalAmount = result[0].grandTotalAmount[0]?.total || 0;
+    const grandTotalWinAmount = result[0].grandTotalWinAmount[0]?.total || 0;
+    const grandActualWinAmount = result[0].grandActualWinAmount[0]?.total || 0;
 
-  return {
-    message: "Transaction overview fetched successfully",
-    total,
-    grandTotalAmount,
-    grandTotalWinAmount,
-    grandActualWinAmount,
-  };
+    return {
+      message: "Transaction overview fetched successfully",
+      total,
+      grandTotalAmount,
+      grandTotalWinAmount,
+      grandActualWinAmount,
+    };
+  } catch (error) {
+    console.log(error);
+    return { error: error };
+  }
 };
 
 const io = socketIO({
@@ -184,153 +192,164 @@ const io = socketIO({
   },
 });
 
+changeStream.on("change", async (change) => {
+  // Only emit the change if more than 10 seconds have passed since the last emit
+  try {
+    if (Date.now() - lastEmitTime > 10000) {
+      console.log("Emitting transaction overview");
+
+      let room = io.of("/").adapter.rooms.get("transactionOverview");
+      if (room) {
+        for (let id of room) {
+          let s = io.sockets.sockets.get(id);
+          let user = s.user;
+          if (user) {
+            const data = await getTransactionOverview(user.username);
+            s.emit("admin:transactionOverview", data);
+            lastEmitTime = Date.now();
+            return;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 io.on("connection", (socket) => {
-  const changeStream = Transaction.watch();
-  let lastEmitTime = Date.now();
   console.log(`$User ${socket.id} connected`);
 
-  changeStream.on("change", async (change) => {
-    // Only emit the change if more than 10 seconds have passed since the last emit
-    if (Date.now() - lastEmitTime > 10000) {
-      console.log("test");
-      for (const username of transOverviewCache.keys()) {
-        console.log(
-          "🚀 ~ file: socket.js:198 ~ changeStream.on ~ username:",
-          username
-        );
-        const userSocketId = transOverviewCache.get(username);
-        console.log(
-          "🚀 ~ file: socket.js:202 ~ changeStream.on ~ userSocketId:",
-          userSocketId
-        );
-        const data = await getTransactionOverview(username);
-        io.to(userSocketId).emit("admin:transactionOverview", data);
+  socket.on("login", async (credentials, callback) => {
+    try {
+      const { username, password } = credentials;
+
+      let room = io.of("/").adapter.rooms.get("logged in");
+      if (room) {
+        for (let id of room) {
+          let s = io.sockets.sockets.get(id);
+          let user = s.user;
+          if (user && user.username === username) {
+            callback({ error: "User is already connected" });
+            socket.emit("login", { error: "User is already connected" });
+            return;
+          }
+        }
       }
-      lastEmitTime = Date.now();
-    }
-  });
 
-  socket.on("watchlist", async (data) => {
-    const { token } = data;
-    const { role } = await authenticateSocket(token);
+      const user = await User.findOne({ username });
+      if (!user) {
+        callback({ error: "Invalid credentials" });
+        socket.emit("login", { error: "Invalid credentials" });
+        return;
+      }
 
-    if (!role) {
-      socket.emit("watchlist", { error: "Authentication failed" });
-      return;
-    }
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        callback({ error: "Invalid credentials" });
+        socket.emit("login", { error: "Invalid credentials" });
+        return;
+      }
 
-    const allowedRoles = ["super-admin", "admin", "user"];
-    if (!authorizeSocket(role, allowedRoles)) {
-      socket.emit("watchlist", {
-        error: "Forbidden: You do not have permission to perform this action",
-      });
-      return;
-    }
+      const token = jwt.sign(
+        {
+          id: user._id,
+          role: user.role,
+          ref_code: user.ref_code ? user.ref_code : null,
+          username: user.username,
+        },
+        JWT_SECRET,
+        {
+          expiresIn: "1d",
+        }
+      );
 
-    socket.emit("watchlist", getWatchlist(generateCacheKey()));
-  });
+      // loginCache.set(username, socket.id);
 
-  socket.on("login", async (credentials) => {
-    const { username, password } = credentials;
+      socket.user = user;
+      socket.join("logged in");
 
-    const existingSession = loginCache.get(username);
-    if (existingSession) {
-      socket.emit("login", { error: "User is already connected" });
-      return;
-    }
+      if (user.role === "admin") {
+        transOverviewCache.set(username, socket.id);
+        socket.join("transactionOverview");
+      } else if (user.role === "user") {
+        socket.join("watchlist");
+      }
 
-    const user = await User.findOne({ username });
-    if (!user) {
-      socket.emit("login", { error: "Invalid credentials" });
-      return;
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      socket.emit("login", { error: "Invalid credentials" });
-      return;
-    }
-
-    const token = jwt.sign(
-      {
+      callback({
+        message: "Logged in successfully",
+        token,
         id: user._id,
         role: user.role,
         ref_code: user.ref_code ? user.ref_code : null,
         username: user.username,
-      },
-      JWT_SECRET,
-      {
-        expiresIn: "1d",
-      }
-    );
-
-    loginCache.set(username, socket.id);
-
-    socket.emit("login", {
-      message: "Logged in successfully",
-      token,
-      id: user._id,
-      role: user.role,
-      ref_code: user.ref_code ? user.ref_code : null,
-      username: user.username,
-    });
+      });
+      socket.emit("login", {
+        message: "Logged in successfully",
+        token,
+        id: user._id,
+        role: user.role,
+        ref_code: user.ref_code ? user.ref_code : null,
+        username: user.username,
+      });
+    } catch (error) {
+      console.log(error);
+      callback({ error: error });
+      socket.emit("login", { error: error });
+      return;
+    }
   });
 
   socket.on("logout", (data) => {
-    console.log("User logged out");
+    console.log(`$User ${socket.id} logged out`);
 
-    for (const username of loginCache.keys()) {
-      const userSocketId = loginCache.get(username);
-      if (userSocketId === data) {
-        loginCache.del(username);
-        break;
+    socket.disconnect();
+  });
+
+  socket.on("watchlist", async (data) => {
+    try {
+      let room = io.of("/").adapter.rooms.get("watchlist");
+      if (room) {
+        for (let id of room) {
+          let s = io.sockets.sockets.get(id);
+          let user = s.user;
+          if (user) {
+            const data = getWatchlist(generateCacheKey());
+            s.emit("watchlist", data);
+            lastEmitTime = Date.now();
+            return;
+          }
+        }
       }
+    } catch (error) {
+      console.log(error);
+      return { error: error };
     }
   });
 
   socket.on("admin:transactionOverview", async (data) => {
-    const { token } = data;
-    const { role, username } = await authenticateSocket(token);
-
-    if (!role) {
-      socket.emit("admin:transactionOverview", {
-        error: "Authentication failed",
-      });
-      return;
-    }
-
-    const allowedRoles = ["admin"];
-    if (!authorizeSocket(role, allowedRoles)) {
-      socket.emit("admin:transactionOverview", {
-        error: "Forbidden: You do not have permission to perform this action",
-      });
-      return;
-    }
-
-    for (const username of transOverviewCache.keys()) {
-      const userSocketId = transOverviewCache.get(username);
-      if (userSocketId !== socket.id) {
-        transOverviewCache.del(username);
-        break;
+    try {
+      let room = io.of("/").adapter.rooms.get("transactionOverview");
+      if (room) {
+        for (let id of room) {
+          let s = io.sockets.sockets.get(id);
+          let user = s.user;
+          if (user) {
+            const data = await getTransactionOverview(user.username);
+            s.emit("admin:transactionOverview", data);
+            lastEmitTime = Date.now();
+            return;
+          }
+        }
       }
+    } catch (error) {
+      console.log(error);
+      return { error: error };
     }
-
-    transOverviewCache.set(username, socket.id);
-
-    const trans_overview = await getTransactionOverview(username);
-    socket.emit("admin:transactionOverview", trans_overview);
   });
 
   socket.on("disconnect", () => {
-    console.log("A user disconnected");
-
-    for (const username of loginCache.keys()) {
-      const userSocketId = loginCache.get(username);
-      if (userSocketId === socket.id) {
-        loginCache.del(username);
-        break;
-      }
-    }
+    console.log(`$User ${socket.id} disconnected`);
   });
 });
 

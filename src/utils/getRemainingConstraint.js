@@ -1,14 +1,14 @@
 const Bet = require("../models/Bet");
 
 const getRemainingConstraints = async (currentDate, batch_id) => {
-  if (!currentDate || !batch_id) {
-    return {
-      status: "error",
-      message: "Missing required parameters",
-    };
-  }
-
   try {
+    if (!currentDate || !batch_id) {
+      return {
+        status: "error",
+        message: "Missing required parameters",
+      };
+    }
+
     const specificDate = new Date(currentDate);
     const startDate = new Date(specificDate);
     startDate.setHours(0, 0, 0, 0);

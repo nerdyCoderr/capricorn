@@ -5,10 +5,11 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.userSignup = async (req, res) => {
-  const { username, password, first_name, last_name, phone_number } = req.body;
-  const ref_code = req.user.ref_code;
-
   try {
+    const { username, password, first_name, last_name, phone_number } =
+      req.body;
+    const ref_code = req.user.ref_code;
+
     let newUser;
     const existingUser = await User.findOne({ username });
 
@@ -41,9 +42,9 @@ exports.userSignup = async (req, res) => {
 };
 
 exports.deleteAdmin = async (req, res) => {
-  const loggedInUserId = req.user.id;
-
   try {
+    const loggedInUserId = req.user.id;
+
     const userToDelete = await User.findOne({
       _id: loggedInUserId,
       role: "admin",
@@ -70,15 +71,15 @@ exports.deleteAdmin = async (req, res) => {
 };
 
 exports.updateAdmin = async (req, res) => {
-  const { updates } = req.body;
-  const loggedInUserRole = req.user.role;
-  const loggedInUserId = req.user.id;
-
-  if (!updates) {
-    return res.status(400).json({ message: "Updates are required" });
-  }
-
   try {
+    const { updates } = req.body;
+    const loggedInUserRole = req.user.role;
+    const loggedInUserId = req.user.id;
+
+    if (!updates) {
+      return res.status(400).json({ message: "Updates are required" });
+    }
+
     const adminToUpdate = await User.findOne({ _id: loggedInUserId });
 
     if (!adminToUpdate) {
@@ -127,12 +128,12 @@ exports.updateAdmin = async (req, res) => {
 };
 
 exports.getUsers = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const page_limit = parseInt(req.query.limit) || 10;
-  const id = req.query.id;
-  const ref_code = req.user.ref_code;
-
   try {
+    const page = parseInt(req.query.page) || 1;
+    const page_limit = parseInt(req.query.limit) || 10;
+    const id = req.query.id;
+    const ref_code = req.user.ref_code;
+
     if (id) {
       // Fetch a specific user by ID
       const user = await User.findOne(
