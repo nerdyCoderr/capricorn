@@ -1,9 +1,9 @@
 const BetType = require("../models/BetType");
 
 exports.createBetType = async (req, res) => {
-  const { bet_type, lower, upper, amt_const, win_multiplier } = req.body;
-
   try {
+    const { bet_type, lower, upper, amt_const, win_multiplier } = req.body;
+
     const betType = new BetType({
       bet_type,
       lower,
@@ -22,15 +22,15 @@ exports.createBetType = async (req, res) => {
 };
 
 exports.updateBetType = async (req, res) => {
-  const { bet_type, updates } = req.body;
-
-  if (!bet_type || !updates) {
-    return res
-      .status(400)
-      .json({ message: "BetType and updates are required" });
-  }
-
   try {
+    const { bet_type, updates } = req.body;
+
+    if (!bet_type || !updates) {
+      return res
+        .status(400)
+        .json({ message: "BetType and updates are required" });
+    }
+
     const betTypeToUpdate = await BetType.findOne({ bet_type: bet_type });
 
     if (!betTypeToUpdate) {
@@ -55,13 +55,13 @@ exports.updateBetType = async (req, res) => {
 };
 
 exports.deleteBetType = async (req, res) => {
-  const { bet_type } = req.body;
-
-  if (!bet_type) {
-    return res.status(400).json({ message: "BetType is required" });
-  }
-
   try {
+    const { bet_type } = req.body;
+
+    if (!bet_type) {
+      return res.status(400).json({ message: "BetType is required" });
+    }
+
     const betTypeToDelete = await BetType.findOne({ bet_type });
 
     if (!betTypeToDelete) {

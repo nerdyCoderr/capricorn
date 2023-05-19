@@ -25,48 +25,64 @@ function createWatchlistKeyObject(bet) {
 }
 
 function initializeWatchlist() {
-  const batch_id = batchID();
-  const currentDate = getCurrentDateString();
-  const cache_key = generateCacheKey();
+  try {
+    const batch_id = batchID();
+    const currentDate = getCurrentDateString();
+    const cache_key = generateCacheKey();
 
-  resetWatchlist(cache_key);
+    resetWatchlist(cache_key);
 
-  async function fetchData() {
-    try {
-      const res = await getRemainingConstraints(currentDate, batch_id);
-      return res;
-    } catch (error) {
-      console.error("Error calling getRemainingConstraints:", error);
-      return {
-        status: "error",
-        message: error.message,
-      };
+    async function fetchData() {
+      try {
+        const res = await getRemainingConstraints(currentDate, batch_id);
+        return res;
+      } catch (error) {
+        console.error("Error calling getRemainingConstraints:", error);
+        return {
+          status: "error",
+          message: error.message,
+        };
+      }
     }
+
+    fetchData().then((data) => {
+      for (let res in data.result) {
+        updateWatchlist(cache_key, data.result[res]);
+      }
+    });
+  } catch (error) {
+    console.error("Error calling initializeWatchlist:", error);
+    return {
+      status: "error",
+      message: error.message,
+    };
   }
-
-  fetchData().then((data) => {
-    for (let res in data.result) {
-      updateWatchlist(cache_key, data.result[res]);
-    }
-  });
 }
 
 function updateWatchlist(name, bet) {
-  const key = createWatchlistKeyObject(bet);
-  const watchlist = getWatchlist(name);
-  const currentBetAmount = watchlist[key]?.total_amt || 0;
+  try {
+    const key = createWatchlistKeyObject(bet);
+    const watchlist = getWatchlist(name);
+    const currentBetAmount = watchlist[key]?.total_amt || 0;
 
-  const betAmount = parseInt(bet.bet_amt) || parseInt(bet.total_amt);
-  const amtConst = parseInt(bet.amt_const);
+    const betAmount = parseInt(bet.bet_amt) || parseInt(bet.total_amt);
+    const amtConst = parseInt(bet.amt_const);
 
-  watchlist[key] = {
-    ...watchlist[key],
-    total_amt: currentBetAmount + betAmount,
-    amt_const: amtConst,
-    remaining_const: amtConst - (currentBetAmount + betAmount),
-  };
+    watchlist[key] = {
+      ...watchlist[key],
+      total_amt: currentBetAmount + betAmount,
+      amt_const: amtConst,
+      remaining_const: amtConst - (currentBetAmount + betAmount),
+    };
 
-  setWatchlist(name, watchlist);
+    setWatchlist(name, watchlist);
+  } catch (error) {
+    console.error("Error calling updateWatchlist:", error);
+    return {
+      status: "error",
+      message: error.message,
+    };
+  }
 }
 
 function getWatchlist(name) {

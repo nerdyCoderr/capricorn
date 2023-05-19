@@ -16,60 +16,60 @@ const BetType = require("../models/BetType");
 const { default: mongoose, mongo } = require("mongoose");
 
 exports.createBet = async (req, res) => {
-  const { bets } = req.body;
-  let new_trans_no;
-  let isUnique = false;
-  let new_bets = [];
-  let new_bet;
-  let transaction;
-  let bet_type;
-  let exceed = {};
+  try {
+    const { bets } = req.body;
+    let new_trans_no;
+    let isUnique = false;
+    let new_bets = [];
+    let new_bet;
+    let transaction;
+    let bet_type;
+    let exceed = {};
 
-  // validation
-  if (!bets) {
-    return res.status(400).json({ message: "No bets provided" });
-  }
-
-  for (const bet of bets) {
-    bet_type = await BetType.findOne({ bet_type: bet.bet_type });
-
-    if (!bet_type) {
-      return res.status(400).json({
-        message: "Invalid bet type",
-      });
+    // validation
+    if (!bets) {
+      return res.status(400).json({ message: "No bets provided" });
     }
 
-    if (bet_type.upper < bet.bet_num || bet_type.lower > bet.bet_num) {
-      return res.status(400).json({
-        message: `Invalid bet number (${bet.bet_num}) for ${bet.bet_type}: bet number should be between ${bet_type.lower} and ${bet_type.upper}`,
-      });
-    }
+    for (const bet of bets) {
+      bet_type = await BetType.findOne({ bet_type: bet.bet_type });
 
-    if (bet_type.bet_amt < bet.bet_amt) {
-      return res.status(400).json({
-        message: `Invalid bet amount (${bet.bet_amt}) for ${bet.bet_type}: bet amount should be less than or equal to ${bet_type.bet_amt}`,
-      });
-    }
+      if (!bet_type) {
+        return res.status(400).json({
+          message: "Invalid bet type",
+        });
+      }
 
-    const watch_list = getWatchlist(generateCacheKey());
-    const watch_list_key = createWatchlistKeyObject(bet);
+      if (bet_type.upper < bet.bet_num || bet_type.lower > bet.bet_num) {
+        return res.status(400).json({
+          message: `Invalid bet number (${bet.bet_num}) for ${bet.bet_type}: bet number should be between ${bet_type.lower} and ${bet_type.upper}`,
+        });
+      }
 
-    if (watch_list.hasOwnProperty(watch_list_key)) {
-      if (watch_list[watch_list_key].remaining_const < bet.bet_amt) {
-        exceed[watch_list_key] = watch_list[watch_list_key];
+      if (bet_type.bet_amt < bet.bet_amt) {
+        return res.status(400).json({
+          message: `Invalid bet amount (${bet.bet_amt}) for ${bet.bet_type}: bet amount should be less than or equal to ${bet_type.bet_amt}`,
+        });
+      }
+
+      const watch_list = getWatchlist(generateCacheKey());
+      const watch_list_key = createWatchlistKeyObject(bet);
+
+      if (watch_list.hasOwnProperty(watch_list_key)) {
+        if (watch_list[watch_list_key].remaining_const < bet.bet_amt) {
+          exceed[watch_list_key] = watch_list[watch_list_key];
+        }
       }
     }
-  }
 
-  if (Object.keys(exceed).length) {
-    return res.status(400).json({
-      message: "Bet amount exceeds remaining const",
-      exceed: exceed,
-    });
-  }
+    if (Object.keys(exceed).length) {
+      return res.status(400).json({
+        message: "Bet amount exceeds remaining const",
+        exceed: exceed,
+      });
+    }
 
-  // create transaction
-  try {
+    // create transaction
     const user = await User.findOne({ _id: req.user.id });
     while (!isUnique) {
       new_trans_no = generateTrans_no();
@@ -131,7 +131,21 @@ exports.createBet = async (req, res) => {
       bet: new_bets,
     });
 
-    io.emit("watchlist", getWatchlist(generateCacheKey()));
+    let room = io.of("/").adapter.rooms.get("watchlist");
+    if (room) {
+      for (let id of room) {
+        let s = io.sockets.sockets.get(id);
+        let user = s.user;
+        if (user) {
+          const data = getWatchlist(generateCacheKey());
+          s.emit("watchlist", data);
+          lastEmitTime = Date.now();
+          return;
+        }
+      }
+    }
+
+    // io.emit("watchlist", getWatchlist(generateCacheKey()));
   } catch (error) {
     try {
       await Transaction.deleteOne({ _id: transaction._id });
@@ -146,28 +160,29 @@ exports.createBet = async (req, res) => {
 };
 
 exports.getSuperBets = async (req, res) => {
-  let query = {};
-  let aggregateQuery;
-  let createdAt = req.query.createdAt;
-
-  const page = parseInt(req.query.page) || 1;
-  const page_limit = parseInt(req.query.limit) || 10;
-  const ref_code = req.query.ref_code;
-  const batch_id = req.query.batch_id;
-
-  // validation
-  if (!req.params.table) {
-    return res.status(400).json({ message: "No table provided" });
-  }
-
-  const table = parseInt(req.params.table);
-
-  if (table < 0 && table > 3) {
-    return res.status(400).json({ message: "Invalid table" });
-  }
-
-  // create transaction
   try {
+    let query = {};
+    let aggregateQuery;
+    let createdAt = req.query.createdAt;
+
+    const page = parseInt(req.query.page) || 1;
+    const page_limit = parseInt(req.query.limit) || 10;
+    const ref_code = req.query.ref_code;
+    const batch_id = req.query.batch_id;
+
+    // validation
+    if (!req.params.table) {
+      return res.status(400).json({ message: "No table provided" });
+    }
+
+    const table = parseInt(req.params.table);
+
+    if (table < 0 && table > 3) {
+      return res.status(400).json({ message: "Invalid table" });
+    }
+
+    // create transaction
+
     if (batch_id) {
       query.batch_id = parseInt(batch_id);
     }
@@ -432,127 +447,127 @@ exports.getSuperBets = async (req, res) => {
 };
 
 exports.getAdminBets = async (req, res) => {
-  // empty vars
-  let transact_query = {};
-  let user_query = {};
-  let bet_query = {};
-  let bet_type_query = {};
-  let query = {};
-  let aggregateQuery;
-
-  // query params
-  let from = req.query.from;
-  let to = req.query.to;
-  let page = parseInt(req.query?.page) || 1;
-  let page_limit = parseInt(req.query?.limit) || 10;
-  let batch_id = parseInt(req.query?.batch_id);
-  let sort_dir = parseInt(req.query?.sort_dir) || -1;
-  let bet_type = req.query.bet_type;
-  let bet_number = parseInt(req.query?.bet_num);
-  let bet_result = parseInt(req.query?.bet_result);
-  let transaction_num = req.query.trans_no;
-  const table = parseInt(req.params?.table);
-
-  // user specific
-  let user_id;
-  let ref_code;
-  let role = req.user.role;
-  if (role === "admin") {
-    user_id = req.query.user_id
-      ? new mongoose.Types.ObjectId(req.query.user_id)
-      : null;
-    ref_code = req.user.ref_code;
-
-    if (table < 1 && table > 4) {
-      return res.status(400).json({ message: "Invalid table" });
-    }
-  } else if (role === "user") {
-    user_id = req.user.id;
-    ref_code = req.user.ref_code;
-
-    if (table < 2 && table > 4) {
-      return res.status(400).json({ message: "Invalid table" });
-    }
-  }
-
-  //filter, sort and validation
-  if (!table) {
-    return res.status(400).json({ message: "No table provided" });
-  }
-
-  if (!from && !to) {
-    from = getCurrentDateString();
-    to = getCurrentDateString();
-  }
-
-  const startOfDay = new Date(from);
-  startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(to);
-  endOfDay.setHours(23, 59, 59, 999);
-  const createdAt = { $gte: startOfDay, $lte: endOfDay };
-
-  if (table === 1) {
-    if (user_id) {
-      user_query["user._id"] = user_id;
-    }
-
-    if (ref_code) {
-      user_query["user.ref_code"] = ref_code;
-    }
-
-    if (batch_id) {
-      transact_query.batch_id = batch_id;
-    }
-
-    transact_query.createdAt = createdAt;
-  } else if (table === 2) {
-    if (!user_id) {
-      return res.status(400).json({ message: "No user_id provided" });
-    }
-
-    if (batch_id) {
-      query.batch_id = batch_id;
-    }
-
-    query.user = new mongoose.Types.ObjectId(user_id);
-    query.createdAt = createdAt;
-  } else if (table === 3 || table === 4) {
-    if (!transaction_num && table === 3) {
-      return res.status(400).json({ message: "No trans_no provided" });
-    } else if (transaction_num) {
-      const trans_no = await Transaction.findOne({
-        trans_no: transaction_num,
-      });
-      bet_query.transaction = trans_no?._id;
-    }
-
-    if (role === "user" && user_id !== "") {
-      bet_query.user = new mongoose.Types.ObjectId(user_id);
-    }
-
-    if (batch_id) {
-      bet_query.batch_id = batch_id;
-    }
-
-    if (bet_type) {
-      const betType = await BetType.findOne({ bet_type: bet_type });
-
-      bet_type_query["bet_type._id"] = betType?._id;
-    }
-
-    if (bet_number) {
-      bet_query.bet_num = bet_number;
-    }
-
-    if (!isNaN(bet_result)) {
-      bet_query.result = Boolean(bet_result);
-    }
-
-    bet_query.ref_code = ref_code;
-    bet_query.createdAt = createdAt;
-  }
-
   try {
+    // empty vars
+    let transact_query = {};
+    let user_query = {};
+    let bet_query = {};
+    let bet_type_query = {};
+    let query = {};
+    let aggregateQuery;
+
+    // query params
+    let from = req.query.from;
+    let to = req.query.to;
+    let page = parseInt(req.query?.page) || 1;
+    let page_limit = parseInt(req.query?.limit) || 10;
+    let batch_id = parseInt(req.query?.batch_id);
+    let sort_dir = parseInt(req.query?.sort_dir) || -1;
+    let bet_type = req.query.bet_type;
+    let bet_number = parseInt(req.query?.bet_num);
+    let bet_result = parseInt(req.query?.bet_result);
+    let transaction_num = req.query.trans_no;
+    const table = parseInt(req.params?.table);
+
+    // user specific
+    let user_id;
+    let ref_code;
+    let role = req.user.role;
+    if (role === "admin") {
+      user_id = req.query.user_id
+        ? new mongoose.Types.ObjectId(req.query.user_id)
+        : null;
+      ref_code = req.user.ref_code;
+
+      if (table < 1 && table > 4) {
+        return res.status(400).json({ message: "Invalid table" });
+      }
+    } else if (role === "user") {
+      user_id = req.user.id;
+      ref_code = req.user.ref_code;
+
+      if (table < 2 && table > 4) {
+        return res.status(400).json({ message: "Invalid table" });
+      }
+    }
+
+    //filter, sort and validation
+    if (!table) {
+      return res.status(400).json({ message: "No table provided" });
+    }
+
+    if (!from && !to) {
+      from = getCurrentDateString();
+      to = getCurrentDateString();
+    }
+
+    const startOfDay = new Date(from);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(to);
+    endOfDay.setHours(23, 59, 59, 999);
+    const createdAt = { $gte: startOfDay, $lte: endOfDay };
+
+    if (table === 1) {
+      if (user_id) {
+        user_query["user._id"] = user_id;
+      }
+
+      if (ref_code) {
+        user_query["user.ref_code"] = ref_code;
+      }
+
+      if (batch_id) {
+        transact_query.batch_id = batch_id;
+      }
+
+      transact_query.createdAt = createdAt;
+    } else if (table === 2) {
+      if (!user_id) {
+        return res.status(400).json({ message: "No user_id provided" });
+      }
+
+      if (batch_id) {
+        query.batch_id = batch_id;
+      }
+
+      query.user = new mongoose.Types.ObjectId(user_id);
+      query.createdAt = createdAt;
+    } else if (table === 3 || table === 4) {
+      if (!transaction_num && table === 3) {
+        return res.status(400).json({ message: "No trans_no provided" });
+      } else if (transaction_num) {
+        const trans_no = await Transaction.findOne({
+          trans_no: transaction_num,
+        });
+        bet_query.transaction = trans_no?._id;
+      }
+
+      if (role === "user" && user_id !== "") {
+        bet_query.user = new mongoose.Types.ObjectId(user_id);
+      }
+
+      if (batch_id) {
+        bet_query.batch_id = batch_id;
+      }
+
+      if (bet_type) {
+        const betType = await BetType.findOne({ bet_type: bet_type });
+
+        bet_type_query["bet_type._id"] = betType?._id;
+      }
+
+      if (bet_number) {
+        bet_query.bet_num = bet_number;
+      }
+
+      if (!isNaN(bet_result)) {
+        bet_query.result = Boolean(bet_result);
+      }
+
+      bet_query.ref_code = ref_code;
+      bet_query.createdAt = createdAt;
+    }
+
     if (table === 1) {
       aggregateQuery = Transaction.aggregate([
         // distinct by user
@@ -842,17 +857,17 @@ exports.getAdminBets = async (req, res) => {
 };
 
 exports.getUserBets = async (req, res) => {
-  let query = {};
-  let aggregateQuery;
-  let createdAt = req.query.createdAt;
-
-  const page = parseInt(req.query.page) || 1;
-  const page_limit = parseInt(req.query.limit) || 10;
-  const ref_code = req.user.ref_code;
-  const batch_id = req.query.batch_id;
-  const _id = req.user.id;
-
   try {
+    let query = {};
+    let aggregateQuery;
+    let createdAt = req.query.createdAt;
+
+    const page = parseInt(req.query.page) || 1;
+    const page_limit = parseInt(req.query.limit) || 10;
+    const ref_code = req.user.ref_code;
+    const batch_id = req.query.batch_id;
+    const _id = req.user.id;
+
     if (!req.params.table) {
       return res.status(400).json({ message: "No table provided" });
     }
@@ -1032,13 +1047,13 @@ exports.getUserBets = async (req, res) => {
 };
 
 exports.createWinNumber = async (req, res) => {
-  const { win_nums } = req.body;
-  let winningNums = [];
-
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
+    const { win_nums } = req.body;
+    let winningNums = [];
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     if (!win_nums) {
       throw new Error("Win numbers not provided");
     }
