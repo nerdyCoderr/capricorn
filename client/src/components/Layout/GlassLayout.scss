@@ -33,8 +33,10 @@
 
     .glassboard-center {
       position: relative;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 1rem;
+      // position: relative;
+      // top: 50%;
+      // transform: translateY(-50%);
     }
   }
   .dashboard-info {

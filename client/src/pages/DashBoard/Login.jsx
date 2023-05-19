@@ -33,6 +33,7 @@ const Login = () => {
               socketID: socket.id,
             };
           });
+
           localStorage.setItem('socketToken', `${data.token}`);
           localStorage.setItem('token', `Bearer ${data.token}`);
           navigate('/dashboard');

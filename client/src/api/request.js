@@ -128,6 +128,30 @@ const createBet = (params, callback = null) => {
     });
 };
 
+const createWinningNumber = (params, callback = null) => {
+  const newToken = token();
+
+  api
+    .post('/super/win-numbers', JSON.stringify({ win_nums: params }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': newToken,
+      },
+    })
+    .then((res) => {
+      message.success(res.data.message);
+      callback(res);
+    })
+    .catch((err) => {
+      if (err) {
+        callback(err);
+        message.error(
+          err.response.data.message + ' , ' + err.response.data.error,
+        );
+      }
+    });
+};
+
 export const openNotification = (title, message) => {
   notification.error({
     message: title,
@@ -213,4 +237,5 @@ export {
   getTransactionNO,
   getBetList,
   getBetListUser,
+  createWinningNumber,
 };

@@ -86,6 +86,11 @@ const BetList = () => {
         accessor: 'total_bet_amt',
       },
       {
+        Header: 'Date',
+        accessor: 'date',
+        width: 40,
+      },
+      {
         Header: 'Action',
         accessor: 'action',
         width: 40,
@@ -133,6 +138,7 @@ const BetList = () => {
 
     const reconstructedList = data?.map((item, index) => ({
       no: index + 1,
+      date: moment(item?.user?.createdAt).format(dateFormat),
       first_name: item?.user?.first_name,
       last_name: item?.user?.last_name,
       total_bet_amt: item?.total_amount,

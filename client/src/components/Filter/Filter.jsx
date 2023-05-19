@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, DatePicker, Input, Select } from 'antd';
+import { Button, DatePicker, Input, Select, Switch } from 'antd';
 import useBetTypes from '../../hooks/useBetTypes';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -28,6 +28,7 @@ function Filter({
         <div className=''>
           <p>From</p>
           <DatePicker
+            value={dayjs(filter.from, dateFormat)}
             onChange={onChangeFrom}
             defaultValue={dayjs(currentDate, dateFormat)}
             format={dateFormat}
@@ -36,6 +37,7 @@ function Filter({
         <div className=''>
           <p>To</p>
           <DatePicker
+            value={dayjs(filter.to, dateFormat)}
             onChange={onChangeTo}
             defaultValue={dayjs(currentDate, dateFormat)}
             format={dateFormat}
@@ -105,6 +107,18 @@ function Filter({
             </div>
           </>
         )}
+        <div>
+          <p>Check Win Result</p>
+          <Switch
+            value={filter.bet_result}
+            onChange={(e) => {
+              console.log(e);
+              setFilter((prev) => {
+                return { ...prev, bet_result: e ? 1 : 0 };
+              });
+            }}
+          />
+        </div>
 
         <div className='text-center'>
           <p>Action</p>
