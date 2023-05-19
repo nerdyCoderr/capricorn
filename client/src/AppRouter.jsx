@@ -13,7 +13,10 @@ import CreateUserAccountByAdmin from './pages/DashBoard/CreateUserAccountByAdmin
 import BetListSearch from './pages/DashBoard/BetListSearch';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import io from 'socket.io-client';
+
 import config from './api/config';
+import CreateWinNum from './pages/DashBoard/createWinNum';
+
 const AppRouter = () => {
   const [data, setData] = useState({
     user: {},
@@ -35,6 +38,15 @@ const AppRouter = () => {
     <userContext.Provider value={{ data, setData, socket }}>
       <BrowserRouter>
         <Routes>
+          <Route
+            path='/create-win-number'
+            element={
+              // <ProtectedRoute isAuth={data && data.isAuth}>
+              <CreateWinNum />
+              // </ProtectedRoute>
+            }
+          />
+
           <Route
             path='/dashboard'
             element={

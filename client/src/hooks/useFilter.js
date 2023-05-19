@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getBetList } from '../api/request';
 
 const useFilter = (params, currentDate) => {
@@ -10,6 +10,7 @@ const useFilter = (params, currentDate) => {
     bet_result: '',
     bet_type: '',
     bet_num: '',
+    win_result_switch: false,
   });
   const [callbackfilterRes, setCallbackfilter] = useState();
 
@@ -74,6 +75,14 @@ const useFilter = (params, currentDate) => {
       bet_num: '',
     });
   };
+
+  useEffect(() => {
+    console.log('check');
+    setFilter((prev) => {
+      return { ...prev, from: currentDate, to: currentDate };
+    });
+  }, [filter.batch_id]);
+
   return {
     setFilter,
     filterHandler,

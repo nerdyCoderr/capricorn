@@ -37,6 +37,21 @@ const Dashboard = () => {
           <h6 className='title'>Capricorn</h6>
         </div>
         <div className='dashboard-content'>
+          {data.role === 'superadmin' && (
+            <Card
+              className='p-2'
+              onClick={() => navigate('/create-win-number')}
+            >
+              <div className='text-center'>
+                <BsFillPencilFill size={40} />
+              </div>
+              <Card.Body>
+                <Card.Title>
+                  <p>Input Win Num</p>
+                </Card.Title>
+              </Card.Body>
+            </Card>
+          )}
           {data.role === 'user' && (
             <>
               <Card className='p-2' onClick={() => navigate('/new-bet')}>

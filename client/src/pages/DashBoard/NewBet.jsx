@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Form, Button, Input, Select } from 'antd';
 import { MdArrowBackIos } from 'react-icons/md';
 import Moment from 'moment';
@@ -14,9 +14,7 @@ import userContext from '../../context/userContext';
 const NewBets = () => {
   const token = localStorage.getItem('socketToken');
 
-  const socket = io(`http://localhost:3002?token=${token}`, {
-    autoConnect: false,
-  });
+  const { socket } = useContext(userContext);
   const date = new Date();
   const nav = useNavigate();
   const formatDate = Moment(date).format('MMMM Do YYYY');
@@ -110,7 +108,7 @@ const NewBets = () => {
       bet_type: formData.bet_type,
       win_amt: formData.win_amt * formData.bet_amount,
     };
-    console.log(newdata);
+
     if (dataTable) {
       let test = dataTable;
       for (let x = 0; x <= test.length - 1; x++) {
@@ -132,7 +130,6 @@ const NewBets = () => {
   };
 
   const handleChange = (key) => (e) => {
-    console.log(e);
     setFormData({ ...formData, [key]: e.target.value });
     return;
   };
@@ -140,10 +137,6 @@ const NewBets = () => {
   const deleteHandler = (id) => {
     setDataTabble((prev) => prev.filter((item) => item.id !== id));
   };
-
-  useEffect(() => {
-    console.log(dataTable);
-  }, [dataTable]);
 
   const newDatable = React.useMemo(() => {
     const reconstructedList = dataTable.map((item) => {
@@ -191,7 +184,6 @@ const NewBets = () => {
   };
 
   const callback = async (res) => {
-    console.log(res);
     const { data } = await res;
     setBetTypeOptions(data.betTypes);
   };
@@ -203,7 +195,6 @@ const NewBets = () => {
       setDataTabble([]);
     }
     if (status === 400) {
-      console.log('check');
       if (dataTable) {
         const newdata = dataTable.filter((bet) => {
           for (let value in limitbet) {
@@ -230,11 +221,11 @@ const NewBets = () => {
   const checklimit = () => {
     // L2:35 betType:betNumber
     const { bet_type, bet_number, bet_amount } = formData;
+
     const betTypeAndNumber = `${bet_type}:${bet_number}`;
     const remainingBetAmount = limitbet[betTypeAndNumber]?.remaining_const;
     const betAmount = bet_amount || 1;
 
-    console.log(formData.bet_amount ? formData.bet_amount : 1);
     setIsBetLimit(remainingBetAmount <= betAmount);
 
     setRemainingBetAmount(
@@ -243,23 +234,23 @@ const NewBets = () => {
   };
 
   useEffect(() => {
-    console.log(formData);
     checklimit();
   }, [formData]);
 
   useEffect(() => {
     getBetType(callback);
     socket.connect();
-    socket.emit('watchlist:get', '');
+    socket.emit('watchlist', { token: token });
 
     const updateLimitBet = (data) => {
+      console.log(data);
       setLimitBet(data);
     };
 
-    socket.on('watchlist:update', updateLimitBet);
+    socket.on('watchlist', updateLimitBet);
 
     return () => {
-      socket.off('watchlist:update', updateLimitBet);
+      socket.off('watchlist', updateLimitBet);
     };
   }, []);
 
@@ -381,7 +372,7 @@ const NewBets = () => {
               className='w-100'
               type='primary'
               htmlType='submit'
-              // disabled={isBetLimit} s
+              disabled={isBetLimit}
             >
               SUBMIT
             </Button>
