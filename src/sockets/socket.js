@@ -294,7 +294,7 @@ io.on("connection", (socket) => {
       });
     } catch (error) {
       console.log(error);
-      callback({ error: error });
+      // callback({ error: error });
       socket.emit("login", { error: error });
       return;
     }
