@@ -334,8 +334,8 @@ io.on("connection", (socket) => {
           let s = io.sockets.sockets.get(id);
           let user = s.user;
           if (user) {
-            const data = await getTransactionOverview(user.username);
-            callback(data);
+            const trans = await getTransactionOverview(user.username);
+            callback({ trans });
             lastEmitTime = Date.now();
             return;
           }
