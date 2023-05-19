@@ -72,6 +72,33 @@ sudo systemctl daemon-reload
 ```
 sudo systemctl enable mongod
 ```
+### Enable replica for mongodb
+```
+service mongod stop
+```
+
+```
+sudo nano /etc/mongod.conf
+```
+### add this:
+
+```
+replication:
+   replSetName: lottery-replica
+```
+
+```
+sudo service mongod start
+```
+
+```
+sudo mongod --replSet "lottery-replica"
+```
+
+```
+mongosh
+rs.initiate()
+```
 
 ## Node.js by nvm
 
