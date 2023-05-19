@@ -19,6 +19,7 @@ const {
   userBetRouter,
   adminBetRouter,
   superBetRouter,
+  superWinNumRouter,
 } = require("./routes/betRoutes");
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -53,7 +54,12 @@ app.use(`${apiVersion}/users`, userPrivateRoutes, userBetRouter);
 app.use(`${apiVersion}/admins`, adminRoutes, adminBetRouter);
 
 // Bet type routes
-app.use(`${apiVersion}/super`, betTypePrivateRoutes, superBetRouter);
+app.use(
+  `${apiVersion}/super`,
+  betTypePrivateRoutes,
+  superBetRouter,
+  superWinNumRouter
+);
 
 // Import the socket.js file and attach it to the HTTP server
 const httpServer = require("http").createServer(app);
