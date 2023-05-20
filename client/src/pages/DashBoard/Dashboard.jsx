@@ -189,7 +189,7 @@ const Dashboard = () => {
                 <Card.Body>
                   <Card.Title>
                     <h4> Win Amount</h4>
-                    <p> {resultOverview.grandTotalAmount}</p>
+                    <p> {resultOverview.grandActualWinAmount}</p>
                   </Card.Title>
                 </Card.Body>
               </Card>
