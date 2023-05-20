@@ -17,12 +17,12 @@ sudo systemctl enable nginx
 sudo nano /etc/nginx/sites-available/default
 ```
 
-Add this, port 3000 is the port of node js
+Add this, port 3002 is the port of node js
 
 ```
 location /api {
 
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3002;
         
         proxy_http_version 1.1;
         
