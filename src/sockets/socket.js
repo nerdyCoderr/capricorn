@@ -187,7 +187,7 @@ const getTransactionOverview = async (username) => {
 
 const io = socketIO({
   cors: {
-    origin: "http://159.65.0.151/",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });

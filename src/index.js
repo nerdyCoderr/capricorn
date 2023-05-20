@@ -33,7 +33,7 @@ initializeWatchlist();
 
 app.use(
   cors({
-    origin: "http://159.65.0.151/",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
