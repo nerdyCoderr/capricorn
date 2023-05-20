@@ -328,10 +328,16 @@ const NewBets = () => {
                 { required: true, message: 'Please select your bet type!' },
               ]}
             >
-              <Select onChange={onTypeChange} allowClear>
+              <Select
+                onChange={onTypeChange}
+                allowClear
+              >
                 {betTypeOptions ? (
                   betTypeOptions.map((item) => (
-                    <Select.Option key={item._id} value={item.bet_type}>
+                    <Select.Option
+                      key={item._id}
+                      value={item.bet_type}
+                    >
                       {item.type}
                     </Select.Option>
                   ))
@@ -344,11 +350,12 @@ const NewBets = () => {
               </Select>
             </Form.Item>
             <Form.Item
-              label={`Bet Amount (remaining: ${
-                remainingBetAmount
-                  ? remainingBetAmount
-                  : formData?.amt_const ?? 0
-              })`}
+              // label={`Bet Amount (remaining: ${
+              //   remainingBetAmount
+              //     ? remainingBetAmount
+              //     : formData?.amt_const ?? 0
+              // })`}
+              label={`Bet Amount `}
               name='bet_amt'
               rules={[
                 {
@@ -381,7 +388,10 @@ const NewBets = () => {
           </Form>
 
           <div style={{ height: '200px', overflowY: 'scroll' }}>
-            <Table dataTable={newDatable} columns={columns} />
+            <Table
+              dataTable={newDatable}
+              columns={columns}
+            />
           </div>
         </div>
         <div className='mt-5 w-100 container'>

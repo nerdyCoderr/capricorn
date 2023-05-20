@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getBetList } from '../api/request';
 
-const useFilter = (params, currentDate) => {
+const useFilter = (params, currentDate, actioncall) => {
   const [filter, setFilter] = useState({
     trans_no: '',
     batch_id: '',
@@ -61,7 +61,7 @@ const useFilter = (params, currentDate) => {
 
     const data = `${params}?page=1${query}`;
 
-    getBetList(data, callbackfilter);
+    actioncall(data, callbackfilter);
   };
 
   const resetHandler = () => {

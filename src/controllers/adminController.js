@@ -72,11 +72,10 @@ exports.deleteAdmin = async (req, res) => {
 };
 
 exports.updateAdmin = async (req, res) => {
+  const { updates } = req.body;
+  const loggedInUserRole = req.user.role;
+  const loggedInUserId = req.user.id;
   try {
-    const { updates } = req.body;
-    const loggedInUserRole = req.user.role;
-    const loggedInUserId = req.user.id;
-
     if (!updates) {
       return res.status(400).json({ message: "Updates are required" });
     }
@@ -129,12 +128,11 @@ exports.updateAdmin = async (req, res) => {
 };
 
 exports.getUsers = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const page_limit = parseInt(req.query.limit) || 10;
+  const id = req.query.id;
+  const ref_code = req.user.ref_code;
   try {
-    const page = parseInt(req.query.page) || 1;
-    const page_limit = parseInt(req.query.limit) || 10;
-    const id = req.query.id;
-    const ref_code = req.user.ref_code;
-
     if (id) {
       // Fetch a specific user by ID
       const user = await User.findOne(

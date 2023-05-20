@@ -5,9 +5,8 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.login = async (req, res) => {
+  const { username, password } = req.body;
   try {
-    const { username, password } = req.body;
-
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -47,19 +46,12 @@ exports.login = async (req, res) => {
 };
 
 exports.userSignup = async (req, res) => {
+  const { username, password, first_name, last_name, phone_number, ref_code } =
+    req.body;
+
+  let newUser;
+  const existingUser = await User.findOne({ username });
   try {
-    const {
-      username,
-      password,
-      first_name,
-      last_name,
-      phone_number,
-      ref_code,
-    } = req.body;
-
-    let newUser;
-    const existingUser = await User.findOne({ username });
-
     if (existingUser) {
       return res.status(409).json({ message: "Username already exists" });
     }
@@ -95,9 +87,8 @@ exports.userSignup = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
+  const loggedInUserId = req.user.id;
   try {
-    const loggedInUserId = req.user.id;
-
     const userToDelete = await User.findOne({
       _id: loggedInUserId,
       role: "user",
@@ -124,11 +115,10 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
+  const { updates } = req.body;
+  const loggedInUserRole = req.user.role;
+  const loggedInUserId = req.user.id;
   try {
-    const { updates } = req.body;
-    const loggedInUserRole = req.user.role;
-    const loggedInUserId = req.user.id;
-
     if (!updates) {
       return res.status(400).json({ message: "Updates are required" });
     }

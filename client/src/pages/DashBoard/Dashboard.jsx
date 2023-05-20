@@ -79,7 +79,10 @@ const Dashboard = () => {
           )}
           {data.role === 'user' && (
             <>
-              <Card className='p-2' onClick={() => navigate('/new-bet')}>
+              <Card
+                className='p-2'
+                onClick={() => navigate('/new-bet')}
+              >
                 <div className='text-center'>
                   <BsFillPencilFill size={40} />
                 </div>
@@ -89,7 +92,10 @@ const Dashboard = () => {
                   </Card.Title>
                 </Card.Body>
               </Card>
-              <Card className='p-2' onClick={() => navigate('/history')}>
+              <Card
+                className='p-2'
+                onClick={() => navigate('/history')}
+              >
                 <div className='text-center'>
                   <FaHistory size={40} />
                 </div>
@@ -99,7 +105,10 @@ const Dashboard = () => {
                   </Card.Title>
                 </Card.Body>
               </Card>
-              <Card className='p-2'>
+              <Card
+                className='p-2'
+                onClick={() => navigate('/hits')}
+              >
                 <div className='text-center'>
                   <BsFillJournalBookmarkFill size={40} />
                 </div>
@@ -126,7 +135,10 @@ const Dashboard = () => {
                   </Card.Title>
                 </Card.Body>
               </Card>
-              <Card className='p-2' onClick={() => navigate('/bet-list')}>
+              <Card
+                className='p-2'
+                onClick={() => navigate('/bet-list')}
+              >
                 <div className='text-center'>
                   <RiContactsBookUploadFill size={40} />
                 </div>
@@ -161,7 +173,10 @@ const Dashboard = () => {
               </Card.Title>
             </Card.Body>
           </Card>
-          <Card className='p-2' onClick={logout}>
+          <Card
+            className='p-2'
+            onClick={logout}
+          >
             <div className='text-center'>
               <GiPowerButton size={40} />
             </div>

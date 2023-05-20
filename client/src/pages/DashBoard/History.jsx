@@ -54,7 +54,7 @@ const History = () => {
     resetHandler,
     filter,
     callbackfilterRes,
-  } = useFilter(params, currentDate);
+  } = useFilter(params, currentDate, getBetListUser);
 
   const {
     isloading,

@@ -59,7 +59,7 @@ const BetList = () => {
     resetHandler,
     filter,
     callbackfilterRes,
-  } = useFilter(params, currentDate);
+  } = useFilter(params, currentDate,getBetList);
 
   const columns = React.useMemo(
     () => [

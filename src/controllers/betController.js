@@ -16,16 +16,15 @@ const BetType = require("../models/BetType");
 const { default: mongoose, mongo } = require("mongoose");
 
 exports.createBet = async (req, res) => {
+  const { bets } = req.body;
+  let new_trans_no;
+  let isUnique = false;
+  let new_bets = [];
+  let new_bet;
+  let transaction;
+  let bet_type;
+  let exceed = {};
   try {
-    const { bets } = req.body;
-    let new_trans_no;
-    let isUnique = false;
-    let new_bets = [];
-    let new_bet;
-    let transaction;
-    let bet_type;
-    let exceed = {};
-
     // validation
     if (!bets) {
       return res.status(400).json({ message: "No bets provided" });
@@ -40,15 +39,22 @@ exports.createBet = async (req, res) => {
         });
       }
 
-      if (bet_type.upper < bet.bet_num || bet_type.lower > bet.bet_num) {
+      if (
+        bet_type.upper < parseInt(bet.bet_num) &&
+        bet_type.lower > parseInt(bet.bet_num)
+      ) {
         return res.status(400).json({
-          message: `Invalid bet number (${bet.bet_num}) for ${bet.bet_type}: bet number should be between ${bet_type.lower} and ${bet_type.upper}`,
+          message: `Invalid bet number (${parseInt(bet.bet_num)}) for ${
+            bet.bet_type
+          }: bet number should be between ${bet_type.lower} and ${
+            bet_type.upper
+          }`,
         });
       }
 
-      if (bet_type.bet_amt < bet.bet_amt) {
+      if (bet_type.amt_const < bet.bet_amt) {
         return res.status(400).json({
-          message: `Invalid bet amount (${bet.bet_amt}) for ${bet.bet_type}: bet amount should be less than or equal to ${bet_type.bet_amt}`,
+          message: `Invalid bet amount (${bet.bet_amt}) for ${bet.bet_type}: bet amount should be less than or equal to ${bet_type.amt_const}`,
         });
       }
 
@@ -151,7 +157,7 @@ exports.createBet = async (req, res) => {
       await Transaction.deleteOne({ _id: transaction._id });
       await Bet.deleteMany({ transaction: transaction._id });
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
     res
       .status(500)
@@ -447,32 +453,33 @@ exports.getSuperBets = async (req, res) => {
 };
 
 exports.getAdminBets = async (req, res) => {
+  // empty vars
+  let transact_query = {};
+  let user_query = {};
+  let bet_query = {};
+  let bet_type_query = {};
+  let query = {};
+  let aggregateQuery;
+
+  // query params
+  let from = req.query.from;
+  let to = req.query.to;
+  let page = parseInt(req.query?.page) || 1;
+  let page_limit = parseInt(req.query?.limit) || 10;
+  let batch_id = parseInt(req.query?.batch_id);
+  let sort_dir = parseInt(req.query?.sort_dir) || -1;
+  let bet_type = req.query.bet_type;
+  let bet_number = parseInt(req.query?.bet_num);
+  let bet_result = parseInt(req.query?.bet_result);
+  let transaction_num = req.query.trans_no;
+  const table = parseInt(req.params?.table);
+
+  // user specific
+  let user_id;
+  let ref_code;
+  let role = req.user.role;
+
   try {
-    // empty vars
-    let transact_query = {};
-    let user_query = {};
-    let bet_query = {};
-    let bet_type_query = {};
-    let query = {};
-    let aggregateQuery;
-
-    // query params
-    let from = req.query.from;
-    let to = req.query.to;
-    let page = parseInt(req.query?.page) || 1;
-    let page_limit = parseInt(req.query?.limit) || 10;
-    let batch_id = parseInt(req.query?.batch_id);
-    let sort_dir = parseInt(req.query?.sort_dir) || -1;
-    let bet_type = req.query.bet_type;
-    let bet_number = parseInt(req.query?.bet_num);
-    let bet_result = parseInt(req.query?.bet_result);
-    let transaction_num = req.query.trans_no;
-    const table = parseInt(req.params?.table);
-
-    // user specific
-    let user_id;
-    let ref_code;
-    let role = req.user.role;
     if (role === "admin") {
       user_id = req.query.user_id
         ? new mongoose.Types.ObjectId(req.query.user_id)
@@ -857,17 +864,17 @@ exports.getAdminBets = async (req, res) => {
 };
 
 exports.getUserBets = async (req, res) => {
+  let query = {};
+  let aggregateQuery;
+  let createdAt = req.query.createdAt;
+
+  const page = parseInt(req.query.page) || 1;
+  const page_limit = parseInt(req.query.limit) || 10;
+  const ref_code = req.user.ref_code;
+  const batch_id = req.query.batch_id;
+  const _id = req.user.id;
+
   try {
-    let query = {};
-    let aggregateQuery;
-    let createdAt = req.query.createdAt;
-
-    const page = parseInt(req.query.page) || 1;
-    const page_limit = parseInt(req.query.limit) || 10;
-    const ref_code = req.user.ref_code;
-    const batch_id = req.query.batch_id;
-    const _id = req.user.id;
-
     if (!req.params.table) {
       return res.status(400).json({ message: "No table provided" });
     }

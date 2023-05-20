@@ -22,9 +22,8 @@ exports.createBetType = async (req, res) => {
 };
 
 exports.updateBetType = async (req, res) => {
+  const { bet_type, updates } = req.body;
   try {
-    const { bet_type, updates } = req.body;
-
     if (!bet_type || !updates) {
       return res
         .status(400)
@@ -55,9 +54,8 @@ exports.updateBetType = async (req, res) => {
 };
 
 exports.deleteBetType = async (req, res) => {
+  const { bet_type } = req.body;
   try {
-    const { bet_type } = req.body;
-
     if (!bet_type) {
       return res.status(400).json({ message: "BetType is required" });
     }

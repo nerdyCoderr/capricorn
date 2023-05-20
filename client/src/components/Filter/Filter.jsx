@@ -13,6 +13,7 @@ function Filter({
   resetHandler,
   filter,
   filterType,
+  params,
 }) {
   dayjs.extend(customParseFormat);
   const dateFormat = 'YYYY-MM-DD';
@@ -24,7 +25,10 @@ function Filter({
   return (
     <>
       <h5 style={{ letterSpacing: '0.8px' }}>Filter:</h5>
-      <div className='d-flex' style={{ gap: '20px', flexWrap: 'wrap' }}>
+      <div
+        className='d-flex'
+        style={{ gap: '20px', flexWrap: 'wrap' }}
+      >
         <div className=''>
           <p>From</p>
           <DatePicker
@@ -55,7 +59,10 @@ function Filter({
               >
                 {betTypeOptions ? (
                   betTypeOptions.map((item) => (
-                    <Select.Option key={item._id} value={item.bet_type}>
+                    <Select.Option
+                      key={item._id}
+                      value={item.bet_type}
+                    >
                       {item.bet_type}
                     </Select.Option>
                   ))
@@ -94,38 +101,55 @@ function Filter({
                 allowClear
                 style={{ width: '150px' }}
               >
-                <Select.Option key={1} value={1}>
+                <Select.Option
+                  key={1}
+                  value={1}
+                >
                   6:00 am - 2:00 pm
                 </Select.Option>
-                <Select.Option key={2} value={2}>
+                <Select.Option
+                  key={2}
+                  value={2}
+                >
                   2:00 pm - 6:00 pm
                 </Select.Option>
-                <Select.Option key={3} value={3}>
+                <Select.Option
+                  key={3}
+                  value={3}
+                >
                   6:00 pm - 9:00 pm
                 </Select.Option>
               </Select>
             </div>
           </>
         )}
-        <div>
-          <p>Check Win Result</p>
-          <Switch
-            value={filter.bet_result}
-            onChange={(e) => {
-              console.log(e);
-              setFilter((prev) => {
-                return { ...prev, bet_result: e ? 1 : 0 };
-              });
-            }}
-          />
-        </div>
+        {params === '4' && (
+          <div>
+            <p>Check Win Result</p>
+            <Switch
+              value={filter.bet_result}
+              onChange={(e) => {
+                console.log(e);
+                setFilter((prev) => {
+                  return { ...prev, bet_result: e ? 1 : 0 };
+                });
+              }}
+            />
+          </div>
+        )}
 
         <div className='text-center'>
           <p>Action</p>
-          <Button onClick={filterHandler} className='mx-1'>
+          <Button
+            onClick={filterHandler}
+            className='mx-1'
+          >
             Filter
           </Button>
-          <Button className='mx-1' onClick={resetHandler}>
+          <Button
+            className='mx-1'
+            onClick={resetHandler}
+          >
             Reset
           </Button>
         </div>

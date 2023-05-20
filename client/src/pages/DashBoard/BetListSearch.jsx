@@ -129,7 +129,7 @@ const BetListSearch = () => {
     resetHandler,
     filter,
     callbackfilterRes,
-  } = useFilter(params, currentDate);
+  } = useFilter(params, currentDate, getBetList);
 
   const onCancel3 = () => {
     setIsTablethreeOpen(false);
@@ -207,6 +207,7 @@ const BetListSearch = () => {
           onChangeFrom={onChangeFrom}
           resetHandler={resetHandler}
           filter={filter}
+          params={params}
         />
 
         <Table
