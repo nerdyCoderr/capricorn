@@ -39,9 +39,9 @@ function batchID() {
   let batch_id = null;
   if (isWithinTimeRange(date, 0, 0, 14, 10)) {
     batch_id = 1;
-  } else if (isWithinTimeRange(date, 14, 10, 18, 10)) {
+  } else if (isWithinTimeRange(date, 14, 10, 17, 10)) {
     batch_id = 2;
-  } else if (isWithinTimeRange(date, 18, 10, 23, 59)) {
+  } else if (isWithinTimeRange(date, 17, 10, 23, 59)) {
     batch_id = 3;
   }
 

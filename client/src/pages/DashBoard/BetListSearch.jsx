@@ -60,8 +60,8 @@ const BetListSearch = () => {
         width: 40,
       },
       {
-        Header: 'Fullname',
-        accessor: 'fullname',
+        Header: 'Username',
+        accessor: 'username',
         width: 40,
       },
       {

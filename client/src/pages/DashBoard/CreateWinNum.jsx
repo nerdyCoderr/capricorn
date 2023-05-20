@@ -148,7 +148,10 @@ function CreateWinNum() {
           autoComplete='off'
           layout='vertical'
         >
-          <Form.Item label='Date' name='date'>
+          <Form.Item
+            label='Date'
+            name='date'
+          >
             <DatePicker
               valuae={dayjs(formData.date, dateFormat)}
               className='w-100'
@@ -165,10 +168,16 @@ function CreateWinNum() {
               { required: true, message: 'Please select your bet type!' },
             ]}
           >
-            <Select onChange={onTypeChange} allowClear>
+            <Select
+              onChange={onTypeChange}
+              allowClear
+            >
               {betTypeOptions ? (
                 betTypeOptions.map((item) => (
-                  <Select.Option key={item._id} value={item._id}>
+                  <Select.Option
+                    key={item._id}
+                    value={item._id}
+                  >
                     {item.bet_type}
                   </Select.Option>
                 ))
@@ -185,15 +194,27 @@ function CreateWinNum() {
               { required: true, message: 'Please select your batch type!' },
             ]}
           >
-            <Select onChange={onBatchChange} allowClear>
-              <Select.Option key={1} value={1}>
-                6:00 am - 2:00 pm
+            <Select
+              onChange={onBatchChange}
+              allowClear
+            >
+              <Select.Option
+                key={1}
+                value={1}
+              >
+                6:00 am - 2:10 pm
               </Select.Option>
-              <Select.Option key={2} value={2}>
-                2:00 pm - 6:00 pm
+              <Select.Option
+                key={2}
+                value={2}
+              >
+                2:10 pm - 4:45 pm
               </Select.Option>
-              <Select.Option key={3} value={3}>
-                6:00 pm - 9:00 pm
+              <Select.Option
+                key={3}
+                value={3}
+              >
+                5:10 pm - 8:45 pm
               </Select.Option>
             </Select>
           </Form.Item>
@@ -215,14 +236,24 @@ function CreateWinNum() {
           >
             <Input />
           </Form.Item>
-          <Button className='w-100' type='primary' htmlType='submit'>
+          <Button
+            className='w-100'
+            type='primary'
+            htmlType='submit'
+          >
             SUBMIT
           </Button>
         </Form>
         <div style={{ height: '200px', margin: '0.5rem', overflowY: 'scroll' }}>
-          <Table dataTable={newDatable} columns={columns} />
+          <Table
+            dataTable={newDatable}
+            columns={columns}
+          />
         </div>
-        <Button type='primary' onClick={createWinBet}>
+        <Button
+          type='primary'
+          onClick={createWinBet}
+        >
           Create Winning Bet
         </Button>
       </div>

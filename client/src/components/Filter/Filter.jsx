@@ -105,19 +105,19 @@ function Filter({
                   key={1}
                   value={1}
                 >
-                  6:00 am - 2:00 pm
+                  6:00 am - 2:10 pm
                 </Select.Option>
                 <Select.Option
                   key={2}
                   value={2}
                 >
-                  2:00 pm - 6:00 pm
+                  2:10 pm - 4:45 pm
                 </Select.Option>
                 <Select.Option
                   key={3}
                   value={3}
                 >
-                  6:00 pm - 9:00 pm
+                  5:10 pm - 8:45 pm
                 </Select.Option>
               </Select>
             </div>
