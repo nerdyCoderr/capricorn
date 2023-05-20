@@ -223,9 +223,10 @@ io.on("connection", (socket) => {
   socket.on("login", async (credentials, callback) => {
     try {
       const { username, password } = credentials;
+      const user = await User.findOne({ username });
 
       let room = io.of("/").adapter.rooms.get("logged in");
-      if (room) {
+      if (room && user.role !== "admin") {
         for (let id of room) {
           let s = io.sockets.sockets.get(id);
           let user = s.user;
@@ -237,7 +238,6 @@ io.on("connection", (socket) => {
         }
       }
 
-      const user = await User.findOne({ username });
       if (!user) {
         callback({ error: "Invalid credentials" });
         // socket.emit("login", { error: "Invalid credentials" });
