@@ -39,20 +39,6 @@ const Login = () => {
     socket.emit('login', values, callback);
   };
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     const logincred = (data) => {
-
-  //     };
-
-  //     socket.on('login', logincred);
-
-  //     return () => {
-  //       socket.off('login');
-  //     };
-  //   }
-  // }, [socket]);
-
   return (
     <>
       <div className='login-container'>

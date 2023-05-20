@@ -29,13 +29,15 @@ const AppRouter = () => {
   const [socket, setSocket] = useState(null);
 
   React.useEffect(() => {
+    console.log('che');
     const newsocket = io(config.websocket_url);
 
     setSocket(newsocket);
     return () => newsocket.disconnect();
   }, []);
+
   return (
-    <userContext.Provider value={{ data, setData, socket }}>
+    <userContext.Provider value={{ data, setData, socket, setSocket }}>
       <BrowserRouter>
         <Routes>
           <Route

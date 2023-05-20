@@ -238,9 +238,10 @@ const NewBets = () => {
   }, [formData]);
 
   useEffect(() => {
+    console.log('check');
     getBetType(callback);
     socket.connect();
-    socket.emit('watchlist', { token: token });
+    socket.emit('watchlist', '', () => {});
 
     const updateLimitBet = (data) => {
       console.log(data);

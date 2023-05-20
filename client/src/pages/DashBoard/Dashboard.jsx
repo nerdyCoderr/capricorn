@@ -10,35 +10,40 @@ import './Dashboard.scss';
 import { useNavigate } from 'react-router-dom';
 import userContext from '../../context/userContext';
 import GlassLayout from '../../components/Layout/GlassLayout';
-
+import io from 'socket.io-client';
+import config from '../../api/config';
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { data, socket } = useContext(userContext);
+  const { data, socket, setSocket } = useContext(userContext);
   const [resultOverview, setResultOverview] = useState({
     total: 1,
-    grandTotalAmount: 450,
-    grandTotalWinAmount: 31500,
-    grandActualWinAmount: 1,
+    grandTotalAmount: 0,
+    grandTotalWinAmount: 0,
+    grandActualWinAmount: 0,
   });
 
   const logout = () => {
     socket.emit('logout', '');
+    const newsocket = io(config.websocket_url);
 
+    setSocket(newsocket);
     navigate('/');
   };
 
   useEffect(() => {
     const updateLimitBet = (data) => {
       console.log(data);
-      setResultOverview(data);
+      setResultOverview(data.trans);
     };
 
-    socket.emit('admin:transactionOverview', '', () => {});
+    socket.emit('admin:transactionOverview', '', updateLimitBet);
 
-    socket.on('admin:transactionOverview', updateLimitBet);
+    socket.on('admin:transactionOverview', (data) => setResultOverview(data));
 
     return () => {
-      socket.off('admin:transactionOverview', () => {});
+      socket.off('admin:transactionOverview', (data) =>
+        setResultOverview(data),
+      );
     };
   }, []);
 
@@ -57,7 +62,7 @@ const Dashboard = () => {
           <h6 className='title'>Capricorn</h6>
         </div>
         <div className='dashboard-content'>
-          {data.role === 'superadmin' && (
+          {data.role === 'super-admin' && (
             <Card
               className='p-2'
               onClick={() => navigate('/create-win-number')}
