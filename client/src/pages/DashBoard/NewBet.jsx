@@ -25,6 +25,7 @@ const NewBets = () => {
   // const [winAmount, setWinAmount] = useState();
   const [remainingBetAmount, setRemainingBetAmount] = useState();
   const [isBetLimit, setIsBetLimit] = useState(false);
+
   //------------
   // const [betAmount, setBetAmount] = useState(0);
   // const [betNumber, setBetNumber] = useState();
@@ -38,7 +39,9 @@ const NewBets = () => {
   //-------------
   const [betnumberRestrictionInput, setBetnumberRestrictionInput] = useState();
   const [limitbet, setLimitBet] = useState([]);
+  const [isPlacebet, setIsplacebet] = useState(false);
 
+  const [form] = Form.useForm();
   const columns = React.useMemo(
     () => [
       {
@@ -116,10 +119,18 @@ const NewBets = () => {
           test[x].bet_num === newdata.bet_num &&
           test[x].bet_type === newdata.bet_type
         ) {
-          test[x].bet_amt =
-            parseInt(test[x].bet_amt) + parseInt(newdata.bet_amt);
+          // if (
+          //   parseInt(test[x].bet_amt) + parseInt(newdata.bet_amt) >
+          //   remainingBetAmount
+          // )
+          //   test[x].bet_amt =
+          //     parseInt(test[x].bet_amt) + parseInt(newdata.bet_amt);
+          // test[x].win_amt =
+          //   parseInt(test[x].bet_amt) * parseInt(formData.win_amt);
+          test[x].bet_amt = parseInt(newdata.bet_amt);
           test[x].win_amt =
-            parseInt(test[x].bet_amt) * parseInt(formData.win_amt);
+            parseInt(newdata.bet_amt) * parseInt(formData.win_amt);
+
           setDataTabble([...test]);
           return 0;
         }
@@ -180,6 +191,7 @@ const NewBets = () => {
 
   const placeBetHandler = () => {
     console.log(dataTable);
+    socket.off('watchlist', () => {});
     createBet(dataTable, betPlacedCallback);
   };
 
@@ -190,6 +202,10 @@ const NewBets = () => {
 
   const betPlacedCallback = async (res) => {
     const { status } = res;
+    console.log(
+      '🚀 ~ file: NewBet.jsx:195 ~ betPlacedCallback ~ status:',
+      status,
+    );
     if (status === 201 || status === 200) {
       console.log(res);
       setDataTabble([]);
@@ -216,6 +232,8 @@ const NewBets = () => {
         setDataTabble([...newdata]);
       }
     }
+
+    socket.on('watchlist', () => {});
   };
 
   const checklimit = () => {
@@ -223,13 +241,32 @@ const NewBets = () => {
     const { bet_type, bet_number, bet_amount } = formData;
 
     const betTypeAndNumber = `${bet_type}:${bet_number}`;
-    const remainingBetAmount = limitbet[betTypeAndNumber]?.remaining_const;
+    let remainingBetAmountcheck = limitbet[betTypeAndNumber]?.remaining_const;
+    console.log(
+      '🚀 ~ file: NewBet.jsx:241 ~ checklimit ~ remainingBetAmountcheck:',
+      remainingBetAmountcheck,
+    );
     const betAmount = bet_amount || 1;
 
-    setIsBetLimit(remainingBetAmount <= betAmount);
+    if (!remainingBetAmountcheck) {
+      remainingBetAmountcheck = betTypeOptions.find(
+        (item) => item.bet_type === bet_type,
+      )?.amt_const;
+    }
+    setIsBetLimit(remainingBetAmountcheck <= betAmount);
+    console.log(
+      '🚀 ~ file: NewBet.jsx:230 ~ checklimit ~ betAmount:',
+      betAmount,
+    );
+    console.log(
+      '🚀 ~ file: NewBet.jsx:230 ~ checklimit ~ remainingBetAmountcheck:',
+      remainingBetAmountcheck,
+    );
 
     setRemainingBetAmount(
-      remainingBetAmount <= betAmount ? remainingBetAmount.toString() : '',
+      remainingBetAmountcheck <= betAmount
+        ? remainingBetAmountcheck.toString()
+        : '',
     );
   };
 
@@ -245,6 +282,7 @@ const NewBets = () => {
 
     const updateLimitBet = (data) => {
       console.log(data);
+      setIsplacebet(true);
       setLimitBet(data);
     };
 
@@ -275,6 +313,11 @@ const NewBets = () => {
 
       return false;
     });
+
+    if (isPlacebet) {
+      setIsplacebet(false);
+      return;
+    }
 
     setDataTabble(updatedDataTable);
   }, [limitbet]);
