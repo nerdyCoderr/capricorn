@@ -141,7 +141,7 @@ function CreateWinNum() {
       </div>
       <div className='create-win-num'>
         {' '}
-        <h1 className='text-center'>New Bet</h1>
+        <h1 className='text-center'>Input Winning bets</h1>
         <Form
           onFinish={submitHandler}
           className='createwinNumForm'
@@ -178,7 +178,13 @@ function CreateWinNum() {
             </Select>
           </Form.Item>
 
-          <Form.Item label='Batch Type' name='batch_type'>
+          <Form.Item
+            label='Batch Type'
+            name='batch_type'
+            rules={[
+              { required: true, message: 'Please select your batch type!' },
+            ]}
+          >
             <Select onChange={onBatchChange} allowClear>
               <Select.Option key={1} value={1}>
                 6:00 am - 2:00 pm

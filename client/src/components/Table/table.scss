@@ -49,11 +49,14 @@
   }
 }
 
-// .table-wrap {
-//   overflow: scroll;
-// }
+.table-wrap {
+  overflow: scroll;
+}
 
 @media (max-width: 575.98px) {
+  .table-wrap {
+    height: 280px;
+  }
   .table-container {
     th {
       font-size: 16px !important;

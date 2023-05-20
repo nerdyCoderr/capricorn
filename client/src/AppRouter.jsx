@@ -15,7 +15,7 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import io from 'socket.io-client';
 
 import config from './api/config';
-import CreateWinNum from './pages/DashBoard/createWinNum';
+import CreateWinNum from './pages/DashBoard/CreateWinNum';
 
 const AppRouter = () => {
   const [data, setData] = useState({

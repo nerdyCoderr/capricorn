@@ -91,14 +91,14 @@ const Login = () => {
                 </Button>
               </Form.Item>
 
-              <Form.Item className='text-center'>
+              {/* <Form.Item className='text-center'>
                 <div
                   onClick={() => navigate('registration')}
                   className='sign-up'
                 >
                   Sign Up!
                 </div>
-              </Form.Item>
+              </Form.Item> */}
             </Form>
           </div>
         </div>

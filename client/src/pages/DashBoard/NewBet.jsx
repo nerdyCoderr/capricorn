@@ -189,9 +189,9 @@ const NewBets = () => {
   };
 
   const betPlacedCallback = async (res) => {
-    console.log(res);
     const { status } = res;
     if (status === 201 || status === 200) {
+      console.log(res);
       setDataTabble([]);
     }
     if (status === 400) {
@@ -259,6 +259,7 @@ const NewBets = () => {
     if (!dataTable) {
       return;
     }
+    console.log(dataTable);
 
     const updatedDataTable = dataTable.filter((data) => {
       const limitKey = `${data.bet_type}:${data.bet_num}`;

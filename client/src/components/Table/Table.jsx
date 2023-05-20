@@ -109,6 +109,7 @@ const Table = ({
           </tbody>
         </table>
       </div>
+
       <div className='table-wrap-bottom'>
         <div className='total-count mt-2'>Total: {totalCountTable ?? 0}</div>
         <Space className='pagination mt-3'>

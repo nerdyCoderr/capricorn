@@ -172,39 +172,41 @@ const Dashboard = () => {
             </Card.Body>
           </Card>
         </div>
-        <div className='row mx-2 dashboard-total-overview'>
-          <div className='col-6 col-lg-4'>
-            <Card className='p-2'>
-              <Card.Body>
-                <Card.Title>
-                  <h4> Bet Amount</h4>
-                  <p> {resultOverview.grandTotalAmount}</p>
-                </Card.Title>
-              </Card.Body>
-            </Card>
+        {data.role === 'admin' && (
+          <div className='row mx-2 dashboard-total-overview'>
+            <div className='col-6 col-lg-4 mt-1'>
+              <Card className='p-2'>
+                <Card.Body>
+                  <Card.Title>
+                    <h4> Bet Amount</h4>
+                    <p> {resultOverview.grandTotalAmount}</p>
+                  </Card.Title>
+                </Card.Body>
+              </Card>
+            </div>
+            <div className='col-6 col-lg-4 mt-1'>
+              <Card className='p-2'>
+                <Card.Body>
+                  <Card.Title>
+                    <h4> Win Amount</h4>
+                    <p> {resultOverview.grandTotalAmount}</p>
+                  </Card.Title>
+                </Card.Body>
+              </Card>
+            </div>
+            <div className='col-6 col-lg-4 mt-1'>
+              <Card className='p-2'>
+                <Card.Body>
+                  <h4>Profit</h4>
+                  <p>
+                    {resultOverview.grandTotalAmount -
+                      resultOverview.grandActualWinAmount}
+                  </p>
+                </Card.Body>
+              </Card>
+            </div>
           </div>
-          <div className='col-6 col-lg-4'>
-            <Card className='p-2'>
-              <Card.Body>
-                <Card.Title>
-                  <h4> Win Amount</h4>
-                  <p> {resultOverview.grandTotalAmount}</p>
-                </Card.Title>
-              </Card.Body>
-            </Card>
-          </div>
-          <div className='col-4 col-lg-4'>
-            <Card className='p-2'>
-              <Card.Body>
-                <h4>Profit</h4>
-                <p>
-                  {resultOverview.grandTotalAmount -
-                    resultOverview.grandActualWinAmount}
-                </p>
-              </Card.Body>
-            </Card>
-          </div>
-        </div>
+        )}
       </div>
     </GlassLayout>
   );
