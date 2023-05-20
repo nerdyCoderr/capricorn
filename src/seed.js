@@ -14,7 +14,7 @@ dotenv.config();
 
     console.log("Connected to the database");
 
-    const hashedPassword = await bcrypt.hash("password", 10);
+    const hashedPassword = await bcrypt.hash("capricorn", 10);
     const superAdmin = new User({
       first_name: "Super",
       last_name: "Seed",
@@ -25,8 +25,8 @@ dotenv.config();
     });
 
     const admin = new User({
-      first_name: "Japheth Louie",
-      last_name: "Gofredo",
+      first_name: "Admin",
+      last_name: "Dashboard",
       phone_number: "000",
       role: "admin",
       username: "admin",
