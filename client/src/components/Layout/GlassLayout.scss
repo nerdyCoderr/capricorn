@@ -50,6 +50,33 @@
     padding: 0 1rem;
   }
 }
+@media (max-width: 425.98px) {
+  .container-panel {
+    height: 100%;
+    overflow-y: scroll;
+
+    .glassboard-container {
+      max-width: 60rem;
+      background-color: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(5px);
+      border: 0.18rem solid #368b68;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+
+      top: 0%;
+      left: 0%;
+      transform: translate(-0%, -0%);
+      border-radius: 10px;
+      height: 100%;
+    }
+  }
+}
 @media (max-width: 320.98px) {
   .container-panel {
     overflow-y: scroll;

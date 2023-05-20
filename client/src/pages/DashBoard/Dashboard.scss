@@ -41,6 +41,16 @@
       }
     }
   }
+  .dashboard-total-overview {
+    p,
+    h4 {
+      color: $fontColorPrimary;
+      margin-bottom: 0;
+    }
+    .card {
+      min-height: 150px;
+    }
+  }
 }
 
 @media (max-width: 375.98px) {

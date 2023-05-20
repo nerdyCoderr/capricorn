@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Button, Form, Input, message } from 'antd';
 import './Login.scss';
 
@@ -11,44 +11,47 @@ const Login = () => {
 
   const { setData, socket } = useContext(userContext);
 
-  const submitHandler = (values) => {
-    console.log('check');
+  const callback = (data) => {
+    if (data.message) {
+      message.success(data?.message);
+      setData((prev) => {
+        return {
+          ...prev,
+          role: data.role,
+          ref_code: data.ref_code,
+          username: data.username,
+          isAuth: true,
+          socket: socket,
+          socketID: socket.id,
+        };
+      });
 
-    socket.emit('login', values);
+      localStorage.setItem('socketToken', `${data.token}`);
+      localStorage.setItem('token', `Bearer ${data.token}`);
+      navigate('/dashboard');
+    } else {
+      message.error(data?.error);
+    }
+  };
+  const submitHandler = (values) => {
+    console.log(values);
+
+    socket.emit('login', values, callback);
   };
 
-  useEffect(() => {
-    if (socket) {
-      const logincred = (data) => {
-        if (data.message) {
-          message.success(data?.message);
-          setData((prev) => {
-            return {
-              ...prev,
-              role: data.role,
-              ref_code: data.ref_code,
-              username: data.username,
-              isAuth: true,
-              socket: socket,
-              socketID: socket.id,
-            };
-          });
+  // useEffect(() => {
+  //   if (socket) {
+  //     const logincred = (data) => {
 
-          localStorage.setItem('socketToken', `${data.token}`);
-          localStorage.setItem('token', `Bearer ${data.token}`);
-          navigate('/dashboard');
-        } else {
-          message.error(data?.error);
-        }
-      };
+  //     };
 
-      socket.on('login', logincred);
+  //     socket.on('login', logincred);
 
-      return () => {
-        socket.off('login');
-      };
-    }
-  }, [socket]);
+  //     return () => {
+  //       socket.off('login');
+  //     };
+  //   }
+  // }, [socket]);
 
   return (
     <>
