@@ -43,9 +43,9 @@ const AppRouter = () => {
           <Route
             path='/create-win-number'
             element={
-              // <ProtectedRoute isAuth={data && data.isAuth}>
-              <CreateWinNum />
-              // </ProtectedRoute>
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <CreateWinNum />
+              </ProtectedRoute>
             }
           />
 
@@ -77,18 +77,18 @@ const AppRouter = () => {
           <Route
             path='/new-bet'
             element={
-              // <ProtectedRoute isAuth={data && data.isAuth}>
-              <NewBets />
-              // </ProtectedRoute>
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <NewBets />
+              </ProtectedRoute>
             }
           />
 
           <Route
             path='/transaction-list'
             element={
-              // <ProtectedRoute isAuth={data && data.isAuth}>
-              <BetList />
-              // </ProtectedRoute>
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <BetList />
+              </ProtectedRoute>
             }
           />
           <Route
