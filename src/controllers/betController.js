@@ -1047,12 +1047,11 @@ exports.getUserBets = async (req, res) => {
 };
 
 exports.createWinNumber = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { win_nums } = req.body;
     let winningNums = [];
-
-    const session = await mongoose.startSession();
-    session.startTransaction();
 
     if (!win_nums) {
       throw new Error("Win numbers not provided");
