@@ -72,42 +72,22 @@ const NewBets = () => {
     const { bet_number, bet_type } = formData;
     let new_bet_number = parseInt(bet_number);
 
-    let prefix = '';
-    if (new_bet_number < 10) {
-      switch (bet_type) {
-        case 'L2':
-          prefix = '0';
-          break;
-        case 'L3':
-          prefix = '00';
-          break;
-        case '4D':
-          prefix = '000';
-          break;
-        default:
-          break;
-      }
-    } else if (new_bet_number < 100) {
-      switch (bet_type) {
-        case 'L3':
-          prefix = '0';
-          break;
-        case '4D':
-          prefix = '00';
-          break;
-        default:
-          break;
-      }
-    } else if (new_bet_number < 1000 && bet_type === '4D') {
-      prefix = '0';
-    }
+    let betNum;
 
-    new_bet_number = prefix + bet_number;
+    if (bet_type === 'L2') {
+      betNum = bet_number.toString().padStart(2, '0');
+    }
+    if (bet_type === '3D') {
+      betNum = bet_number.toString().padStart(3, '0');
+    }
+    if (bet_type === '4D') {
+      betNum = bet_number.toString().padStart(4, '0');
+    }
 
     const newdata = {
       id: Math.floor(Math.random() * 1000000),
       bet_amt: +formData.bet_amount,
-      bet_num: new_bet_number,
+      bet_num: betNum,
       bet_type: formData.bet_type,
       win_amt: formData.win_amt * formData.bet_amount,
     };

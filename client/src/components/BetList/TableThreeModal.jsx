@@ -41,22 +41,27 @@ function TableThreeModal({
     [],
   );
   console.log(data);
-  const {
-    isloading,
-    onPrevious,
-    onFirst,
-    onLast,
-    onNext,
-    callbackresponse,
-  } = usePagination(params, dataTable, actioncall, otherparams, dateparams);
+  const { isloading, onPrevious, onFirst, onLast, onNext, callbackresponse } =
+    usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
   useEffect(() => {
     const { data, total } = callbackresponse;
     setTotalCountTable(total);
     const reconstructedList = data?.map((data) => {
+      let betNum;
+
+      if (data?.bet_type?.bet_type === 'L2') {
+        betNum = data?.bet_num.toString().padStart(2, '0');
+      }
+      if (data?.bet_type?.bet_type === '3D') {
+        betNum = data?.bet_num.toString().padStart(3, '0');
+      }
+      if (data?.bet_type?.bet_type === '4D') {
+        betNum = data?.bet_num.toString().padStart(4, '0');
+      }
       return {
         bet_type: data?.bet_type?.bet_type,
-        bet_num: data?.bet_num,
+        bet_num: betNum,
         bet_amt: data?.bet_amt,
         win_amt: data?.win_amt,
       };
@@ -78,7 +83,12 @@ function TableThreeModal({
       open={isTablethreeOpen}
       onCancel={onCancel}
       footer={[
-        <Button size='middle' key='submit' type='primary' onClick={handleOk}>
+        <Button
+          size='middle'
+          key='submit'
+          type='primary'
+          onClick={handleOk}
+        >
           OK
         </Button>,
       ]}

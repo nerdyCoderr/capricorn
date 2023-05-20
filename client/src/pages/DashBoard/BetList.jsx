@@ -59,7 +59,7 @@ const BetList = () => {
     resetHandler,
     filter,
     callbackfilterRes,
-  } = useFilter(params, currentDate,getBetList);
+  } = useFilter(params, currentDate, getBetList);
 
   const columns = React.useMemo(
     () => [
@@ -206,15 +206,27 @@ const BetList = () => {
         <Space className='d-flex mt-5'>
           <div>
             <p>Grand Total Amount</p>
-            <Input value={amountForm?.grandTotalAmount} disabled />
+            <Input
+              style={{ fontColor: 'white', backgroundColor: '#d0efb1' }}
+              value={amountForm?.grandTotalAmount}
+              disabled
+            />
           </div>
           <div>
             <p>Grand Total Win Amount</p>
-            <Input value={amountForm?.grandTotalWinAmount} disabled />
+            <Input
+              style={{ fontColor: 'white', backgroundColor: '#d0efb1' }}
+              value={amountForm?.grandTotalWinAmount}
+              disabled
+            />
           </div>
           <div>
             <p>Grand Actual Win Amount</p>
-            <Input value={amountForm?.grandActualWinAmount} disabled />
+            <Input
+              style={{ fontColor: 'white', backgroundColor: '#d0efb1' }}
+              value={amountForm?.grandActualWinAmount}
+              disabled
+            />
           </div>
         </Space>
         <Table

@@ -141,10 +141,21 @@ const Hits = () => {
     setTotalCountTable(total);
 
     const reconstructedList = data?.map((data, index) => {
+      let betNum;
+
+      if (data?.bet_type?.bet_type === 'L2') {
+        betNum = data?.bet_num.toString().padStart(2, '0');
+      }
+      if (data?.bet_type?.bet_type === '3D') {
+        betNum = data?.bet_num.toString().padStart(3, '0');
+      }
+      if (data?.bet_type?.bet_type === '4D') {
+        betNum = data?.bet_num.toString().padStart(4, '0');
+      }
       return {
         index: index + 1,
         bet_type: data?.bet_type?.bet_type,
-        bet_num: data?.bet_num,
+        bet_num: betNum,
         bet_amt: data?.bet_amt,
         trans_no: data?.transaction?.trans_no,
         fullname: data?.user?.first_name + ' ' + data?.user?.last_name,
