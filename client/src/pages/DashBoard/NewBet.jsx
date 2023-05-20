@@ -253,7 +253,7 @@ const NewBets = () => {
         (item) => item.bet_type === bet_type,
       )?.amt_const;
     }
-    setIsBetLimit(remainingBetAmountcheck <= betAmount);
+    setIsBetLimit(remainingBetAmountcheck < betAmount);
     console.log(
       '🚀 ~ file: NewBet.jsx:230 ~ checklimit ~ betAmount:',
       betAmount,

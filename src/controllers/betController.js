@@ -54,7 +54,7 @@ exports.createBet = async (req, res) => {
 
       if (bet_type.amt_const < bet.bet_amt) {
         return res.status(400).json({
-          message: `Invalid bet amount (${bet.bet_amt}) for ${bet.bet_type}: bet amount should be less than or equal to ${bet_type.amt_const}`,
+          message: `Invalid bet amount (${bet.bet_amt}) for ${bet.bet_type}`,
         });
       }
 
