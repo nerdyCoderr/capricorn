@@ -99,6 +99,11 @@ const getTransactionOverview = async (username) => {
           from: "transactions",
           localField: "user._id",
           foreignField: "user",
+          pipeline: [
+            {
+              $match: transact_query,
+            },
+          ],
           as: "transactions",
         },
       },
