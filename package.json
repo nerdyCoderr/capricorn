@@ -21,7 +21,8 @@
     "node-cache": "^5.1.2",
     "pm2": "^5.3.0",
     "request": "^2.88.2",
-    "socket.io": "^4.6.1"
+    "socket.io": "^4.6.1",
+    "tunnel-ssh": "^5.0.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
