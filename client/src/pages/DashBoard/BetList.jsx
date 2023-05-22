@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import './BetList.scss';
 import Table from '../../components/Table/Table';
 import { getBetList } from '../../api/request';
-
+import { BsEyeFill } from 'react-icons/bs';
 import TableThreeModal from '../../components/BetList/TableThreeModal';
-import { Button, Input, Space } from 'antd';
+import { Space } from 'antd';
 import usePagination from '../../hooks/usePagination';
 import TabletwoModal from '../../components/BetList/TabletwoModal';
 import dayjs from 'dayjs';
@@ -37,7 +37,7 @@ const BetList = () => {
   const currentDate = moment().format(dateFormat);
 
   const params = '1';
-
+  const filterType = 'trans_list';
   const dateparams = `&from=${currentDate}&to=${currentDate}`;
 
   const {
@@ -73,17 +73,12 @@ const BetList = () => {
         accessor: 'username',
       },
       {
-        Header: 'Last Name',
-        accessor: 'last_name',
-      },
-      {
-        Header: 'First Name',
-        accessor: 'first_name',
-      },
-
-      {
-        Header: 'Total Bet Amount',
+        Header: 'Bet Amt',
         accessor: 'total_bet_amt',
+      },
+      {
+        Header: 'Win Amt',
+        accessor: 'actual_win_amt',
       },
       {
         Header: 'Date',
@@ -91,7 +86,7 @@ const BetList = () => {
         width: 40,
       },
       {
-        Header: 'Action',
+        Header: '#',
         accessor: 'action',
         width: 40,
       },
@@ -138,14 +133,17 @@ const BetList = () => {
 
     const reconstructedList = data?.map((item, index) => ({
       no: index + 1,
-      date: moment(item?.user?.createdAt).format(dateFormat),
-      first_name: item?.user?.first_name,
-      last_name: item?.user?.last_name,
+      date: moment(item?.latest_transaction).format(dateFormat),
+      full_name: item?.user?.first_name + ' ' + item?.user?.last_name,
       total_bet_amt: item?.total_amount,
       username: item?.user?.username,
+      actual_win_amt: item?.actual_win_amount,
       action: (
-        <div className='text-center'>
-          <Button onClick={() => actionHandler(item?.user?._id)}>View</Button>
+        <div className='text-center bg-primary text-white rounded px-2 py-1'>
+          <BsEyeFill
+            onClick={() => actionHandler(item?.user?._id)}
+            color='white'
+          />
         </div>
       ),
     }));
@@ -192,7 +190,7 @@ const BetList = () => {
           />
         )}
         <h6 onClick={() => nav('/dashboard')}>Back</h6>
-        <h1 className='text-center'>Transaction List</h1>
+        <h1 className='text-center title'>Transaction List</h1>
 
         <Filter
           setFilter={setFilter}
@@ -202,45 +200,40 @@ const BetList = () => {
           onChangeFrom={onChangeFrom}
           resetHandler={resetHandler}
           filter={filter}
+          filterType={filterType}
         />
-        <Space className='d-flex mt-5'>
+        <Space className='d-flex mt-5 text-center profit-container'>
           <div>
-            <p>Grand Total Amount</p>
-            <Input
-              style={{ fontColor: 'white', backgroundColor: '#d0efb1' }}
-              value={amountForm?.grandTotalAmount}
-              disabled
-            />
+            <p>Profit</p>
+            <h5>
+              {(amountForm?.grandTotalAmount -
+                amountForm.grandActualWinAmount) |
+                0}
+            </h5>
+          </div>{' '}
+          <div>
+            <p>Bet Amount</p>
+            <h5>{amountForm?.grandTotalAmount}</h5>
           </div>
           <div>
-            <p>Grand Total Win Amount</p>
-            <Input
-              style={{ fontColor: 'white', backgroundColor: '#d0efb1' }}
-              value={amountForm?.grandTotalWinAmount}
-              disabled
-            />
-          </div>
-          <div>
-            <p>Grand Actual Win Amount</p>
-            <Input
-              style={{ fontColor: 'white', backgroundColor: '#d0efb1' }}
-              value={amountForm?.grandActualWinAmount}
-              disabled
-            />
+            <p> Win Amount</p>
+            <h5>{amountForm?.grandActualWinAmount}</h5>
           </div>
         </Space>
-        <Table
-          dataTable={dataTable}
-          columns={columns}
-          onNext={onNext}
-          onPrevious={onPrevious}
-          onFirst={onFirst}
-          onLast={onLast}
-          isloading={isloading}
-          handleColumnClick={handleColumnClick}
-          errorResponse={errorResponse}
-          totalCountTable={totalCountTable}
-        />
+        <div style={{ height: '200px', overflowY: 'scroll' }}>
+          <Table
+            dataTable={dataTable}
+            columns={columns}
+            onNext={onNext}
+            onPrevious={onPrevious}
+            onFirst={onFirst}
+            onLast={onLast}
+            isloading={isloading}
+            handleColumnClick={handleColumnClick}
+            errorResponse={errorResponse}
+            totalCountTable={totalCountTable}
+          />
+        </div>
       </div>
     </div>
   );

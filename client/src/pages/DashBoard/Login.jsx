@@ -54,7 +54,7 @@ const Login = () => {
 
             <h6 className='title'>Capricorn</h6>
           </div>
-          <div className='login-form'>
+          <div className='login-form '>
             <Form
               name='basic'
               initialValues={{ remember: true }}
