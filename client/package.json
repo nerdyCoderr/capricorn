@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:cloud": "env-cmd -f .env.cloud vite",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src/**/*.js",
@@ -32,6 +33,7 @@
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
     "@vitejs/plugin-react": "^3.0.0",
+    "env-cmd": "^10.1.0",
     "eslint": "^8.39.0",
     "eslint-plugin-react": "^7.32.2",
     "react-error-overlay": "^6.0.9",
@@ -42,5 +44,4 @@
     "react-error-overlay": "6.0.9"
   },
   "proxy": "http://localhost:3000"
-  
 }
