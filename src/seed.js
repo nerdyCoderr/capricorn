@@ -20,7 +20,7 @@ dotenv.config();
       last_name: "Seed",
       phone_number: "777",
       role: "super-admin",
-      username: "super",
+      username: "superlocal",
       password: hashedPassword,
     });
 
@@ -29,7 +29,7 @@ dotenv.config();
       last_name: "Dashboard",
       phone_number: "000",
       role: "admin",
-      username: "admin",
+      username: "adminlocal",
       password: hashedPassword,
     });
 

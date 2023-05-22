@@ -22,6 +22,8 @@ const {
   superWinNumRouter,
 } = require("./routes/betRoutes");
 
+const superRoutes = require("./routes/superRoutes");
+
 // mongoose.connect(process.env.MONGODB_URI, {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
@@ -85,7 +87,8 @@ app.use(
   `${apiVersion}/super`,
   betTypePrivateRoutes,
   superBetRouter,
-  superWinNumRouter
+  superWinNumRouter,
+  superRoutes
 );
 
 // Import the socket.js file and attach it to the HTTP server

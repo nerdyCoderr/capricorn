@@ -41,6 +41,39 @@ exports.userSignup = async (req, res) => {
   }
 };
 
+exports.adminSignup = async (req, res) => {
+  const { username, password, first_name, last_name, phone_number } = req.body;
+
+  let newUser;
+  const existingUser = await User.findOne({ username });
+  try {
+    if (existingUser) {
+      return res.status(409).json({ message: "Username already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    newUser = new User({
+      first_name,
+      last_name,
+      phone_number,
+      role: "admin",
+      username,
+      password: hashedPassword,
+    });
+    await newUser.save();
+
+    res
+      .status(201)
+      .json({ message: "Admin created successfully", data: newUser });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Error creating admin", error: error.message });
+  }
+};
+
 exports.deleteAdmin = async (req, res) => {
   try {
     const loggedInUserId = req.user.id;

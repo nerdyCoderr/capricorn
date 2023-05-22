@@ -166,16 +166,15 @@ exports.createBet = async (req, res) => {
 };
 
 exports.getSuperBets = async (req, res) => {
+  let query = {};
+  let aggregateQuery;
+  let createdAt = req.query.createdAt;
+
+  const page = parseInt(req.query.page) || 1;
+  const page_limit = parseInt(req.query.limit) || 10;
+  const ref_code = req.query.ref_code;
+  const batch_id = req.query.batch_id;
   try {
-    let query = {};
-    let aggregateQuery;
-    let createdAt = req.query.createdAt;
-
-    const page = parseInt(req.query.page) || 1;
-    const page_limit = parseInt(req.query.limit) || 10;
-    const ref_code = req.query.ref_code;
-    const batch_id = req.query.batch_id;
-
     // validation
     if (!req.params.table) {
       return res.status(400).json({ message: "No table provided" });
@@ -480,10 +479,25 @@ exports.getAdminBets = async (req, res) => {
   let role = req.user.role;
 
   try {
-    if (role === "admin") {
+    if (role === "super-admin") {
       user_id = req.query.user_id
         ? new mongoose.Types.ObjectId(req.query.user_id)
         : null;
+
+      if (table < 0 && table > 4) {
+        return res.status(400).json({ message: "Invalid table" });
+      }
+    } else if (role === "admin") {
+      let user;
+      if (req.query.username) {
+        user = await User.findOne({ username: req.query.username });
+        user_id = user._id;
+      } else {
+        user_id = req.query.user_id
+          ? new mongoose.Types.ObjectId(req.query.user_id)
+          : null;
+      }
+
       ref_code = req.user.ref_code;
 
       if (table < 1 && table > 4) {
@@ -514,13 +528,14 @@ exports.getAdminBets = async (req, res) => {
     endOfDay.setHours(23, 59, 59, 999);
     const createdAt = { $gte: startOfDay, $lte: endOfDay };
 
-    if (table === 1) {
+    if (table === 0) {
+    } else if (table === 1) {
       if (user_id) {
-        user_query["user._id"] = user_id;
+        transact_query.user = user_id;
       }
 
       if (ref_code) {
-        user_query["user.ref_code"] = ref_code;
+        user_query.ref_code = ref_code;
       }
 
       if (batch_id) {
@@ -575,6 +590,7 @@ exports.getAdminBets = async (req, res) => {
       bet_query.createdAt = createdAt;
     }
 
+    //transaction_queries
     if (table === 1) {
       aggregateQuery = Transaction.aggregate([
         // distinct by user
@@ -585,8 +601,24 @@ exports.getAdminBets = async (req, res) => {
         {
           $lookup: {
             from: "users",
-            localField: "user",
-            foreignField: "_id",
+            let: {
+              ["user_id"]: "$user", //user_query.user_id,
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$_id", "$$user_id"],
+                  },
+                  ref_code: user_query.ref_code,
+                },
+              },
+              {
+                $project: {
+                  "user.password": 0,
+                },
+              },
+            ],
             as: "user",
           },
         },
@@ -596,56 +628,22 @@ exports.getAdminBets = async (req, res) => {
           },
         },
         {
-          $project: {
-            "user.password": 0,
-          },
-        },
-        {
-          $match: user_query,
-        },
-        {
-          $lookup: {
-            from: "transactions",
-            localField: "user._id",
-            foreignField: "user",
-            pipeline: [
-              {
-                $match: transact_query,
-              },
-            ],
-            as: "transactions",
-          },
-        },
-        {
-          $addFields: {
-            total_amount: {
-              $sum: "$transactions.total_amount",
-            },
-            total_win_amount: {
-              $sum: "$transactions.total_win_amount",
-            },
-            actual_win_amount: {
-              $sum: "$transactions.actual_win_amount",
-            },
-            latest_transaction: {
-              $max: "$transactions.createdAt",
-            },
-          },
-        },
-        {
           $group: {
             _id: "$user._id",
-            user: { $first: "$user" },
-            // transactions: { $first: "$transactions" },
-            total_amount: { $first: "$total_amount" },
+            user: {
+              $first: "$user",
+            },
+            total_amount: {
+              $sum: "$total_amount",
+            },
             total_win_amount: {
-              $first: "$total_win_amount",
+              $sum: "$total_win_amount",
             },
             actual_win_amount: {
-              $first: "$actual_win_amount",
+              $sum: "$actual_win_amount",
             },
             latest_transaction: {
-              $first: "$latest_transaction",
+              $max: "$createdAt",
             },
           },
         },

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const superController = require("../controllers/superController");
+const adminController = require("../controllers/adminController");
 const { authenticate, authorize } = require("../utils/authMiddleware");
 
 // Public routes
@@ -9,7 +10,7 @@ router.post(
   "/admin-signup",
   authenticate,
   authorize(["super-admin"]),
-  superController.userSignup
+  superController.adminSignup
 );
 
 router.delete(
