@@ -564,7 +564,7 @@ exports.getAdminBets = async (req, res) => {
         bet_query.transaction = trans_no?._id;
       }
 
-      if (role === "user" && user_id !== "") {
+      if (user_id !== "") {
         bet_query.user = new mongoose.Types.ObjectId(user_id);
       }
 
