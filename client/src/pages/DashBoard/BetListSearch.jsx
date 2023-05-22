@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import './BetList.scss';
-import Table from '../../components/Table/Table';
+
 import { getBetList } from '../../api/request';
 
 import usePagination from '../../hooks/usePagination';
@@ -14,6 +15,8 @@ import TabletwoModal from '../../components/BetList/TabletwoModal';
 import useFilter from '../../hooks/useFilter';
 import moment from 'moment';
 import Filter from '../../components/Filter/Filter';
+import Table from '../../components/Table/Table';
+import AntTable from '../../components/Table/AntTable';
 
 const BetListSearch = () => {
   dayjs.extend(customParseFormat);
@@ -34,45 +37,41 @@ const BetListSearch = () => {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'No',
-        accessor: 'index', // accessor is the "key" in the data
-        width: 30,
+        title: 'Username',
+        dataIndex: 'username',
+        width: 40,
+        fixed: 'left',
       },
       {
-        Header: 'Type',
-        accessor: 'bet_type',
+        title: 'Type',
+        dataIndex: 'bet_type',
         width: 40,
       },
       {
-        Header: 'Number',
-        accessor: 'bet_num',
+        title: 'Number',
+        dataIndex: 'bet_num',
         width: 40,
       },
       {
-        Header: 'Amount',
-        accessor: 'bet_amt',
+        title: 'Amount',
+        dataIndex: 'bet_amt',
         width: 40,
       },
 
       {
-        Header: 'Trans No.',
-        accessor: 'trans_no',
+        title: 'Trans No.',
+        dataIndex: 'trans_no',
         width: 40,
       },
       {
-        Header: 'Username',
-        accessor: 'username',
-        width: 40,
-      },
-      {
-        Header: 'Date Created',
-        accessor: 'date',
+        title: 'Date Created',
+        dataIndex: 'date',
         width: 80,
       },
     ],
     [],
   );
-
+  console.log(dataTable);
   const params = '4';
   const dateFormat = 'YYYY-MM-DD';
   const filterType = 'bet_list';
@@ -87,23 +86,21 @@ const BetListSearch = () => {
     setTrans_no(trans_no);
   };
 
-  const handleColumnClick = (row, column) => {
-    console.log(column);
-    console.log(row);
+  const handleColumnClick = (record, e) => {
+    const columnIndex = e.target.cellIndex;
+    console.log('🚀 ~ file: BetListSearch.jsx:103 ~ handleColumnClick ~ e:', e);
 
-    if (column.Header === 'Trans No.') {
-      console.log(row?.original);
-      setData(row?.original);
-      setTrans_no(row?.original?.trans_no);
+    console.log(columnIndex);
+    if (columnIndex === 4) {
+      setData(record);
+      setTrans_no(record?.trans_no);
       setIsTablethreeOpen(true);
     }
-    if (column.Header === 'Fullname') {
-      setData(row?.original);
-      setUsername(row?.original?.user_id);
+    if (columnIndex === 'Fullname') {
+      setData(record);
+      setTrans_no(record?.trans_no);
       setIsTable2Open(true);
     }
-
-    // Do something when the column is clicked
   };
 
   const handleColumnClick2 = (row) => {
@@ -154,7 +151,6 @@ const BetListSearch = () => {
       }
 
       return {
-        index: index + 1,
         bet_type: data?.bet_type?.bet_type,
         bet_num: betNum,
         bet_amt: data?.bet_amt,
@@ -182,6 +178,7 @@ const BetListSearch = () => {
       setDataTabble(processedData);
     }
   }, [callbackfilterRes]);
+
   return (
     <div className='betlistcontainer'>
       <div>
@@ -222,7 +219,7 @@ const BetListSearch = () => {
           params={params}
         />
 
-        <Table
+        <AntTable
           dataTable={dataTable}
           columns={columns}
           onNext={onNext}
@@ -233,6 +230,7 @@ const BetListSearch = () => {
           handleColumnClick={handleColumnClick}
           errorResponse={errorResponse}
           totalCountTable={totalCountTable}
+          scroll={{ x: 700, y: 400 }}
         />
       </div>
     </div>

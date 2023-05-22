@@ -1,19 +1,15 @@
-/* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react';
-import { Form, Button, Input, Select } from 'antd';
+import { Form, Button, Input, Select, Table } from 'antd';
 import { MdArrowBackIos } from 'react-icons/md';
 import Moment from 'moment';
 import './NewBet.scss';
 import { useNavigate } from 'react-router-dom';
-import Table from '../../components/Table/Table';
+
 import { createBet, getBetType, openNotification } from '../../api/request';
-import GlassLayout from '../../components/Layout/GlassLayout';
-import io from 'socket.io-client';
+
 import userContext from '../../context/userContext';
 
 const NewBets = () => {
-  const token = localStorage.getItem('socketToken');
-
   const { socket } = useContext(userContext);
   const date = new Date();
   const nav = useNavigate();
@@ -23,6 +19,7 @@ const NewBets = () => {
   const [dataTable, setDataTabble] = useState([]);
   const [betTypeOptions, setBetTypeOptions] = useState([]);
   // const [winAmount, setWinAmount] = useState();
+  // eslint-disable-next-line no-unused-vars
   const [remainingBetAmount, setRemainingBetAmount] = useState();
   const [isBetLimit, setIsBetLimit] = useState(false);
 
@@ -41,36 +38,37 @@ const NewBets = () => {
   const [limitbet, setLimitBet] = useState([]);
   const [isPlacebet, setIsplacebet] = useState(false);
 
-  const [form] = Form.useForm();
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Type',
-        accessor: 'bet_type',
+        title: 'Bet',
+        dataIndex: 'bet_num',
+        fixed: 'left',
       },
       {
-        Header: 'Number',
-        accessor: 'bet_num', // accessor is the "key" in the data
-      },
-      {
-        Header: 'Amount',
-        accessor: 'bet_amt',
-      },
-      {
-        Header: 'Win Amt',
-        accessor: 'win_amt', // accessor is the "key" in the data
+        title: 'Type',
+        dataIndex: 'bet_type',
       },
 
       {
-        Header: 'Action',
-        accessor: 'action',
+        title: 'Amt',
+        dataIndex: 'bet_amt',
+        width: 70,
+      },
+      {
+        title: 'Win Amt',
+        dataIndex: 'win_amt',
+      },
+
+      {
+        title: 'Action',
+        dataIndex: 'action',
       },
     ],
     [],
   );
   const submitHandler = () => {
     const { bet_number, bet_type } = formData;
-    let new_bet_number = parseInt(bet_number);
 
     let betNum;
 
@@ -130,8 +128,9 @@ const NewBets = () => {
   };
 
   const newDatable = React.useMemo(() => {
-    const reconstructedList = dataTable.map((item) => {
+    const reconstructedList = dataTable.map((item, index) => {
       return {
+        no: index + 1,
         bet_amt: item.bet_amt,
         bet_num: item.bet_num,
         win_amt: item.win_amt,
@@ -301,9 +300,9 @@ const NewBets = () => {
 
     setDataTabble(updatedDataTable);
   }, [limitbet]);
-
+  console.log(newDatable);
   return (
-    <GlassLayout>
+    <div className='newbetcontainer'>
       <div
         style={{ textAlign: 'left', marginLeft: '1rem' }}
         onClick={() => nav('/dashboard')}
@@ -311,7 +310,7 @@ const NewBets = () => {
         <MdArrowBackIos size={25} />
       </div>
       <div className='newBet'>
-        <h1 className='text-center'>New Bet</h1>
+        <h1 className='text-center title'>New Bet</h1>
         <div className='mt-5'>
           <h6>{formatDate}</h6>
           <h6>{timeFormat}</h6>
@@ -403,9 +402,16 @@ const NewBets = () => {
               SUBMIT
             </Button>
           </Form>
-
-          <div style={{ height: '200px', overflowY: 'scroll' }}>
-            <Table dataTable={newDatable} columns={columns} />
+          <div
+            className='mt-3'
+            style={{ height: '200px', overflowY: 'scroll' }}
+          >
+            <Table
+              dataSource={newDatable.data}
+              columns={columns}
+              scroll={{ x: 450, y: 400 }}
+              pagination={false}
+            />
           </div>
         </div>
         <div className='mt-5 w-100 container'>
@@ -418,7 +424,7 @@ const NewBets = () => {
           </Button>
         </div>
       </div>
-    </GlassLayout>
+    </div>
   );
 };
 

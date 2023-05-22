@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Table from '../Table/Table';
+
 import { Button, Modal } from 'antd';
 
 import usePagination from '../../hooks/usePagination';
 import './TableThreeModal.scss';
+import AntTable from '../Table/AntTable';
 function TableThreeModal({
   isTablethreeOpen,
   setIsTablethreeOpen,
@@ -22,27 +23,34 @@ function TableThreeModal({
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Bet Number',
-        accessor: 'bet_num', // accessor is the "key" in the data
+        title: 'Bet No',
+        dataIndex: 'bet_num',
+        fixed: 'left',
       },
       {
-        Header: 'Bet Amount',
-        accessor: 'bet_amt', // accessor is the "key" in the data
+        title: 'Bet Amt',
+        dataIndex: 'bet_amt',
       },
       {
-        Header: 'Win Amount',
-        accessor: 'win_amt', // accessor is the "key" in the data
+        title: 'Win Amt',
+        dataIndex: 'win_amt',
       },
       {
-        Header: 'Bet Type',
-        accessor: 'bet_type', // accessor is the "key" in the data
+        title: 'Bet Type',
+        dataIndex: 'bet_type',
       },
     ],
     [],
   );
   console.log(data);
-  const { isloading, onPrevious, onFirst, onLast, onNext, callbackresponse } =
-    usePagination(params, dataTable, actioncall, otherparams, dateparams);
+  const {
+    isloading,
+    onPrevious,
+    onFirst,
+    onLast,
+    onNext,
+    callbackresponse,
+  } = usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
   useEffect(() => {
     const { data, total } = callbackresponse;
@@ -79,16 +87,16 @@ function TableThreeModal({
     <Modal
       className='modal-container'
       width={1000}
-      title={`Transaction No: ${data?.trans_no}`}
+      title={
+        <div>
+          <div>Transaction No:</div>
+          <div>{data?.trans_no}</div>
+        </div>
+      }
       open={isTablethreeOpen}
       onCancel={onCancel}
       footer={[
-        <Button
-          size='middle'
-          key='submit'
-          type='primary'
-          onClick={handleOk}
-        >
+        <Button size='middle' key='submit' type='primary' onClick={handleOk}>
           OK
         </Button>,
       ]}
@@ -96,15 +104,18 @@ function TableThreeModal({
       {isloading ? (
         <p>loading</p>
       ) : (
-        <Table
-          dataTable={dataTable}
-          columns={columns}
-          onNext={onNext}
-          onPrevious={onPrevious}
-          onFirst={onFirst}
-          onLast={onLast}
-          totalCountTable={totalCountTable}
-        />
+        <div className='mt-3'>
+          <AntTable
+            dataTable={dataTable}
+            columns={columns}
+            onNext={onNext}
+            onPrevious={onPrevious}
+            onFirst={onFirst}
+            onLast={onLast}
+            totalCountTable={totalCountTable}
+            scroll={{ x: 450, y: 400 }}
+          />
+        </div>
       )}
     </Modal>
   );

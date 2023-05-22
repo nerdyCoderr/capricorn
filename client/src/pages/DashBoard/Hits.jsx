@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './BetList.scss';
-import Table from '../../components/Table/Table';
+
 import { getBetList, getBetListUser } from '../../api/request';
 
 import usePagination from '../../hooks/usePagination';
@@ -14,6 +14,7 @@ import TabletwoModal from '../../components/BetList/TabletwoModal';
 import useFilter from '../../hooks/useFilter';
 import moment from 'moment';
 import Filter from '../../components/Filter/Filter';
+import AntTable from '../../components/Table/AntTable';
 
 const Hits = () => {
   dayjs.extend(customParseFormat);
@@ -34,40 +35,30 @@ const Hits = () => {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'No',
-        accessor: 'index', // accessor is the "key" in the data
-        width: 30,
+        title: 'Trans No.',
+        dataIndex: 'trans_no',
+        fixed: 'left',
       },
       {
-        Header: 'Bet Type',
-        accessor: 'bet_type',
-        width: 40,
+        title: 'Bet Type',
+        dataIndex: 'bet_type',
       },
       {
-        Header: 'Bet Number',
-        accessor: 'bet_num',
-        width: 40,
+        title: 'Bet Number',
+        dataIndex: 'bet_num',
       },
       {
-        Header: 'Bet Amount',
-        accessor: 'bet_amt',
-        width: 40,
+        title: 'Bet Amt',
+        dataIndex: 'bet_amt',
       },
 
       {
-        Header: 'Transaction No.',
-        accessor: 'trans_no',
-        width: 40,
+        title: 'Fullname',
+        dataIndex: 'fullname',
       },
       {
-        Header: 'Fullname',
-        accessor: 'fullname',
-        width: 40,
-      },
-      {
-        Header: 'Date Created',
-        accessor: 'date',
-        width: 80,
+        title: 'Date Created',
+        dataIndex: 'date',
       },
     ],
     [],
@@ -221,7 +212,7 @@ const Hits = () => {
           params={params}
         />
 
-        <Table
+        <AntTable
           dataTable={dataTable}
           columns={columns}
           onNext={onNext}
@@ -232,6 +223,7 @@ const Hits = () => {
           handleColumnClick={handleColumnClick}
           errorResponse={errorResponse}
           totalCountTable={totalCountTable}
+          scroll={{ x: 700, y: 400 }}
         />
       </div>
     </div>

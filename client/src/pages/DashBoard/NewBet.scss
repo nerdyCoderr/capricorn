@@ -1,4 +1,13 @@
 @import '../../index.scss';
+
+.newbetcontainer {
+  background-color: #008080;
+  height: 100%;
+  min-height: 100vh;
+
+  color: #d0efb1;
+  padding: 1rem;
+}
 .newBet {
   .ant-form-item-required::before {
     display: none !important;
@@ -25,16 +34,13 @@
   h1 {
     text-shadow: 1px 1px 2px #000000;
   }
-  h6 {
-    color: $fontColorPrimary;
-    font-weight: 500;
-  }
+
   .betForm {
     width: 15rem;
     margin: auto;
 
     label {
-      color: $fontColorPrimary;
+      color: $fontColorSecondary;
       font-weight: 500;
       font-size: 1rem;
     }

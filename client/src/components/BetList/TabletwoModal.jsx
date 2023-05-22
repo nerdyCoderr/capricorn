@@ -1,7 +1,7 @@
 import { Button, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
-import Table from '../Table/Table';
 import usePagination from '../../hooks/usePagination';
+import AntTable from '../Table/AntTable';
 
 const TabletwoModal = ({
   isTable2Open,
@@ -18,16 +18,16 @@ const TabletwoModal = ({
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Transaction No.',
-        accessor: 'trans_no', // accessor is the "key" in the data
+        title: 'Trans No.',
+        dataIndex: 'trans_no',
       },
       {
-        Header: 'Total Bet Amount',
-        accessor: 'total_bet_amt', // accessor is the "key" in the data
+        title: 'Bet Amount',
+        dataIndex: 'total_bet_amt', // dataIndex is the "key" in the data
       },
       {
-        Header: 'Action',
-        accessor: 'action',
+        title: 'Action',
+        dataIndex: 'action',
       },
     ],
     [],
@@ -79,19 +79,16 @@ const TabletwoModal = ({
       open={isTable2Open}
       onOk={handleOk}
       onCancel={handleCancel}
+      title={
+        <div>
+          <div>USERNAME:</div>
+          <div className='firstletter'>{data?.username}</div>
+          <div>FULLNAME:</div>
+          <div className='firstletter'>{data?.full_name}</div>
+        </div>
+      }
     >
-      <div className='container'>
-        <h5 className='text-left'>
-          USERNAME: <span className='firstletter'>{data?.username}</span>
-        </h5>
-        <h5>
-          FULLNAME:{' '}
-          <span className='firstletter'>
-            {data?.first_name} {data?.last_name}
-          </span>
-        </h5>
-      </div>
-      <Table
+      <AntTable
         dataTable={dataTable}
         columns={columns}
         onNext={onNext}
@@ -100,6 +97,7 @@ const TabletwoModal = ({
         onLast={onLast}
         handleColumnClick={handleColumnClick}
         totalCountTable={totalCountTable}
+        scroll={{ x: 300, y: 300 }}
       />
     </Modal>
   );

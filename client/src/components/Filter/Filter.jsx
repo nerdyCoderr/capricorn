@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import moment from 'moment';
 import './filter.scss';
-function Filter({
+const Filter = ({
   setFilter,
   filterHandler,
   onBatchChange,
@@ -15,7 +15,7 @@ function Filter({
   filter,
   filterType,
   params,
-}) {
+}) => {
   dayjs.extend(customParseFormat);
   const dateFormat = 'YYYY-MM-DD';
 
@@ -46,7 +46,6 @@ function Filter({
       </div>
       {isFilter && (
         <>
-          {' '}
           <div className='filter-container shadow-lg'>
             <div className='filter-fields'>
               <p>From</p>
@@ -185,6 +184,6 @@ function Filter({
       )}
     </>
   );
-}
+};
 
 export default Filter;

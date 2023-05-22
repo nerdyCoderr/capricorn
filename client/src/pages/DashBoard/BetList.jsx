@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import './BetList.scss';
-import Table from '../../components/Table/Table';
+// import Table from '../../components/Table/Table';
 import { getBetList } from '../../api/request';
 import { BsEyeFill } from 'react-icons/bs';
 import TableThreeModal from '../../components/BetList/TableThreeModal';
-import { Space } from 'antd';
+import { Button, Space, Table } from 'antd';
 import usePagination from '../../hooks/usePagination';
 import TabletwoModal from '../../components/BetList/TabletwoModal';
 import dayjs from 'dayjs';
@@ -13,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import Filter from '../../components/Filter/Filter';
 import useFilter from '../../hooks/useFilter';
+import AntTable from '../../components/Table/AntTable';
 
 const BetList = () => {
   dayjs.extend(customParseFormat);
@@ -64,31 +66,32 @@ const BetList = () => {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'No.',
-        accessor: 'no',
-        width: 30,
+        title: 'Username',
+        dataIndex: 'username',
+        key: 'username',
+        fixed: 'left',
+        width: 100,
       },
       {
-        Header: 'Username',
-        accessor: 'username',
+        title: 'Bet Amt',
+        dataIndex: 'total_bet_amt',
+        key: 'total_bet_amt',
       },
       {
-        Header: 'Bet Amt',
-        accessor: 'total_bet_amt',
+        title: 'Win Amt',
+        dataIndex: 'actual_win_amt',
+        key: 'actual_win_amt',
       },
       {
-        Header: 'Win Amt',
-        accessor: 'actual_win_amt',
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
       },
       {
-        Header: 'Date',
-        accessor: 'date',
-        width: 40,
-      },
-      {
-        Header: '#',
-        accessor: 'action',
-        width: 40,
+        title: 'Action',
+        dataIndex: 'action',
+        key: 'action',
+        width: 100,
       },
     ],
     [],
@@ -105,11 +108,11 @@ const BetList = () => {
     setTrans_no(trans_no);
   };
 
-  const handleColumnClick = (row) => {
-    setData(row.original);
+  const handleColumnClick = (record, _) => {
+    setData(record);
   };
-  const handleColumnClick2 = (row) => {
-    setData2(row.original);
+  const handleColumnClick2 = (record, _) => {
+    setData2(record);
   };
   const onCancel3 = () => {
     setIsTable2Open(true);
@@ -132,19 +135,13 @@ const BetList = () => {
     });
 
     const reconstructedList = data?.map((item, index) => ({
-      no: index + 1,
       date: moment(item?.latest_transaction).format(dateFormat),
       full_name: item?.user?.first_name + ' ' + item?.user?.last_name,
       total_bet_amt: item?.total_amount,
       username: item?.user?.username,
       actual_win_amt: item?.actual_win_amount,
       action: (
-        <div className='text-center bg-primary text-white rounded px-2 py-1'>
-          <BsEyeFill
-            onClick={() => actionHandler(item?.user?._id)}
-            color='white'
-          />
-        </div>
+        <Button onClick={() => actionHandler(item?.user?._id)}>View</Button>
       ),
     }));
 
@@ -161,6 +158,8 @@ const BetList = () => {
       setDataTabble(processedData);
     }
   }, [callbackfilterRes]);
+
+  console.log(dataTable);
 
   return (
     <div className='betlistcontainer'>
@@ -208,32 +207,31 @@ const BetList = () => {
             <h5>
               {(amountForm?.grandTotalAmount -
                 amountForm.grandActualWinAmount) |
-                0}
+                '- -'}
             </h5>
-          </div>{' '}
+          </div>
           <div>
             <p>Bet Amount</p>
-            <h5>{amountForm?.grandTotalAmount}</h5>
+            <h5>{amountForm?.grandTotalAmount | '- -'}</h5>
           </div>
           <div>
             <p> Win Amount</p>
-            <h5>{amountForm?.grandActualWinAmount}</h5>
+            <h5>{amountForm?.grandActualWinAmount | '- -'}</h5>
           </div>
         </Space>
-        <div style={{ height: '200px', overflowY: 'scroll' }}>
-          <Table
-            dataTable={dataTable}
-            columns={columns}
-            onNext={onNext}
-            onPrevious={onPrevious}
-            onFirst={onFirst}
-            onLast={onLast}
-            isloading={isloading}
-            handleColumnClick={handleColumnClick}
-            errorResponse={errorResponse}
-            totalCountTable={totalCountTable}
-          />
-        </div>
+        <AntTable
+          dataTable={dataTable}
+          columns={columns}
+          onNext={onNext}
+          onPrevious={onPrevious}
+          onFirst={onFirst}
+          onLast={onLast}
+          isloading={isloading}
+          handleColumnClick={handleColumnClick}
+          errorResponse={errorResponse}
+          totalCountTable={totalCountTable}
+          scroll={{ x: 500, y: 400 }}
+        />
       </div>
     </div>
   );

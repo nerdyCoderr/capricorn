@@ -1,0 +1,38 @@
+.ant-table-container {
+  overflow-x: auto;
+  max-height: 500px; /* Adjust the max-height as needed */
+  .ant-table-tbody {
+    background: white;
+  }
+
+  // .ant-table-thead > tr > th {
+  //   position: sticky;
+  //   top: 0;
+  //   background-color: #f0f0f0; /* Customize the background color if desired */
+  //   z-index: 1;
+  // }
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+// @media (max-width: 576px) {
+//   .table-container .ant-table {
+//     background: white;
+//     overflow-x: scroll;
+//     display: block;
+//   }
+
+//   .table-container .ant-table > .ant-table-container {
+//     display: block;
+//     width: 100%;
+//   }
+
+//   .table-container .ant-table-thead > tr > th,
+//   .table-container .ant-table-tbody > tr > td {
+//     display: block;
+//     width: 100%;
+//     text-align: left;
+//   }
+// }

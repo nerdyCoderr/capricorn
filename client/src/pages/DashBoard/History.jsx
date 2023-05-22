@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Table from '../../components/Table/Table';
+
 import './History.scss';
 import { getBetListUser } from '../../api/request';
 import dayjs from 'dayjs';
@@ -11,6 +11,7 @@ import moment from 'moment';
 import TableThreeModal from '../../components/BetList/TableThreeModal';
 import useFilter from '../../hooks/useFilter';
 import Filter from '../../components/Filter/Filter';
+import AntTable from '../../components/Table/AntTable';
 const History = () => {
   dayjs.extend(customParseFormat);
   const nav = useNavigate();
@@ -23,16 +24,17 @@ const History = () => {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Transaction No.',
-        accessor: 'trans_no', // accessor is the "key" in the data
+        title: 'Trans No.',
+        dataIndex: 'trans_no',
+        fixed: 'left',
       },
       {
-        Header: 'Total Bet Amount',
-        accessor: 'total_bet_amt', // accessor is the "key" in the data
+        title: 'Total Bet Amount',
+        dataIndex: 'total_amount',
       },
       {
-        Header: 'Action',
-        accessor: 'action',
+        title: 'Action',
+        dataIndex: 'action',
       },
     ],
     [],
@@ -83,10 +85,10 @@ const History = () => {
   const processResponseData = (response) => {
     const { data, total } = response;
     setTotalCountTable(total);
-
+    console.log(data);
     const reconstructedList = data?.map((data) => {
       return {
-        total_bet_amt: data?.total_amount,
+        total_amount: data?.total_amount,
         trans_no: data?.trans_no,
         action: (
           <div className='text-center'>
@@ -104,12 +106,12 @@ const History = () => {
 
   useEffect(() => {
     if (callbackfilterRes) {
+      console.log(callbackfilterRes);
       const processedData = processResponseData(callbackfilterRes);
       setDataTabble(processResponseData(processedData));
     }
   }, [callbackfilterRes]);
 
-  useEffect(() => {}, [callbackfilterRes]);
   return (
     <div className='historycontainer '>
       <h6 onClick={() => nav('/dashboard')}>Back</h6>
@@ -135,7 +137,7 @@ const History = () => {
           onCancel={onCancel3}
         />
       )}
-      <Table
+      <AntTable
         dataTable={dataTable}
         columns={columns}
         onNext={onNext}
@@ -146,6 +148,7 @@ const History = () => {
         handleColumnClick={handleColumnClick}
         errorResponse={errorResponse}
         totalCountTable={totalCountTable}
+        scroll={{ x: 500, y: 300 }}
       />
     </div>
   );
