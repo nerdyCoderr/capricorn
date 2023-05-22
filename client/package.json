@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:cloud": "env-cmd -f .env.cloud vite",
+    "dev": "vite --host",
+    "dev:cloud": "env-cmd -f .env.cloud vite --host",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host",
     "lint": "eslint src/**/*.js",
     "lint-fix": "eslint src/**/*.js --fix"
   },
