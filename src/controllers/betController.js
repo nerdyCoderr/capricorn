@@ -489,10 +489,10 @@ exports.getAdminBets = async (req, res) => {
       }
     } else if (role === "admin") {
       let user;
-      if (req.query.username) {
+      if (req.query.username !== "") {
         user = await User.findOne({ username: req.query.username });
         user_id = user._id;
-      } else {
+      } else if (req.query.user_id) {
         user_id = req.query.user_id
           ? new mongoose.Types.ObjectId(req.query.user_id)
           : null;
