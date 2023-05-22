@@ -66,27 +66,9 @@ function Filter({
                 format={dateFormat}
               />
             </div>
+
             {filterType === 'bet_list' && (
               <>
-                <div className='filter-fields'>
-                  <p>Batch Type</p>
-                  <Select
-                    value={filter.batch_id}
-                    onChange={onBatchChange}
-                    allowClear
-                    style={{ width: '130px' }}
-                  >
-                    <Select.Option key={1} value={1}>
-                      6:00 am - 2:10 pm
-                    </Select.Option>
-                    <Select.Option key={2} value={2}>
-                      2:10 pm - 4:45 pm
-                    </Select.Option>
-                    <Select.Option key={3} value={3}>
-                      5:10 pm - 8:45 pm
-                    </Select.Option>
-                  </Select>
-                </div>
                 <div className='filter-fields'>
                   <p>Bet type</p>
                   <Select
@@ -131,17 +113,39 @@ function Filter({
               </>
             )}
             {(filterType === 'bet_list') | (filterType === 'trans_list') && (
-              <div className='filter-fields'>
-                <p>Username</p>
-                <Input
-                  value={filter?.username}
-                  onChange={(e) => {
-                    setFilter((prev) => {
-                      return { ...prev, username: e.target.value };
-                    });
-                  }}
-                />
-              </div>
+              <>
+                {' '}
+                <div className='filter-fields'>
+                  <p>Batch Type</p>
+                  <Select
+                    value={filter.batch_id}
+                    onChange={onBatchChange}
+                    allowClear
+                    style={{ width: '130px' }}
+                  >
+                    <Select.Option key={1} value={1}>
+                      6:00 am - 2:10 pm
+                    </Select.Option>
+                    <Select.Option key={2} value={2}>
+                      2:10 pm - 4:45 pm
+                    </Select.Option>
+                    <Select.Option key={3} value={3}>
+                      5:10 pm - 8:45 pm
+                    </Select.Option>
+                  </Select>
+                </div>
+                <div className='filter-fields'>
+                  <p>Username</p>
+                  <Input
+                    value={filter?.username}
+                    onChange={(e) => {
+                      setFilter((prev) => {
+                        return { ...prev, username: e.target.value };
+                      });
+                    }}
+                  />
+                </div>
+              </>
             )}
             {params === '4' && (
               <div className='filter-fields'>

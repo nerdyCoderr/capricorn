@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const useFilter = (params, currentDate, actioncall) => {
   const [filter, setFilter] = useState({
@@ -78,13 +78,6 @@ const useFilter = (params, currentDate, actioncall) => {
       username: '',
     });
   };
-
-  useEffect(() => {
-    console.log('check');
-    setFilter((prev) => {
-      return { ...prev, from: currentDate, to: currentDate };
-    });
-  }, [filter.batch_id]);
 
   return {
     setFilter,
