@@ -489,7 +489,6 @@ exports.getAdminBets = async (req, res) => {
       }
     } else if (role === "admin") {
       let user;
-      console.log(req.query.username);
       if (req.query.username) {
         user = await User.findOne({ username: req.query.username });
         user_id = user._id;
