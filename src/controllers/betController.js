@@ -489,7 +489,8 @@ exports.getAdminBets = async (req, res) => {
       }
     } else if (role === "admin") {
       let user;
-      if (req.query.username !== "") {
+      console.log(req.query.username);
+      if (req.query.username) {
         user = await User.findOne({ username: req.query.username });
         user_id = user._id;
       } else if (req.query.user_id) {
@@ -564,7 +565,7 @@ exports.getAdminBets = async (req, res) => {
         bet_query.transaction = trans_no?._id;
       }
 
-      if (user_id !== "") {
+      if (user_id) {
         bet_query.user = new mongoose.Types.ObjectId(user_id);
       }
 
