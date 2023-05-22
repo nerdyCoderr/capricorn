@@ -30,6 +30,7 @@ const usePagination = (
       bet_type: searchParams.get('bet_type'),
       bet_num: searchParams.get('bet_num'),
       batch_id: searchParams.get('batch_id'),
+      username: searchParams.get('username'),
     };
 
     const newParams = `${params}?page=${queryParams.page}${
@@ -40,6 +41,8 @@ const usePagination = (
       queryParams.bet_result ? `&bet_result=${queryParams.bet_result}` : ''
     }${queryParams.trans_no ? `&trans_no=${queryParams.trans_no}` : ''}${
       queryParams.batch_id ? `&batch_id=${queryParams.batch_id}` : ''
+    }${
+      queryParams.username ? `&username=${queryParams.username}` : ''
     }${additionalParams}`;
 
     setIsloading(true);

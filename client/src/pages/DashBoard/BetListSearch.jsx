@@ -39,23 +39,23 @@ const BetListSearch = () => {
         width: 30,
       },
       {
-        Header: 'Bet Type',
+        Header: 'Type',
         accessor: 'bet_type',
         width: 40,
       },
       {
-        Header: 'Bet Number',
+        Header: 'Number',
         accessor: 'bet_num',
         width: 40,
       },
       {
-        Header: 'Bet Amount',
+        Header: 'Amount',
         accessor: 'bet_amt',
         width: 40,
       },
 
       {
-        Header: 'Transaction No.',
+        Header: 'Trans No.',
         accessor: 'trans_no',
         width: 40,
       },
@@ -91,7 +91,7 @@ const BetListSearch = () => {
     console.log(column);
     console.log(row);
 
-    if (column.Header === 'Transaction No.') {
+    if (column.Header === 'Trans No.') {
       console.log(row?.original);
       setData(row?.original);
       setTrans_no(row?.original?.trans_no);
@@ -209,7 +209,7 @@ const BetListSearch = () => {
           />
         )}
         <h6 onClick={() => nav('/dashboard')}>Back</h6>
-        <h1 className='text-center'>Bet List</h1>
+        <h1 className='text-center title'>Bet List</h1>
         <Filter
           filterType={filterType}
           setFilter={setFilter}

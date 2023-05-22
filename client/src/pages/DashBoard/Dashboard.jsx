@@ -50,7 +50,6 @@ const Dashboard = () => {
   return (
     <GlassLayout>
       <div className='dashboard'>
-        {' '}
         <div className='dashboard-header'>
           <div className='img-fluid logo'>
             <img
@@ -79,10 +78,7 @@ const Dashboard = () => {
           )}
           {data.role === 'user' && (
             <>
-              <Card
-                className='p-2'
-                onClick={() => navigate('/new-bet')}
-              >
+              <Card className='p-2' onClick={() => navigate('/new-bet')}>
                 <div className='text-center'>
                   <BsFillPencilFill size={40} />
                 </div>
@@ -92,10 +88,7 @@ const Dashboard = () => {
                   </Card.Title>
                 </Card.Body>
               </Card>
-              <Card
-                className='p-2'
-                onClick={() => navigate('/history')}
-              >
+              <Card className='p-2' onClick={() => navigate('/history')}>
                 <div className='text-center'>
                   <FaHistory size={40} />
                 </div>
@@ -105,10 +98,7 @@ const Dashboard = () => {
                   </Card.Title>
                 </Card.Body>
               </Card>
-              <Card
-                className='p-2'
-                onClick={() => navigate('/hits')}
-              >
+              <Card className='p-2' onClick={() => navigate('/hits')}>
                 <div className='text-center'>
                   <BsFillJournalBookmarkFill size={40} />
                 </div>
@@ -135,10 +125,7 @@ const Dashboard = () => {
                   </Card.Title>
                 </Card.Body>
               </Card>
-              <Card
-                className='p-2'
-                onClick={() => navigate('/bet-list')}
-              >
+              <Card className='p-2' onClick={() => navigate('/bet-list')}>
                 <div className='text-center'>
                   <RiContactsBookUploadFill size={40} />
                 </div>
@@ -173,10 +160,7 @@ const Dashboard = () => {
               </Card.Title>
             </Card.Body>
           </Card>
-          <Card
-            className='p-2'
-            onClick={logout}
-          >
+          <Card className='p-2' onClick={logout}>
             <div className='text-center'>
               <GiPowerButton size={40} />
             </div>
@@ -189,7 +173,7 @@ const Dashboard = () => {
         </div>
         {data.role === 'admin' && (
           <div className='row mx-2 dashboard-total-overview'>
-            <div className='col-6 col-lg-4 mt-1'>
+            <div className='col-6 col-lg-4 col-md-4 mt-1'>
               <Card className='p-2'>
                 <Card.Body>
                   <Card.Title>
@@ -199,7 +183,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </div>
-            <div className='col-6 col-lg-4 mt-1'>
+            <div className='col-6 col-lg-4 col-md-4 mt-1'>
               <Card className='p-2'>
                 <Card.Body>
                   <Card.Title>
@@ -209,7 +193,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </div>
-            <div className='col-6 col-lg-4 mt-1'>
+            <div className='col-6 col-lg-4 col-md-4 mt-1'>
               <Card className='p-2'>
                 <Card.Body>
                   <h4>Profit</h4>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { getBetList } from '../api/request';
 
 const useFilter = (params, currentDate, actioncall) => {
   const [filter, setFilter] = useState({
@@ -10,6 +9,7 @@ const useFilter = (params, currentDate, actioncall) => {
     bet_result: '',
     bet_type: '',
     bet_num: '',
+    username: '',
     win_result_switch: false,
   });
   const [callbackfilterRes, setCallbackfilter] = useState();
@@ -45,6 +45,7 @@ const useFilter = (params, currentDate, actioncall) => {
       from,
       to,
       bet_result: betResult,
+      username: username,
     } = filter;
 
     const queryParams = {
@@ -55,6 +56,7 @@ const useFilter = (params, currentDate, actioncall) => {
       from: from ? `&from=${from}` : '',
       to: to ? `&to=${to}` : '',
       betResult: betResult ? `&bet_result=${betResult}` : '',
+      username: username ? `&username=${username}` : '',
     };
 
     const query = Object.values(queryParams).join('');
@@ -73,6 +75,7 @@ const useFilter = (params, currentDate, actioncall) => {
       bet_result: '',
       bet_type: '',
       bet_num: '',
+      username: '',
     });
   };
 

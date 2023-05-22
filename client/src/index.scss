@@ -3,8 +3,18 @@
 * {
   font-family: 'Roboto', sans-serif;
 }
+
+* {
+  box-sizing: border-box;
+}
+#id {
+  height: 100vh;
+}
+
 body {
   background-color: #d0efb1;
+  height: 100vh;
+  margin: 0;
 }
 
 $backgroundColor: #50a3a2;

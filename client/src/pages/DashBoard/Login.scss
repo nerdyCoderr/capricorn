@@ -93,3 +93,21 @@ body {
     }
   }
 }
+
+@media (max-width: 425.98px) {
+  .login-container {
+    .login-header {
+      h6 {
+        font-size: 2.5rem !important;
+      }
+      .logo {
+        max-width: 10rem;
+      }
+    }
+
+    .login-form {
+      padding: 15px;
+      max-width: 18rem;
+    }
+  }
+}
