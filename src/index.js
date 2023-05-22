@@ -22,10 +22,37 @@ const {
   superWinNumRouter,
 } = require("./routes/betRoutes");
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// mongoose.connect(process.env.MONGODB_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+const uri =
+  process.env.DB_LOC === "local"
+    ? process.env.MONGODB_URI
+    : process.env.MONGODB_URI_CLOUD;
+
+async function run() {
+  try {
+    // Connect to MongoDB
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    // Check if the connection was successful
+    const db = mongoose.connection;
+    if (db.readyState === 1) {
+      console.log("Connected to MongoDB!");
+    } else {
+      console.log("Failed to connect to MongoDB.");
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+run();
 
 // initialize bet constraints watchlist
 const { initializeWatchlist } = require("./utils/watchlist");
