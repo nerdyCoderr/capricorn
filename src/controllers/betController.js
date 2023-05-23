@@ -455,6 +455,7 @@ exports.getAdminBets = async (req, res) => {
   // empty vars
   let transact_query = {};
   let user_query = {};
+  let admin_query = {};
   let bet_query = {};
   let bet_type_query = {};
   let query = {};
@@ -476,13 +477,29 @@ exports.getAdminBets = async (req, res) => {
   // user specific
   let user_id;
   let ref_code;
+  let admin_ref_code;
   let role = req.user.role;
 
   try {
     if (role === "super-admin") {
-      user_id = req.query.user_id
-        ? new mongoose.Types.ObjectId(req.query.user_id)
-        : null;
+      let user;
+      if (req.query.username) {
+        user = await User.findOne({ username: req.query.username });
+        user_id = user._id;
+      } else if (req.query.user_id) {
+        user_id = req.query.user_id
+          ? new mongoose.Types.ObjectId(req.query.user_id)
+          : null;
+      }
+
+      if (req.query.ref_code) {
+        ref_code = req.query.ref_code;
+      }
+
+      if (req.query.admin_username) {
+        user = await User.findOne({ username: req.query.admin_username });
+        admin_ref_code = user.ref_code;
+      }
 
       if (table < 0 && table > 4) {
         return res.status(400).json({ message: "Invalid table" });
@@ -513,7 +530,7 @@ exports.getAdminBets = async (req, res) => {
     }
 
     //filter, sort and validation
-    if (!table) {
+    if (table === undefined) {
       return res.status(400).json({ message: "No table provided" });
     }
 
@@ -528,18 +545,24 @@ exports.getAdminBets = async (req, res) => {
     endOfDay.setHours(23, 59, 59, 999);
     const createdAt = { $gte: startOfDay, $lte: endOfDay };
 
-    if (table === 0) {
-    } else if (table === 1) {
+    if (table === 1 || table === 0) {
       if (user_id) {
         transact_query.user = user_id;
       }
 
       if (ref_code) {
         user_query.ref_code = ref_code;
+      } else if (role === "super-admin" && !ref_code && table === 1) {
+        return res.status(400).json({ message: "No ref_code provided" });
       }
 
       if (batch_id) {
         transact_query.batch_id = batch_id;
+      }
+
+      // for table 0
+      if (admin_ref_code) {
+        admin_query.ref_code = admin_ref_code;
       }
 
       transact_query.createdAt = createdAt;
@@ -591,7 +614,175 @@ exports.getAdminBets = async (req, res) => {
     }
 
     //transaction_queries
-    if (table === 1) {
+    if (table === 0) {
+      aggregateQuery = Transaction.aggregate([
+        // filter by createdAt, batch_id, admin ref_code
+        {
+          $match: transact_query,
+        },
+        {
+          $lookup: {
+            from: "users",
+            let: {
+              user_id: "$user",
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$_id", "$$user_id"],
+                  },
+                  ...admin_query,
+                },
+              },
+              {
+                $project: {
+                  password: 0,
+                },
+              },
+            ],
+            as: "user",
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $addFields: {
+            ref_code: "$user.ref_code",
+          },
+        },
+        //filter by ref_code of admin
+        // {
+        //   $match: {
+        //     ref_code: {
+        //       $ne: "840G6",
+        //     },
+        //   },
+        // },
+        {
+          $group: {
+            _id: "$ref_code",
+            transactions: {
+              $push: {
+                _id: "$_id",
+                trans_no: "$trans_no",
+                user: "$user",
+                total_amount: "$total_amount",
+                total_win_amount: "$total_win_amount",
+                actual_win_amount: "$actual_win_amount",
+                status: "$status",
+                createdAt: "$createdAt",
+                updatedAt: "$updatedAt",
+                batch_id: "$batch_id",
+                __v: "$__v",
+                ref_code: "$ref_code",
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            let: {
+              ref_code: "$_id",
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$ref_code", "$$ref_code"],
+                  },
+                  role: "admin",
+                },
+              },
+              {
+                $project: {
+                  password: 0,
+                },
+              },
+            ],
+            as: "admin",
+          },
+        },
+        {
+          $unwind: "$admin",
+        },
+        {
+          $addFields: {
+            total_amount: {
+              $sum: "$transactions.total_amount",
+            },
+            total_win_amount: {
+              $sum: "$transactions.total_win_amount",
+            },
+            actual_win_amount: {
+              $sum: "$transactions.actual_win_amount",
+            },
+            latest_transaction: {
+              $max: "$transactions.createdAt",
+            },
+          },
+        },
+        {
+          $sort: {
+            latest_transaction: -1,
+          },
+        },
+        {
+          $project: {
+            transactions: 0,
+          },
+        },
+        {
+          $facet: {
+            paginatedResults: [
+              {
+                $skip: page_limit * (page - 1),
+              },
+              {
+                $limit: page_limit,
+              },
+            ],
+            totalCount: [
+              {
+                $count: "count",
+              },
+            ],
+            grandTotalAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: {
+                    $sum: "$total_amount",
+                  },
+                },
+              },
+            ],
+            grandTotalWinAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: {
+                    $sum: "$total_win_amount",
+                  },
+                },
+              },
+            ],
+            grandActualWinAmount: [
+              {
+                $group: {
+                  _id: null,
+                  total: {
+                    $sum: "$actual_win_amount",
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ]);
+    } else if (table === 1) {
       aggregateQuery = Transaction.aggregate([
         // distinct by user
         // filter by transaction (createdAt, batch_id), by user (username, ref_code)
@@ -1062,7 +1253,7 @@ exports.createWinNumber = async (req, res) => {
   try {
     const { win_nums } = req.body;
     let winningNums = [];
-
+    let winNumber;
     if (!win_nums) {
       throw new Error("Win numbers not provided");
     }
@@ -1091,12 +1282,13 @@ exports.createWinNumber = async (req, res) => {
 
       const findWinNumber = await WinNumber.findOne(query).session(session);
 
+      query.createdAt = startOfDay;
       if (findWinNumber) {
-        throw new Error("Win number already exists");
+        winNumber = findWinNumber;
+      } else {
+        winNumber = await WinNumber.create([query], { session });
       }
 
-      query.createdAt = startOfDay;
-      const winNumber = await WinNumber.create([query], { session });
       console.log(
         "🚀 ~ file: betController.js:1076 ~ exports.createWinNumber= ~ winNumber:",
         winNumber
@@ -1170,5 +1362,113 @@ exports.createWinNumber = async (req, res) => {
       .json({ message: "Error creating win number", error: error.message });
   } finally {
     session.endSession();
+  }
+};
+
+exports.getWinNumber = async (req, res) => {
+  let query = {};
+  let aggregateQuery = {};
+  const page = parseInt(req.query.page) || 1;
+  const page_limit = parseInt(req.query.limit) || 10;
+  const from = req.query.from;
+  const to = req.query.to;
+  const batch_id = parseInt(req.query.batch_id);
+  const bet_type = req.query.bet_type;
+  const bet_num = parseInt(req.query.bet_num);
+
+  if (from && to) {
+    const startOfDay = new Date(from);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(to);
+    endOfDay.setHours(23, 59, 59, 999);
+    query.createdAt = { $gte: startOfDay, $lte: endOfDay };
+  }
+
+  if (batch_id) {
+    query.batch_id = batch_id;
+  }
+
+  if (bet_type) {
+    const betType = await BetType.findOne({ bet_type: bet_type });
+    query.bet_type = betType._id;
+  }
+
+  if (bet_num) {
+    query.bet_num = bet_num;
+  }
+
+  try {
+    aggregateQuery = WinNumber.aggregate([
+      {
+        $match: query,
+      },
+      {
+        $lookup: {
+          from: "bettypes",
+          let: {
+            bet_type_id: "$bet_type",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$_id", "$$bet_type_id"],
+                },
+              },
+            },
+          ],
+          as: "bet_type",
+        },
+      },
+      {
+        $unwind: "$bet_type",
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $facet: {
+          paginatedResults: [
+            {
+              $skip: page_limit * (page - 1),
+            },
+            {
+              $limit: page_limit,
+            },
+          ],
+          totalCount: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      },
+    ]);
+
+    const result = await aggregateQuery.exec();
+    const data = result[0].paginatedResults;
+    const total = result[0].totalCount[0]?.count || 0;
+
+    const totalPages = Math.ceil(total / page_limit);
+
+    // Generate pagination links
+    const baseUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+    const paginationLinks = generatePaginationLinks(baseUrl, page, totalPages);
+
+    res.status(200).json({
+      message: "Winning number/s fetched successfully",
+      total,
+      totalPages,
+      currentPage: page,
+      page_limit,
+      links: paginationLinks,
+      data,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      message: "Error getting Winning number/s",
+      error: error.message,
+    });
   }
 };

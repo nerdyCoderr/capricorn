@@ -206,15 +206,15 @@ exports.getAcctInfo = async (req, res) => {
     const user = await User.findById(req.user.id, { password: 0 }).exec();
 
     if (!user) {
-      return res.status(404).json({ message: "Admin not found" });
+      return res.status(404).json({ message: "Account not found" });
     }
 
-    res.status(200).json({ message: "Admin fetched successfully", user });
+    res.status(200).json({ message: "Account fetched successfully", user });
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ message: "Error fetching admin", error: error.message });
+      .json({ message: "Error fetching Account", error: error.message });
   }
 };
 

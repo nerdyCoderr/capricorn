@@ -49,7 +49,6 @@ exports.userSignup = async (req, res) => {
   const { username, password, first_name, last_name, phone_number, ref_code } =
     req.body;
 
-  let newUser;
   const existingUser = await User.findOne({ username });
   try {
     if (existingUser) {
@@ -58,13 +57,13 @@ exports.userSignup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const refCode = await User.findOne({ ref_code });
+    const refCode = await User.findOne({ ref_code, role: "admin" });
 
     if (!refCode) {
       return res.status(404).json({ message: "ref_code not found" });
     }
 
-    newUser = new User({
+    const newUser = new User({
       first_name,
       last_name,
       phone_number,

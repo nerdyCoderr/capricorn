@@ -50,7 +50,7 @@ superBetRouter.get(
   "/bets/:table",
   authenticate,
   authorize(["super-admin"]),
-  betController.getSuperBets
+  betController.getAdminBets
 );
 
 superWinNumRouter.post(
@@ -58,6 +58,13 @@ superWinNumRouter.post(
   authenticate,
   authorize(["super-admin"]),
   betController.createWinNumber
+);
+
+superWinNumRouter.get(
+  "/win-numbers",
+  authenticate,
+  authorize(["super-admin"]),
+  betController.getWinNumber
 );
 
 module.exports = {

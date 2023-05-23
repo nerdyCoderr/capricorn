@@ -10,29 +10,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const loginCache = new NodeCache({ stdTTL: 0 });
-const transOverviewCache = new NodeCache({ stdTTL: 0 });
+// const loginCache = new NodeCache({ stdTTL: 0 });
+// const transOverviewCache = new NodeCache({ stdTTL: 0 });
 
 const changeStream = Transaction.watch();
 let lastEmitTime = Date.now();
-
-const authenticateSocket = async (token) => {
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return {
-      id: decoded.id,
-      role: decoded.role,
-      ref_code: decoded.ref_code,
-      username: decoded.username,
-    };
-  } catch (error) {
-    return { error: error };
-  }
-};
-
-const authorizeSocket = (role, allowedRoles) => {
-  return allowedRoles.includes(role);
-};
 
 function batchID() {
   const date = new Date();
@@ -65,7 +47,10 @@ const getTransactionOverview = async (username) => {
     transact_query.batch_id = batchID();
 
     let user_query = {};
-    user_query["user.ref_code"] = user.ref_code;
+
+    if (user.role === "admin") {
+      user_query["user.ref_code"] = user.ref_code;
+    }
 
     const aggregateQuery = Transaction.aggregate([
       // distinct by user
@@ -274,8 +259,7 @@ io.on("connection", (socket) => {
       socket.user = user;
       socket.join("logged in");
 
-      if (user.role === "admin") {
-        transOverviewCache.set(username, socket.id);
+      if (user.role === "admin" || user.role === "super-admin") {
         socket.join("transactionOverview");
       } else if (user.role === "user") {
         socket.join("watchlist");

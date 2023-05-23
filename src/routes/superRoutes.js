@@ -7,38 +7,40 @@ const { authenticate, authorize } = require("../utils/authMiddleware");
 
 // Public routes
 router.post(
-  "/admin-signup",
+  "/accounts/admin-signup",
   authenticate,
   authorize(["super-admin"]),
   superController.adminSignup
 );
 
-router.delete(
-  "/:id",
-  authenticate,
-  authorize(["admin"]),
-  superController.deleteAdmin
-);
-
+// update user and admin account info
 router.put(
-  "/:id",
+  "/accounts/:username",
   authenticate,
-  authorize(["admin"]),
-  superController.updateAdmin
+  authorize(["super-admin"]),
+  superController.updateAccount
 );
 
 router.get(
   "/accounts",
   authenticate,
-  authorize(["admin"]),
+  authorize(["super-admin"]),
   superController.getUsers
 );
 
 router.get(
   "/",
   authenticate,
-  authorize(["admin"]),
+  authorize(["super-admin"]),
   adminController.getAcctInfo
+);
+
+// update own account info
+router.put(
+  "/",
+  authenticate,
+  authorize(["super-admin"]),
+  superController.updateOwnAccount
 );
 
 module.exports = router;

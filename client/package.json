@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
-    "dev:cloud": "env-cmd -f .env.cloud vite --host",
+    "dev": "vite --host 0.0.0.0",
+    "dev:cloud": "env-cmd -f .env.cloud vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host",
+    "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint src/**/*.js",
     "lint-fix": "eslint src/**/*.js --fix"
   },
@@ -36,12 +36,12 @@
     "env-cmd": "^10.1.0",
     "eslint": "^8.39.0",
     "eslint-plugin-react": "^7.32.2",
+    "http-proxy-middleware": "^2.0.6",
     "react-error-overlay": "^6.0.9",
     "vite": "^4.0.0"
   },
   "resolutions": {
     "//": "See https://github.com/facebook/create-react-app/issues/11773",
     "react-error-overlay": "6.0.9"
-  },
-  "proxy": "http://localhost:3000"
+  }
 }
