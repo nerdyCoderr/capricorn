@@ -1,12 +1,13 @@
 import React from 'react';
 import './CreateUserAccountByAdmin.scss';
-import { useNavigate } from 'react-router-dom';
+
 import RegistrationForm from '../../components/registration/RegistrationForm';
 import { registerUserAccountbyAdmin } from '../../api/request';
 import { Form } from 'antd';
+import BackButton from '../../components/Layout/BackButton';
 
 const CreateUserAccountByAdmin = () => {
-  const nav = useNavigate();
+  const title = 'Create User Account';
   const [formfields] = Form.useForm(); // create a form instance
 
   const submitHandler = (values) => {
@@ -20,9 +21,6 @@ const CreateUserAccountByAdmin = () => {
     };
     console.log(form);
     registerUserAccountbyAdmin(form, callback);
-
-    // registerUserAccount(form, callback);
-    // };
   };
 
   const callback = async (res) => {
@@ -36,8 +34,7 @@ const CreateUserAccountByAdmin = () => {
   };
   return (
     <div className='createuseraccount-container'>
-      <h6 onClick={() => nav('/dashboard')}>Back</h6>
-      <h1 className='text-center'>Create User Account</h1>
+      <BackButton title={title} />
 
       <RegistrationForm
         formfields={formfields}

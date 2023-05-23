@@ -5,3 +5,22 @@
   color: #d0efb1;
   padding: 1rem;
 }
+
+@media (max-width: 425.98px) {
+  .createuseraccount-container {
+    .registration-form-container
+      :where(.css-dev-only-do-not-override-1mqg3i0).ant-form-vertical
+      .ant-form-item-label
+      > label,
+    .registration-form-container
+      :where(.css-dev-only-do-not-override-1mqg3i0).ant-col-24.ant-form-item-label
+      > label,
+    .registration-form-container
+      :where(.css-dev-only-do-not-override-1mqg3i0).ant-col-xl-24.ant-form-item-label
+      > label {
+      margin: 0;
+      color: #6a5d7b;
+      font-size: 16px;
+    }
+  }
+}

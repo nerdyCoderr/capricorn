@@ -1,31 +1,28 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Form, Button, Input, Select, Table } from 'antd';
-import { MdArrowBackIos } from 'react-icons/md';
+
 import Moment from 'moment';
 import './NewBet.scss';
-import { useNavigate } from 'react-router-dom';
 
 import { createBet, getBetType, openNotification } from '../../api/request';
 
 import userContext from '../../context/userContext';
+import BackButton from '../../components/Layout/BackButton';
 
 const NewBets = () => {
   const { socket } = useContext(userContext);
   const date = new Date();
-  const nav = useNavigate();
+  const title = 'New Bet';
+
   const formatDate = Moment(date).format('MMMM Do YYYY');
   const timeFormat = Moment(date).format('LTS');
 
   const [dataTable, setDataTabble] = useState([]);
   const [betTypeOptions, setBetTypeOptions] = useState([]);
-  // const [winAmount, setWinAmount] = useState();
   // eslint-disable-next-line no-unused-vars
   const [remainingBetAmount, setRemainingBetAmount] = useState();
   const [isBetLimit, setIsBetLimit] = useState(false);
 
-  //------------
-  // const [betAmount, setBetAmount] = useState(0);
-  // const [betNumber, setBetNumber] = useState();
   const [formData, setFormData] = useState({
     bet_number: '',
     bet_type: '',
@@ -97,14 +94,6 @@ const NewBets = () => {
           test[x].bet_num === newdata.bet_num &&
           test[x].bet_type === newdata.bet_type
         ) {
-          // if (
-          //   parseInt(test[x].bet_amt) + parseInt(newdata.bet_amt) >
-          //   remainingBetAmount
-          // )
-          //   test[x].bet_amt =
-          //     parseInt(test[x].bet_amt) + parseInt(newdata.bet_amt);
-          // test[x].win_amt =
-          //   parseInt(test[x].bet_amt) * parseInt(formData.win_amt);
           test[x].bet_amt = parseInt(newdata.bet_amt);
           test[x].win_amt =
             parseInt(newdata.bet_amt) * parseInt(formData.win_amt);
@@ -221,10 +210,7 @@ const NewBets = () => {
 
     const betTypeAndNumber = `${bet_type}:${bet_number}`;
     let remainingBetAmountcheck = limitbet[betTypeAndNumber]?.remaining_const;
-    console.log(
-      '🚀 ~ file: NewBet.jsx:241 ~ checklimit ~ remainingBetAmountcheck:',
-      remainingBetAmountcheck,
-    );
+
     const betAmount = bet_amount || 1;
 
     if (!remainingBetAmountcheck) {
@@ -233,14 +219,6 @@ const NewBets = () => {
       )?.amt_const;
     }
     setIsBetLimit(remainingBetAmountcheck < betAmount);
-    console.log(
-      '🚀 ~ file: NewBet.jsx:230 ~ checklimit ~ betAmount:',
-      betAmount,
-    );
-    console.log(
-      '🚀 ~ file: NewBet.jsx:230 ~ checklimit ~ remainingBetAmountcheck:',
-      remainingBetAmountcheck,
-    );
 
     setRemainingBetAmount(
       remainingBetAmountcheck <= betAmount
@@ -302,127 +280,109 @@ const NewBets = () => {
   }, [limitbet]);
   console.log(newDatable);
   return (
-    <div className='newbetcontainer'>
-      <div
-        style={{ textAlign: 'left', marginLeft: '1rem' }}
-        onClick={() => nav('/dashboard')}
-      >
-        <MdArrowBackIos size={25} />
-      </div>
-      <div className='newBet'>
-        <h1 className='text-center title'>New Bet</h1>
-        <div className='mt-5'>
-          <h6>{formatDate}</h6>
-          <h6>{timeFormat}</h6>
-        </div>
-        <div className='container'>
-          <Form
-            className='betForm'
-            onFinish={submitHandler}
-            autoComplete='off'
-            layout='vertical'
-          >
-            <Form.Item
-              className='form-group-custom'
-              label='Bet Number'
-              name='bet_num'
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your bet Number!',
-                },
-                {
-                  max: betnumberRestrictionInput,
-                  message: `Please enter bet number less or equal to ${betnumberRestrictionInput}`,
-                },
-              ]}
-            >
-              <Input
-                value={formData.bet_number}
-                onChange={handleChange('bet_number')}
-              />
-            </Form.Item>
+    <div className='newbetcontainer '>
+      <BackButton title={title} />
+      <div className='newBet container'>
+        <h6 className='mt-5'>{formatDate}</h6>
+        <h6>{timeFormat}</h6>
 
-            <Form.Item
-              name='bet_type'
-              label='Bet Type'
-              rules={[
-                { required: true, message: 'Please select your bet type!' },
-              ]}
-            >
-              <Select onChange={onTypeChange} allowClear>
-                {betTypeOptions ? (
-                  betTypeOptions.map((item) => (
-                    <Select.Option key={item._id} value={item.bet_type}>
-                      {item.type}
-                    </Select.Option>
-                  ))
-                ) : (
-                  <></>
-                )}
-                <Select.Option value='cut_off'>
-                  Current Day Cut-off
-                </Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              // label={`Bet Amount (remaining: ${
-              //   remainingBetAmount
-              //     ? remainingBetAmount
-              //     : formData?.amt_const ?? 0
-              // })`}
-              label={'Bet Amount '}
-              name='bet_amt'
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your bet Amount!',
-                },
-                {
-                  validator: validateMinimumAmount,
-                },
-              ]}
-            >
-              <Input
-                value={formData.bet_amount}
-                disabled={
-                  formData.bet_type && formData.bet_number ? false : true
-                }
-                type='number'
-                onChange={handleChange('bet_amount')}
-              />
-            </Form.Item>
-
-            <Button
-              className='w-100'
-              type='primary'
-              htmlType='submit'
-              disabled={isBetLimit}
-            >
-              SUBMIT
-            </Button>
-          </Form>
-          <div
-            className='mt-3'
-            style={{ height: '200px', overflowY: 'scroll' }}
+        <Form
+          className='betForm mb-3'
+          onFinish={submitHandler}
+          autoComplete='off'
+          layout='vertical'
+        >
+          <Form.Item
+            className='form-group-custom'
+            label='Bet Number'
+            name='bet_num'
+            rules={[
+              {
+                required: true,
+                message: 'Please input your bet Number!',
+              },
+              {
+                max: betnumberRestrictionInput,
+                message: `Please enter bet number less or equal to ${betnumberRestrictionInput}`,
+              },
+            ]}
           >
-            <Table
-              dataSource={newDatable.data}
-              columns={columns}
-              scroll={{ x: 450, y: 400 }}
-              pagination={false}
+            <Input
+              value={formData.bet_number}
+              onChange={handleChange('bet_number')}
             />
-          </div>
-        </div>
-        <div className='mt-5 w-100 container'>
-          <Button
-            disabled={!dataTable.length > 0 ? true : false}
-            className='w-100'
-            onClick={placeBetHandler}
+          </Form.Item>
+
+          <Form.Item
+            name='bet_type'
+            label='Bet Type'
+            rules={[
+              { required: true, message: 'Please select your bet type!' },
+            ]}
           >
-            PLACE BET
+            <Select onChange={onTypeChange} allowClear>
+              {betTypeOptions ? (
+                betTypeOptions.map((item) => (
+                  <Select.Option key={item._id} value={item.bet_type}>
+                    {item.type}
+                  </Select.Option>
+                ))
+              ) : (
+                <></>
+              )}
+              <Select.Option value='cut_off'>Current Day Cut-off</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            // label={`Bet Amount (remaining: ${
+            //   remainingBetAmount
+            //     ? remainingBetAmount
+            //     : formData?.amt_const ?? 0
+            // })`}
+            label={'Bet Amount '}
+            name='bet_amt'
+            rules={[
+              {
+                required: true,
+                message: 'Please input your bet Amount!',
+              },
+              {
+                validator: validateMinimumAmount,
+              },
+            ]}
+          >
+            <Input
+              value={formData.bet_amount}
+              disabled={formData.bet_type && formData.bet_number ? false : true}
+              type='number'
+              onChange={handleChange('bet_amount')}
+            />
+          </Form.Item>
+
+          <Button
+            className='w-100'
+            type='primary'
+            htmlType='submit'
+            disabled={isBetLimit}
+          >
+            SUBMIT
           </Button>
-        </div>
+        </Form>
+
+        <Table
+          dataSource={newDatable.data}
+          columns={columns}
+          scroll={{ x: 450, y: 200 }}
+          pagination={false}
+        />
+
+        <Button
+          disabled={!dataTable.length > 0 ? true : false}
+          className='w-100 mt-5'
+          onClick={placeBetHandler}
+        >
+          PLACE BET
+        </Button>
       </div>
     </div>
   );

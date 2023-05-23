@@ -52,7 +52,9 @@ const Login = () => {
               />
             </div>
 
-            <h6 className='title'>Capricorn</h6>
+            <div className='text-center'>
+              <h6 className='title '>Capricorn</h6>
+            </div>
           </div>
           <div className='login-form '>
             <Form

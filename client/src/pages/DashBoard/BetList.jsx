@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import './BetList.scss';
 // import Table from '../../components/Table/Table';
-import { getBetList } from '../../api/request';
+import { getAdminTransList, getBetList } from '../../api/request';
 import { BsEyeFill } from 'react-icons/bs';
 import TableThreeModal from '../../components/BetList/TableThreeModal';
 import { Button, Space, Table } from 'antd';
@@ -10,15 +10,26 @@ import usePagination from '../../hooks/usePagination';
 import TabletwoModal from '../../components/BetList/TabletwoModal';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import Filter from '../../components/Filter/Filter';
 import useFilter from '../../hooks/useFilter';
 import AntTable from '../../components/Table/AntTable';
+import BackButton from '../../components/Layout/BackButton';
 
 const BetList = () => {
   dayjs.extend(customParseFormat);
 
+  const adminData = React.useMemo(() => {
+    const url = new URL(window.location.href);
+    const searchParams = url.searchParams;
+    const refcode = searchParams.get('ref_code');
+    const from = searchParams.get('from');
+    const to = searchParams.get('to');
+    return { refcode: refcode, from: from, to: to };
+  }, []);
+
+  const title = 'Transaction List';
   const nav = useNavigate();
   const [dataTable, setDataTabble] = useState([]);
   const [data, setData] = useState([]);
@@ -37,11 +48,13 @@ const BetList = () => {
   });
   const dateFormat = 'YYYY-MM-DD';
   const currentDate = moment().format(dateFormat);
-
+  console.log(adminData);
   const params = '1';
   const filterType = 'trans_list';
-  const dateparams = `&from=${currentDate}&to=${currentDate}`;
-
+  const dateparams = `&from=${adminData.from ?? currentDate}&to=${
+    adminData.from ?? currentDate
+  }`;
+  const otherparams = `&ref_code=${adminData.refcode}`;
   const {
     isloading,
     onPrevious,
@@ -50,7 +63,13 @@ const BetList = () => {
     onNext,
     callbackresponse,
     errorResponse,
-  } = usePagination(params, dataTable, getBetList, null, dateparams);
+  } = usePagination(
+    params,
+    dataTable,
+    adminData?.refcode ? getAdminTransList : getBetList,
+    otherparams,
+    dateparams,
+  );
 
   const {
     setFilter,
@@ -61,7 +80,11 @@ const BetList = () => {
     resetHandler,
     filter,
     callbackfilterRes,
-  } = useFilter(params, currentDate, getBetList);
+  } = useFilter(
+    params,
+    currentDate,
+    adminData?.refcode ? getAdminTransList : getBetList,
+  );
 
   const columns = React.useMemo(
     () => [
@@ -159,8 +182,6 @@ const BetList = () => {
     }
   }, [callbackfilterRes]);
 
-  console.log(dataTable);
-
   return (
     <div className='betlistcontainer'>
       <div>
@@ -170,7 +191,7 @@ const BetList = () => {
             setIsTable2Open={setIsTable2Open}
             username={username}
             actionHandlertwo={actionHandlertwo}
-            actioncall={getBetList}
+            actioncall={adminData?.refcode ? getAdminTransList : getBetList}
             data={data}
             dateSearch={filter}
             handleColumnClick={handleColumnClick2}
@@ -179,7 +200,7 @@ const BetList = () => {
         {isTablethreeOpen && (
           <TableThreeModal
             dateSearch={filter}
-            actioncall={getBetList}
+            actioncall={adminData?.refcode ? getAdminTransList : getBetList}
             isTablethreeOpen={isTablethreeOpen}
             setIsTablethreeOpen={setIsTablethreeOpen}
             setIsTable2Open={setIsTable2Open}
@@ -188,8 +209,7 @@ const BetList = () => {
             onCancel={onCancel3}
           />
         )}
-        <h6 onClick={() => nav('/dashboard')}>Back</h6>
-        <h1 className='text-center title'>Transaction List</h1>
+        <BackButton title={title} adminData={adminData} />
 
         <Filter
           setFilter={setFilter}
@@ -230,7 +250,7 @@ const BetList = () => {
           handleColumnClick={handleColumnClick}
           errorResponse={errorResponse}
           totalCountTable={totalCountTable}
-          scroll={{ x: 500, y: 400 }}
+          scroll={{ x: 500, y: 300 }}
         />
       </div>
     </div>

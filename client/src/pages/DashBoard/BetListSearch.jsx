@@ -17,10 +17,11 @@ import moment from 'moment';
 import Filter from '../../components/Filter/Filter';
 import Table from '../../components/Table/Table';
 import AntTable from '../../components/Table/AntTable';
+import BackButton from '../../components/Layout/BackButton';
 
 const BetListSearch = () => {
   dayjs.extend(customParseFormat);
-
+  const title = 'Bet List';
   const nav = useNavigate();
   const [dataTable, setDataTabble] = useState([]);
   const [data, setData] = useState([]);
@@ -71,7 +72,6 @@ const BetListSearch = () => {
     ],
     [],
   );
-  console.log(dataTable);
   const params = '4';
   const dateFormat = 'YYYY-MM-DD';
   const filterType = 'bet_list';
@@ -205,8 +205,7 @@ const BetListSearch = () => {
             dateSearch={filter}
           />
         )}
-        <h6 onClick={() => nav('/dashboard')}>Back</h6>
-        <h1 className='text-center title'>Bet List</h1>
+        <BackButton title={title} />
         <Filter
           filterType={filterType}
           setFilter={setFilter}

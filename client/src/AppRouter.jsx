@@ -16,6 +16,7 @@ import io from 'socket.io-client';
 
 import config from './api/config';
 import CreateWinNum from './pages/DashBoard/CreateWinNum';
+import AdminTransList from './pages/DashBoard/AdminTransList';
 
 const AppRouter = () => {
   const [data, setData] = useState({
@@ -97,6 +98,14 @@ const AppRouter = () => {
               <ProtectedRoute isAuth={data && data.isAuth}>
                 <BetListSearch />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/admin-trans-list'
+            element={
+              // <ProtectedRoute isAuth={data && data.isAuth}>
+              <AdminTransList />
+              // </ProtectedRoute>
             }
           />
           <Route path='/' element={<Login />} />

@@ -181,6 +181,25 @@ const getBetList = (params, callback = null) => {
     });
 };
 
+const getAdminTransList = (params, callback = null) => {
+  const newToken = token();
+
+  api
+    .get(`/super/bets/${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': newToken,
+      },
+    })
+    .then((res) => {
+      message.success(res.data.message);
+      callback(res);
+    })
+    .catch((err) => {
+      callback(err.response);
+    });
+};
+
 const getBetListUser = (params, callback = null) => {
   const newToken = token();
 
@@ -238,4 +257,5 @@ export {
   getBetList,
   getBetListUser,
   createWinningNumber,
+  getAdminTransList,
 };

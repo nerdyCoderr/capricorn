@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react';
 import { BsFillPencilFill, BsFillJournalBookmarkFill } from 'react-icons/bs';
 
@@ -30,6 +29,17 @@ const Dashboard = () => {
     navigate('/');
   };
 
+  const CardItem = ({ icon, title, onClick }) => (
+    <Card className='p-2' onClick={onClick}>
+      <div className='text-center'>{icon}</div>
+      <Card.Body>
+        <Card.Title>
+          <p>{title}</p>
+        </Card.Title>
+      </Card.Body>
+    </Card>
+  );
+
   useEffect(() => {
     const updateLimitBet = (data) => {
       console.log(data);
@@ -50,7 +60,7 @@ const Dashboard = () => {
   return (
     <GlassLayout>
       <div className='dashboard'>
-        <div className='dashboard-header'>
+        <div className='dashboard__header'>
           <div className='img-fluid logo'>
             <img
               src='./capricorn_log.png'
@@ -60,119 +70,78 @@ const Dashboard = () => {
           </div>
           <h6 className='title'>Capricorn</h6>
         </div>
-        <div className='dashboard-content'>
+
+        <div className='dashboard__content'>
           {data.role === 'super-admin' && (
-            <Card
-              className='p-2'
-              onClick={() => navigate('/create-win-number')}
-            >
-              <div className='text-center'>
-                <BsFillPencilFill size={40} />
-              </div>
-              <Card.Body>
-                <Card.Title>
-                  <p>Input Win Num</p>
-                </Card.Title>
-              </Card.Body>
-            </Card>
+            <>
+              <CardItem
+                icon={<BsFillPencilFill size={40} />}
+                title='Admin Trans List'
+                onClick={() => navigate('/admin-trans-list')}
+              />
+              <CardItem
+                icon={<BsFillPencilFill size={40} />}
+                title='Input Win Num'
+                onClick={() => navigate('/create-win-number')}
+              />
+            </>
           )}
           {data.role === 'user' && (
             <>
-              <Card className='p-2' onClick={() => navigate('/new-bet')}>
-                <div className='text-center'>
-                  <BsFillPencilFill size={40} />
-                </div>
-                <Card.Body>
-                  <Card.Title>
-                    <p>New Bet</p>
-                  </Card.Title>
-                </Card.Body>
-              </Card>
-              <Card className='p-2' onClick={() => navigate('/history')}>
-                <div className='text-center'>
-                  <FaHistory size={40} />
-                </div>
-                <Card.Body>
-                  <Card.Title>
-                    <p>History</p>
-                  </Card.Title>
-                </Card.Body>
-              </Card>
-              <Card className='p-2' onClick={() => navigate('/hits')}>
-                <div className='text-center'>
-                  <BsFillJournalBookmarkFill size={40} />
-                </div>
-                <Card.Body>
-                  <Card.Title>
-                    <p>Hits</p>
-                  </Card.Title>
-                </Card.Body>
-              </Card>
+              <CardItem
+                icon={<BsFillPencilFill size={40} />}
+                title='New Bet'
+                onClick={() => navigate('/new-bet')}
+              />
+
+              <CardItem
+                icon={<FaHistory size={40} />}
+                title='History'
+                onClick={() => navigate('/history')}
+              />
+
+              <CardItem
+                icon={<BsFillJournalBookmarkFill size={40} />}
+                title='Hits'
+                onClick={() => navigate('/hits')}
+              />
             </>
           )}
           {data.role === 'admin' && (
             <>
-              <Card
-                className='p-2'
+              <CardItem
+                icon={<RiContactsBookUploadFill size={40} />}
+                title='Tranasction List'
                 onClick={() => navigate('/transaction-list')}
-              >
-                <div className='text-center'>
-                  <RiContactsBookUploadFill size={40} />
-                </div>
-                <Card.Body>
-                  <Card.Title>
-                    <p>Tranasction List</p>
-                  </Card.Title>
-                </Card.Body>
-              </Card>
-              <Card className='p-2' onClick={() => navigate('/bet-list')}>
-                <div className='text-center'>
-                  <RiContactsBookUploadFill size={40} />
-                </div>
-                <Card.Body>
-                  <Card.Title>
-                    <p>Bet List</p>
-                  </Card.Title>
-                </Card.Body>
-              </Card>
-              <Card
-                className='p-2'
+              />
+
+              <CardItem
+                icon={<RiContactsBookUploadFill size={40} />}
+                title='Bet List'
+                onClick={() => navigate('/bet-list')}
+              />
+
+              <CardItem
+                icon={<RiContactsBookUploadFill size={40} />}
+                title='Create User Account'
                 onClick={() => navigate('/create-user-account-by-admin')}
-              >
-                <div className='text-center'>
-                  <RiContactsBookUploadFill size={40} />
-                </div>
-                <Card.Body>
-                  <Card.Title>
-                    <p>Create User Account</p>
-                  </Card.Title>
-                </Card.Body>
-              </Card>
+              />
             </>
           )}
-          <Card className='p-2'>
-            <div className='text-center'>
-              <RiContactsBookUploadFill size={40} />
-            </div>
-            <Card.Body>
-              <Card.Title>
-                <p>Account Settings</p>
-              </Card.Title>
-            </Card.Body>
-          </Card>
-          <Card className='p-2' onClick={logout}>
-            <div className='text-center'>
-              <GiPowerButton size={40} />
-            </div>
-            <Card.Body>
-              <Card.Title>
-                <p>Log Out</p>
-              </Card.Title>
-            </Card.Body>
-          </Card>
+
+          <CardItem
+            icon={<RiContactsBookUploadFill size={40} />}
+            title='Account Settings'
+          />
+          <CardItem
+            icon={<GiPowerButton size={40} />}
+            title='Log Out'
+            onClick={logout}
+          />
         </div>
+
         {data.role === 'admin' && (
-          <div className='row mx-2 dashboard-total-overview'>
+          <div className='row mx-2 dashboard__totaloverview'>
             <div className='col-6 col-lg-4 col-md-4 mt-1'>
               <Card className='p-2'>
                 <Card.Body>

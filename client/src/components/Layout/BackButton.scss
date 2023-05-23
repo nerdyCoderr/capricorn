@@ -1,0 +1,19 @@
+.header-backbutton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title-container {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.title {
+  display: inline-block;
+  color: white !important;
+
+  text-align: center;
+  text-shadow: 1px 1px 2px #000000;
+}

@@ -81,7 +81,7 @@ const usePagination = (
     if (status === 204) {
       setErrorResposne(res.statusText);
     }
-    console.log(res);
+
     setIsloading(false);
   };
 
