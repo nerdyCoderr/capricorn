@@ -104,10 +104,9 @@ exports.updateAccount = async (req, res) => {
       return res.status(400).json({ message: "Username is required" });
     }
 
-    const userToUpdate = await User.findOne({
-      query,
-      role: { $ne: "super-admin" },
-    });
+    query.role = { $ne: "super-admin" };
+
+    const userToUpdate = await User.findOne(query);
 
     if (!userToUpdate) {
       return res.status(404).json({ message: "User not found" });
