@@ -252,7 +252,7 @@ async function chartData(username, days) {
   const user = await User.findOne({ username: username });
 
   if (days === 1) {
-    for (let x = 6; x <= 21; x++) {
+    for (let x = 21; x >= 6; x--) {
       hour = x;
       date.setHours(hour, 0, 0, 0);
       timeFormat = date.toLocaleTimeString([], {
