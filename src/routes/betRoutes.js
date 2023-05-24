@@ -20,7 +20,7 @@ userBetRouter.get(
   "/bets/:table",
   authenticate,
   authorize(["user"]),
-  betController.getAdminBets
+  betController.getBets
 );
 
 userBetRouter.get(
@@ -42,7 +42,7 @@ adminBetRouter.get(
   "/bets/:table",
   authenticate,
   authorize(["admin"]),
-  betController.getAdminBets
+  betController.getBets
 );
 
 // Super Routes
@@ -50,7 +50,7 @@ superBetRouter.get(
   "/bets/:table",
   authenticate,
   authorize(["super-admin"]),
-  betController.getAdminBets
+  betController.getBets
 );
 
 superWinNumRouter.post(

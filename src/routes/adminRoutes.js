@@ -12,13 +12,6 @@ router.post(
   adminController.userSignup
 );
 
-router.delete(
-  "/",
-  authenticate,
-  authorize(["admin"]),
-  adminController.deleteAdmin
-);
-
 router.put(
   "/",
   authenticate,

@@ -24,11 +24,6 @@ const {
 
 const superRoutes = require("./routes/superRoutes");
 
-// mongoose.connect(process.env.MONGODB_URI, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-
 const uri =
   process.env.DB_LOC === "local"
     ? process.env.MONGODB_URI

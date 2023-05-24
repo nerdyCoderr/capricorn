@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 exports.login = async (req, res) => {
   const { username, password } = req.body;
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username, active: true });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -45,84 +45,20 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.userSignup = async (req, res) => {
-  const { username, password, first_name, last_name, phone_number, ref_code } =
-    req.body;
-
-  const existingUser = await User.findOne({ username });
-  try {
-    if (existingUser) {
-      return res.status(409).json({ message: "Username already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const refCode = await User.findOne({ ref_code, role: "admin" });
-
-    if (!refCode) {
-      return res.status(404).json({ message: "ref_code not found" });
-    }
-
-    const newUser = new User({
-      first_name,
-      last_name,
-      phone_number,
-      role: "user",
-      ref_code: refCode.ref_code,
-      username,
-      password: hashedPassword,
-    });
-    await newUser.save();
-
-    res
-      .status(201)
-      .json({ message: "User created successfully", data: newUser });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "Error creating user", error: error.message });
-  }
-};
-
-exports.deleteUser = async (req, res) => {
-  const loggedInUserId = req.user.id;
-  try {
-    const userToDelete = await User.findOne({
-      _id: loggedInUserId,
-      role: "user",
-    });
-
-    if (!userToDelete) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (loggedInUserId !== userToDelete._id.toString()) {
-      return res.status(403).json({
-        message: "Forbidden: You do not have permission to perform this action",
-      });
-    }
-
-    await User.deleteOne({ _id: userToDelete._id }); // Replace the `remove` function with `deleteOne`
-    res.status(200).json({ message: "User deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "Error deleting user", error: error.message });
-  }
-};
-
 exports.updateUser = async (req, res) => {
   const { updates } = req.body;
   const loggedInUserRole = req.user.role;
   const loggedInUserId = req.user.id;
+
   try {
     if (!updates) {
       return res.status(400).json({ message: "Updates are required" });
     }
 
-    const userToUpdate = await User.findOne({ _id: loggedInUserId });
+    const userToUpdate = await User.findOne({
+      _id: loggedInUserId,
+      active: true,
+    });
 
     if (!userToUpdate) {
       return res.status(404).json({ message: "User not found" });
@@ -141,7 +77,8 @@ exports.updateUser = async (req, res) => {
           key !== "role" &&
           key !== "username" &&
           key !== "_id" &&
-          key !== "ref_code" // not clear if user can't edit ref_code
+          key !== "ref_code" &&
+          key !== "active"
         ) {
           if (key === "password") {
             const hashedPassword = await bcrypt.hash(updates[key], 10);
@@ -169,61 +106,6 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// exports.getUsers = async (req, res) => {
-//   const page = parseInt(req.query.page) || 1;
-//   const page_limit = parseInt(req.query.limit) || 10;
-//   const id = req.query.id;
-//   const ref_code = req.query.ref_code;
-
-//   try {
-//     if (id) {
-//       // Fetch a specific user by ID
-//       const user = await User.findById(id, { password: 0 }).exec();
-//       if (!user) {
-//         return res.status(404).json({ message: "User not found" });
-//       }
-//       res.status(200).json({ message: "User fetched successfully", user });
-//     } else if (req.query.page || req.query.limit) {
-//       // Pagination: Fetch users with page and limit
-//       const users = await User.find(
-//         { role: "user", ref_code: ref_code },
-//         { password: 0 }
-//       )
-//         .skip((page - 1) * page_limit)
-//         .limit(page_limit)
-//         .exec();
-
-//       const total = await User.countDocuments(
-//         { role: "user", ref_code: ref_code },
-//         { password: 0 }
-//       );
-
-//       res.status(200).json({
-//         message: "Users fetched successfully with pagination",
-//         total,
-//         totalPages: Math.ceil(total / page_limit),
-//         currentPage: page,
-//         page_limit,
-//         users,
-//       });
-//     } else {
-//       // Fetch all users
-//       const users = await User.find(
-//         { role: "user", ref_code: ref_code },
-//         { password: 0 }
-//       ).exec();
-//       res
-//         .status(200)
-//         .json({ message: "All users fetched successfully", users });
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res
-//       .status(500)
-//       .json({ message: "Error fetching users", error: error.message });
-//   }
-// };
-
 exports.getAcctInfo = async (req, res) => {
   try {
     // Fetch the user with the given req.user.id
@@ -246,6 +128,7 @@ exports.getRefCode = async (req, res) => {
   let query = {};
   try {
     query.role = "admin";
+    query.active = true;
     const admin_ref_codes = await User.find(query, {
       ref_code: 1,
       first_name: 1,
@@ -265,5 +148,3 @@ exports.getRefCode = async (req, res) => {
       .json({ message: "Error fetching ref_codes", error: error.message });
   }
 };
-
-// Implement other user-related controllers as needed

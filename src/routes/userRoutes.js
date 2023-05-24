@@ -10,19 +10,13 @@ userPublicRoutes.post("/login", userController.login);
 userPublicRoutes.get("/ref-codes", userController.getRefCode);
 
 // Private routes
-userPrivateRoutes.post("/signup", userController.userSignup);
-userPrivateRoutes.delete(
-  "/",
-  authenticate,
-  authorize(["user"]),
-  userController.deleteUser
-);
 userPrivateRoutes.put(
   "/",
   authenticate,
   authorize(["user"]),
   userController.updateUser
 );
+
 userPrivateRoutes.get(
   "/",
   authenticate,

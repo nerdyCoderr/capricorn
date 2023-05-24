@@ -15,7 +15,11 @@ exports.userSignup = async (req, res) => {
       return res.status(400).json({ message: "ref_code is required" });
     }
 
-    const existingRef = await User.findOne({ ref_code, role: "admin" });
+    const existingRef = await User.findOne({
+      ref_code,
+      role: "admin",
+      active: true,
+    });
 
     if (!existingRef) {
       return res.status(400).json({ message: "Invalid ref_code" });
@@ -192,6 +196,11 @@ exports.getUsers = async (req, res) => {
         },
       },
       {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
         $facet: {
           paginatedResults: [
             {
@@ -295,5 +304,3 @@ exports.getAcctInfo = async (req, res) => {
       .json({ message: "Error fetching account", error: error.message });
   }
 };
-
-// Implement other user-related controllers as needed

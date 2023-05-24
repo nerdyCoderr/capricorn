@@ -42,35 +42,6 @@ exports.userSignup = async (req, res) => {
   }
 };
 
-exports.deleteAdmin = async (req, res) => {
-  try {
-    const loggedInUserId = req.user.id;
-
-    const userToDelete = await User.findOne({
-      _id: loggedInUserId,
-      role: "admin",
-    });
-
-    if (!userToDelete) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (loggedInUserId !== userToDelete._id.toString()) {
-      return res.status(403).json({
-        message: "Forbidden: You do not have permission to perform this action",
-      });
-    }
-
-    await User.deleteOne({ _id: userToDelete._id }); // Replace the `remove` function with `deleteOne`
-    res.status(200).json({ message: "Admin deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "Error deleting admin", error: error.message });
-  }
-};
-
 exports.updateAdmin = async (req, res) => {
   const { updates } = req.body;
   const loggedInUserRole = req.user.role;
@@ -99,7 +70,8 @@ exports.updateAdmin = async (req, res) => {
           key !== "role" &&
           key !== "username" &&
           key !== "_id" &&
-          key !== "ref_code" // not clear if user can't edit ref_code
+          key !== "ref_code" && // not clear if user can't edit ref_code
+          key !== "active"
         ) {
           if (key === "password") {
             const hashedPassword = await bcrypt.hash(updates[key], 10);
@@ -110,7 +82,6 @@ exports.updateAdmin = async (req, res) => {
         }
       }
 
-      adminToUpdate.__v += 1;
       await adminToUpdate.updateOne(adminToUpdate);
       res
         .status(200)
@@ -128,70 +99,78 @@ exports.updateAdmin = async (req, res) => {
 };
 
 exports.getUsers = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const page_limit = parseInt(req.query.limit) || 10;
-  const id = req.query.id;
-  const ref_code = req.user.ref_code;
   try {
-    if (id) {
-      // Fetch a specific user by ID
-      const user = await User.findOne(
-        {
-          _id: id,
-          role: "user",
-          ...(ref_code !== null && { ref_code: ref_code }),
-        },
-        { password: 0 }
-      );
+    let query = {};
+    let aggregateQuery = {};
+    const page = parseInt(req.query.page) || 1;
+    const page_limit = parseInt(req.query.limit) || 10;
+    const { _id, username, active } = req.query;
+    const role = "user";
+    const ref_code = req.user.ref_code;
 
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
+    query.ref_code = ref_code;
+    query.role = role;
 
-      res.status(200).json({ message: "User fetched successfully", user });
-    } else if (req.query.page || req.query.limit) {
-      // Pagination: Fetch users with page and limit
-      const users = await User.find(
-        { role: "user", ...(ref_code !== null && { ref_code: ref_code }) },
-        { password: 0 }
-      )
-        .skip((page - 1) * page_limit)
-        .limit(page_limit);
-
-      const total = await User.countDocuments(
-        { role: "user", ref_code: ref_code },
-        { password: 0 }
-      );
-
-      const totalPages = Math.ceil(total / page_limit);
-
-      // Generate pagination links
-      const baseUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
-      const paginationLinks = generatePaginationLinks(
-        baseUrl,
-        page,
-        totalPages
-      );
-
-      res.status(200).json({
-        message: "Users fetched successfully with pagination",
-        total,
-        totalPages,
-        currentPage: page,
-        page_limit,
-        users,
-        links: paginationLinks,
-      });
-    } else {
-      // Fetch all users
-      const users = await User.find(
-        { role: "user", ...(ref_code !== null && { ref_code: ref_code }) },
-        { password: 0 }
-      ).exec();
-      res
-        .status(200)
-        .json({ message: "All users fetched successfully", users });
+    if (active !== undefined) {
+      query.active = Boolean(parseInt(active));
     }
+
+    if (_id) {
+      query._id = _id;
+    }
+
+    if (username) {
+      query.username = username;
+    }
+
+    aggregateQuery = User.aggregate([
+      // filter by createdAt, batch_id, admin ref_code
+      {
+        $match: query,
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $facet: {
+          paginatedResults: [
+            {
+              $skip: page_limit * (page - 1),
+            },
+            {
+              $limit: page_limit,
+            },
+          ],
+          totalCount: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      },
+    ]);
+
+    const result = await aggregateQuery.exec();
+    const data = result[0].paginatedResults;
+    const total = result[0].totalCount[0]?.count || 0;
+
+    const totalPages = Math.ceil(total / page_limit);
+
+    // Generate pagination links
+    const baseUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+    const paginationLinks = generatePaginationLinks(baseUrl, page, totalPages);
+
+    res.status(200).json({
+      message: "Users fetched successfully",
+      total,
+      totalPages,
+      currentPage: page,
+      page_limit,
+      links: paginationLinks,
+      data,
+    });
   } catch (error) {
     console.error(error);
     res
@@ -217,5 +196,3 @@ exports.getAcctInfo = async (req, res) => {
       .json({ message: "Error fetching Account", error: error.message });
   }
 };
-
-// Implement other user-related controllers as needed
