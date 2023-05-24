@@ -43,14 +43,8 @@ function TableThreeModal({
     [],
   );
   console.log(data);
-  const {
-    isloading,
-    onPrevious,
-    onFirst,
-    onLast,
-    onNext,
-    callbackresponse,
-  } = usePagination(params, dataTable, actioncall, otherparams, dateparams);
+  const { isloading, onPrevious, onFirst, onLast, onNext, callbackresponse } =
+    usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
   useEffect(() => {
     const { data, total } = callbackresponse;
@@ -71,7 +65,7 @@ function TableThreeModal({
         bet_type: data?.bet_type?.bet_type,
         bet_num: betNum,
         bet_amt: data?.bet_amt,
-        win_amt: data?.win_amt,
+        win_amt: data?.result ? data?.win_amt : 0,
       };
     });
     const newdata = { ...callbackresponse, data: reconstructedList };
@@ -96,7 +90,12 @@ function TableThreeModal({
       open={isTablethreeOpen}
       onCancel={onCancel}
       footer={[
-        <Button size='middle' key='submit' type='primary' onClick={handleOk}>
+        <Button
+          size='middle'
+          key='submit'
+          type='primary'
+          onClick={handleOk}
+        >
           OK
         </Button>,
       ]}

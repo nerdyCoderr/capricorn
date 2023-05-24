@@ -6,7 +6,7 @@ import './BackButton.scss';
 const BackButton = ({ title, adminData = undefined }) => {
   const nav = useNavigate();
   return (
-    <div className='header-backbutton'>
+    <div className='header-backbutton container'>
       <div
         className='arrow-back'
         onClick={() => {

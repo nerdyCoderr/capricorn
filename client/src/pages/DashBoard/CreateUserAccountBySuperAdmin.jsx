@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './CreateUserAccountByAdmin.scss';
 
 import RegistrationForm from '../../components/registration/RegistrationForm';
-import { registerUserAccountbyAdmin } from '../../api/request';
+import { getRefCodes, registerAccountbySuper } from '../../api/request';
 import { Form } from 'antd';
 import BackButton from '../../components/Layout/BackButton';
 
-const CreateUserAccountByAdmin = () => {
-  const title = 'Create User Account';
+const CreateUserAccountBySuperAdmin = () => {
+  const title = 'Create User Account By Admin';
   const [formfields] = Form.useForm(); // create a form instance
-
+  const [refCodesTypes, setReCodeTypes] = useState();
   const submitHandler = (values) => {
     console.log(values);
     const form = {
@@ -18,9 +18,11 @@ const CreateUserAccountByAdmin = () => {
       phone_number: values.phonenumber,
       username: values.username,
       password: values.password,
+      ref_code: values.ref_code,
+      link: 'user-signup',
     };
     console.log(form);
-    registerUserAccountbyAdmin(form, callback);
+    registerAccountbySuper(form, callback);
   };
 
   const callback = async (res) => {
@@ -32,6 +34,16 @@ const CreateUserAccountByAdmin = () => {
       formfields.resetFields();
     }
   };
+
+  const callbackRefcodes = async (res) => {
+    const { data } = await res;
+    console.log(data);
+    setReCodeTypes(data?.admin_ref_codes);
+  };
+
+  useEffect(() => {
+    getRefCodes(callbackRefcodes);
+  }, []);
   return (
     <div className='createuseraccount-container'>
       <BackButton title={title} />
@@ -39,10 +51,12 @@ const CreateUserAccountByAdmin = () => {
       <RegistrationForm
         formfields={formfields}
         submitHandler={submitHandler}
+        refCodesTypes={refCodesTypes}
         type='create'
+        filterType='admin'
       />
     </div>
   );
 };
 
-export default CreateUserAccountByAdmin;
+export default CreateUserAccountBySuperAdmin;

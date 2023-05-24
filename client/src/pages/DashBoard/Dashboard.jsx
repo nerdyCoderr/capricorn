@@ -30,7 +30,10 @@ const Dashboard = () => {
   };
 
   const CardItem = ({ icon, title, onClick }) => (
-    <Card className='p-2' onClick={onClick}>
+    <Card
+      className='p-2'
+      onClick={onClick}
+    >
       <div className='text-center'>{icon}</div>
       <Card.Body>
         <Card.Title>
@@ -84,6 +87,21 @@ const Dashboard = () => {
                 title='Input Win Num'
                 onClick={() => navigate('/create-win-number')}
               />
+              <CardItem
+                icon={<BsFillPencilFill size={40} />}
+                title='Account Management'
+                onClick={() => navigate('/account-management')}
+              />
+              <CardItem
+                icon={<BsFillPencilFill size={40} />}
+                title='Create Admin Account'
+                onClick={() => navigate('/create-admin-account')}
+              />
+              <CardItem
+                icon={<BsFillPencilFill size={40} />}
+                title='Create User Account'
+                onClick={() => navigate('/create-user-account-by-superadmin')}
+              />
             </>
           )}
           {data.role === 'user' && (
@@ -111,7 +129,7 @@ const Dashboard = () => {
             <>
               <CardItem
                 icon={<RiContactsBookUploadFill size={40} />}
-                title='Tranasction List'
+                title='Transaction List'
                 onClick={() => navigate('/transaction-list')}
               />
 
@@ -132,6 +150,7 @@ const Dashboard = () => {
           <CardItem
             icon={<RiContactsBookUploadFill size={40} />}
             title='Account Settings'
+            onClick={() => navigate('/account-settings')}
           />
           <CardItem
             icon={<GiPowerButton size={40} />}

@@ -37,7 +37,10 @@ const Filter = ({
         >
           {betTypeOptions ? (
             betTypeOptions.map((item) => (
-              <Select.Option key={item._id} value={item.bet_type}>
+              <Select.Option
+                key={item._id}
+                value={item.bet_type}
+              >
                 {item.bet_type}
               </Select.Option>
             ))
@@ -82,13 +85,22 @@ const Filter = ({
           onChange={onBatchChange}
           allowClear
         >
-          <Select.Option key={1} value={1}>
+          <Select.Option
+            key={1}
+            value={1}
+          >
             6:00 am - 2:10 pm
           </Select.Option>
-          <Select.Option key={2} value={2}>
+          <Select.Option
+            key={2}
+            value={2}
+          >
             2:10 pm - 4:45 pm
           </Select.Option>
-          <Select.Option key={3} value={3}>
+          <Select.Option
+            key={3}
+            value={3}
+          >
             5:10 pm - 8:45 pm
           </Select.Option>
         </Select>
@@ -103,6 +115,37 @@ const Filter = ({
             });
           }}
         />
+      </div>
+    </>
+  );
+
+  const isForSuperAdmin = filterType === 'superadmin' && (
+    <>
+      <div className='filter__container-fields'>
+        <p>Username</p>
+        <Input
+          value={filter?.username}
+          onChange={(e) => {
+            setFilter((prev) => {
+              return { ...prev, username: e.target.value };
+            });
+          }}
+        />
+      </div>
+      <div className='filter__container-fields'>
+        <p>Role</p>
+        <div className='switch'>
+          <Switch
+            size='large'
+            checked={filter.role === 'admin' ? false : true}
+            onChange={(e) => {
+              console.log(e ? 'user' : 'admin');
+              setFilter((prev) => {
+                return { ...prev, role: e ? 'user' : 'admin' };
+              });
+            }}
+          />
+        </div>
       </div>
     </>
   );
@@ -158,29 +201,37 @@ const Filter = ({
               Reset
             </Button>
           </div>
+
           <div className='filter shadow-lg'>
             <div className='filter__container'>
-              <div className='filter__container-fields'>
-                <p>From</p>
-                <DatePicker
-                  value={dayjs(filter.from, dateFormat)}
-                  onChange={onChangeFrom}
-                  defaultValue={dayjs(currentDate, dateFormat)}
-                  format={dateFormat}
-                />
-              </div>
-              <div className='filter__container-fields'>
-                <p>To</p>
-                <DatePicker
-                  value={dayjs(filter.to, dateFormat)}
-                  onChange={onChangeTo}
-                  defaultValue={dayjs(currentDate, dateFormat)}
-                  format={dateFormat}
-                />
-              </div>
+              {!filterType === 'superadmin' ||
+                (filterType === 'trans_list' && (
+                  <>
+                    {' '}
+                    <div className='filter__container-fields'>
+                      <p>From</p>
+                      <DatePicker
+                        value={dayjs(filter.from, dateFormat)}
+                        onChange={onChangeFrom}
+                        defaultValue={dayjs(currentDate, dateFormat)}
+                        format={dateFormat}
+                      />
+                    </div>
+                    <div className='filter__container-fields'>
+                      <p>To</p>
+                      <DatePicker
+                        value={dayjs(filter.to, dateFormat)}
+                        onChange={onChangeTo}
+                        defaultValue={dayjs(currentDate, dateFormat)}
+                        format={dateFormat}
+                      />
+                    </div>
+                  </>
+                ))}
               {isForBetlist}
               {isForBetlistOrTransactionlist}
               {isForTableFour}
+              {isForSuperAdmin}
             </div>
           </div>
         </div>

@@ -1,11 +1,18 @@
 import React, { useContext } from 'react';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, Select } from 'antd';
 import './RegistrationForm.scss';
 import userContext from '../../context/userContext';
 
-const RegistrationForm = ({ submitHandler, formfields }) => {
-  // const [form] = Form.useForm(); // create a form instance
+const RegistrationForm = ({
+  submitHandler,
+  formfields,
+  refCodesTypes = [],
+  initialValues = {},
+  filterType = null,
+  type = null,
+}) => {
   const { data } = useContext(userContext);
+
   const validateMessages = {
     required: '${label} is required!',
     types: {
@@ -34,7 +41,7 @@ const RegistrationForm = ({ submitHandler, formfields }) => {
       return Promise.reject(new Error('The two passwords do not match.'));
     },
   });
-  console.log(data);
+
   return (
     <div className='registration-form-container container'>
       <Form
@@ -52,6 +59,7 @@ const RegistrationForm = ({ submitHandler, formfields }) => {
         <Form.Item
           name='firstname'
           label='Firstname'
+          initialValue={initialValues?.first_name}
           rules={[
             {
               required: true,
@@ -61,6 +69,7 @@ const RegistrationForm = ({ submitHandler, formfields }) => {
           <Input />
         </Form.Item>
         <Form.Item
+          initialValue={initialValues?.last_name ?? ''}
           name='lastname'
           label='Lastname'
           rules={[
@@ -72,6 +81,7 @@ const RegistrationForm = ({ submitHandler, formfields }) => {
           <Input />
         </Form.Item>
         <Form.Item
+          initialValue={initialValues?.phone_number ?? ''}
           name='phonenumber'
           label='Phone Number'
           rules={[
@@ -82,28 +92,43 @@ const RegistrationForm = ({ submitHandler, formfields }) => {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name='username'
-          label='Username'
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        {!data?.role && (
+        {type === 'create' && (
           <Form.Item
-            name='ref_code'
-            label='Ref Code'
+            initialValue={initialValues?.username ?? ''}
+            name='username'
+            label='Username'
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <Input.Password />
+            <Input />
+          </Form.Item>
+        )}
+
+        {data?.role === 'super-admin' && filterType === 'admin' && (
+          <Form.Item
+            name='ref_code'
+            label='Ref Code'
+            rules={[
+              { required: true, message: 'Please select your bet type!' },
+            ]}
+          >
+            <Select allowClear>
+              {refCodesTypes ? (
+                refCodesTypes.map((item, id) => (
+                  <Select.Option
+                    key={id}
+                    value={item.ref_code}
+                  >
+                    {item.ref_code}
+                  </Select.Option>
+                ))
+              ) : (
+                <></>
+              )}
+            </Select>
           </Form.Item>
         )}
         <Form.Item
@@ -138,12 +163,18 @@ const RegistrationForm = ({ submitHandler, formfields }) => {
         </Form.Item>
         <div className='button-field'>
           <Form.Item className='text-center mx-1'>
-            <Button type='primary' htmlType='submit'>
+            <Button
+              type='primary'
+              htmlType='submit'
+            >
               Submit
             </Button>
           </Form.Item>
           <Form.Item className='text-center mx-1 '>
-            <Button htmlType='button' onClick={() => formfields.resetFields()}>
+            <Button
+              htmlType='button'
+              onClick={() => formfields.resetFields()}
+            >
               Reset
             </Button>
           </Form.Item>

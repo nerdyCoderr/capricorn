@@ -48,7 +48,7 @@ const BetList = () => {
   });
   const dateFormat = 'YYYY-MM-DD';
   const currentDate = moment().format(dateFormat);
-  console.log(adminData);
+ 
   const params = '1';
   const filterType = 'trans_list';
   const dateparams = `&from=${adminData.from ?? currentDate}&to=${
@@ -193,13 +193,13 @@ const BetList = () => {
             actionHandlertwo={actionHandlertwo}
             actioncall={adminData?.refcode ? getAdminTransList : getBetList}
             data={data}
-            dateSearch={filter}
+            dateSearch={adminData.refcode ? adminData : filter}
             handleColumnClick={handleColumnClick2}
           />
         )}
         {isTablethreeOpen && (
           <TableThreeModal
-            dateSearch={filter}
+            dateSearch={adminData.refcode ? adminData : filter}
             actioncall={adminData?.refcode ? getAdminTransList : getBetList}
             isTablethreeOpen={isTablethreeOpen}
             setIsTablethreeOpen={setIsTablethreeOpen}
@@ -209,7 +209,10 @@ const BetList = () => {
             onCancel={onCancel3}
           />
         )}
-        <BackButton title={title} adminData={adminData} />
+        <BackButton
+          title={title}
+          adminData={adminData}
+        />
 
         <Filter
           setFilter={setFilter}
@@ -221,7 +224,7 @@ const BetList = () => {
           filter={filter}
           filterType={filterType}
         />
-        <Space className='d-flex mt-5 text-center profit-container'>
+        <Space className='d-flex mt-5 text-center profit-container container'>
           <div>
             <p>Profit</p>
             <h5>

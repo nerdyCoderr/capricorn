@@ -17,6 +17,10 @@ import io from 'socket.io-client';
 import config from './api/config';
 import CreateWinNum from './pages/DashBoard/CreateWinNum';
 import AdminTransList from './pages/DashBoard/AdminTransList';
+import AccountManagement from './pages/DashBoard/AccountManagement';
+import CreateAdminAccount from './pages/DashBoard/CreateAdminAccount';
+import CreateUserAccountBySuperAdmin from './pages/DashBoard/CreateUserAccountBySuperAdmin';
+import AccountSettings from './pages/DashBoard/AccountSettings';
 
 const AppRouter = () => {
   const [data, setData] = useState({
@@ -55,6 +59,41 @@ const AppRouter = () => {
             element={
               <ProtectedRoute isAuth={data && data.isAuth}>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/account-management'
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <AccountManagement />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/create-admin-account'
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <CreateAdminAccount />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/account-settings'
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <AccountSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/create-user-account-by-superadmin'
+            element={
+              <ProtectedRoute isAuth={data && data.isAuth}>
+                <CreateUserAccountBySuperAdmin />
               </ProtectedRoute>
             }
           />
@@ -108,8 +147,14 @@ const AppRouter = () => {
               // </ProtectedRoute>
             }
           />
-          <Route path='/' element={<Login />} />
-          <Route path='/registration' element={<Registration />} />
+          <Route
+            path='/'
+            element={<Login />}
+          />
+          <Route
+            path='/registration'
+            element={<Registration />}
+          />
           <Route
             path='/create-user-account-by-admin'
             element={

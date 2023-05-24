@@ -26,6 +26,10 @@ const TabletwoModal = ({
         dataIndex: 'total_bet_amt', // dataIndex is the "key" in the data
       },
       {
+        title: 'Win Amt',
+        dataIndex: 'win_amt', // dataIndex is the "key" in the data
+      },
+      {
         title: 'Action',
         dataIndex: 'action',
       },
@@ -37,13 +41,8 @@ const TabletwoModal = ({
   const otherparams = `&user_id=${username}`;
 
   const dateparams = `&from=${dateSearch?.from}&to=${dateSearch?.to}`;
-  const {
-    onPrevious,
-    onFirst,
-    onLast,
-    onNext,
-    callbackresponse,
-  } = usePagination(params, dataTable, actioncall, otherparams, dateparams);
+  const { onPrevious, onFirst, onLast, onNext, callbackresponse } =
+    usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
   useEffect(() => {
     const { data, total } = callbackresponse;
@@ -52,6 +51,7 @@ const TabletwoModal = ({
       return {
         total_bet_amt: data?.total_amount,
         trans_no: data?.trans_no,
+        win_amt: data?.actual_win_amount,
         action: (
           <div className='text-center'>
             {' '}

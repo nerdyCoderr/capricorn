@@ -39,10 +39,6 @@ const AdminTransList = () => {
     grandTotalWinAmount: '',
     grandActualWinAmount: '',
   });
-  const [tableData, setTableData] = useState({
-    istableOne: false,
-    ref_code: '',
-  });
 
   const columns = React.useMemo(
     () => [
@@ -109,20 +105,12 @@ const AdminTransList = () => {
   //   return;
   // };
   const actionHandler = (id) => {
-    // console.log('check');
-    // setTableData((prev) => {
-    //   return { ...prev, istableOne: true, ref_code: id };
-    // });
     nav(
       `/transaction-list?ref_code=${id}&from=${
         adminData.from ?? filter.from
       }&to=${adminData.to ?? filter.to}`,
     );
   };
-
-  useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
 
   const processResponseData = (response) => {
     const {
@@ -182,7 +170,7 @@ const AdminTransList = () => {
         filterType={filterType}
       />
 
-      <Space className='d-flex mt-5 text-center profit-container'>
+      <Space className='d-flex mt-5 text-center profit-container container'>
         <div>
           <p>Profit</p>
           <h5>

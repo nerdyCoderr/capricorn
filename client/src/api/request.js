@@ -71,11 +71,107 @@ const registerUserAccountbyAdmin = (params, callback = null) => {
     });
 };
 
+const registerAccountbySuper = (params, callback = null) => {
+  const newToken = token();
+
+  api
+    .post(`/super/accounts/${params?.link}`, JSON.stringify(params), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': newToken,
+      },
+    })
+    .then((res) => {
+      message.success(res.data.message);
+      callback(res);
+    })
+    .catch((err) => {
+      if (err) {
+        message.error(err.response.data.message);
+        if (err.response.status === 401 || err.response.status === 422) {
+          callback(err.response);
+        }
+      }
+    });
+};
+
 const getBetType = (callback = null) => {
   const newToken = token();
 
   api
     .get('/bet-types', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': newToken,
+      },
+    })
+    .then((res) => {
+      // message.success(res.data.message);
+      callback(res);
+    })
+    .catch((err) => {
+      if (err) {
+        message.error(err.response.data.message);
+        if (err.response.status === 401 || err.response.status === 422) {
+          callback(err.response);
+        }
+      }
+    });
+};
+
+const getAccountInfo = (params, callback = null) => {
+  const newToken = token();
+
+  api
+    .get(`/${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': newToken,
+      },
+    })
+    .then((res) => {
+      // message.success(res.data.message);
+      callback(res);
+    })
+    .catch((err) => {
+      if (err) {
+        message.error(err.response.data.message);
+        if (err.response.status === 401 || err.response.status === 422) {
+          callback(err.response);
+        }
+      }
+    });
+};
+
+const updateAccountInfo = (params, callback = null) => {
+  const newToken = token();
+
+  api
+    .put(`/${params.link}`, JSON.stringify({ updates: params }), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': newToken,
+      },
+    })
+    .then((res) => {
+      message.success(res.data.message);
+      callback(res);
+    })
+    .catch((err) => {
+      if (err) {
+        message.error(err.response.data.message);
+        if (err.response.status === 401 || err.response.status === 422) {
+          callback(err.response);
+        }
+      }
+    });
+};
+
+const getRefCodes = (callback = null) => {
+  const newToken = token();
+
+  api
+    .get('/ref-codes', {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': newToken,
@@ -162,6 +258,25 @@ export const openNotification = (title, message) => {
   });
 };
 
+const getAccountList = (params, callback = null) => {
+  const newToken = token();
+
+  api
+    .get(`/super/accounts${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': newToken,
+      },
+    })
+    .then((res) => {
+      message.success(res.data.message);
+      callback(res);
+    })
+    .catch((err) => {
+      callback(err.response);
+    });
+};
+
 const getBetList = (params, callback = null) => {
   const newToken = token();
 
@@ -224,6 +339,30 @@ const getBetListUser = (params, callback = null) => {
     });
 };
 
+const updateAdminUserAccount = (params, callback = null) => {
+  const newToken = token();
+
+  api
+    .put(
+      `/super/accounts/${params.username}`,
+      JSON.stringify({ updates: params }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': newToken,
+        },
+      },
+    )
+    .then((res) => {
+      message.success(res.data.message);
+
+      callback(res);
+    })
+    .catch((err) => {
+      callback(err.response);
+    });
+};
+
 const getTransactionNO = (params, callback = null) => {
   const newToken = token();
   console.log(params);
@@ -248,6 +387,9 @@ const getTransactionNO = (params, callback = null) => {
 };
 
 export {
+  updateAccountInfo,
+  getAccountInfo,
+  getRefCodes,
   registerUserAccountbyAdmin,
   userLogin,
   registerUserAccount,
@@ -258,4 +400,7 @@ export {
   getBetListUser,
   createWinningNumber,
   getAdminTransList,
+  getAccountList,
+  updateAdminUserAccount,
+  registerAccountbySuper,
 };

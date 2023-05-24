@@ -1,0 +1,27 @@
+.accountmanagement {
+  background-color: #008080;
+  height: 100%;
+  min-height: 100vh;
+
+  color: #d0efb1;
+  padding: 1rem;
+
+  .title {
+    color: white;
+
+    text-align: center;
+    text-shadow: 1px 1px 2px #000000;
+  }
+  .ant-modal-confirm-content {
+    margin-inline-start: 10 !important;
+  }
+  :where(.css-dev-only-do-not-override-1mqg3i0).ant-input {
+    height: 45px;
+    font-size: 14px;
+    width: 100%;
+  }
+}
+.inputss .ant-input-disabled {
+  background-color: #ffffff; /* Set the desired background color */
+  color: #000000; /* Set the desired text color */
+}

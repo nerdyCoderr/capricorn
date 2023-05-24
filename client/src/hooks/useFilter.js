@@ -10,6 +10,7 @@ const useFilter = (params, currentDate, actioncall) => {
     bet_type: '',
     bet_num: '',
     username: '',
+    role: 'admin',
     win_result_switch: false,
   });
   const [callbackfilterRes, setCallbackfilter] = useState();
@@ -46,6 +47,7 @@ const useFilter = (params, currentDate, actioncall) => {
       to,
       bet_result: betResult,
       username: username,
+      role,
     } = filter;
 
     const queryParams = {
@@ -57,6 +59,7 @@ const useFilter = (params, currentDate, actioncall) => {
       to: to ? `&to=${to}` : '',
       betResult: betResult ? `&bet_result=${betResult}` : '',
       username: username ? `&username=${username}` : '',
+      role: role ? `&role=${role}` : '',
     };
 
     const query = Object.values(queryParams).join('');
@@ -76,6 +79,7 @@ const useFilter = (params, currentDate, actioncall) => {
       bet_type: '',
       bet_num: '',
       username: '',
+      role: 'admin',
     });
   };
 

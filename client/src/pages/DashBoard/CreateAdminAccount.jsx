@@ -2,12 +2,13 @@ import React from 'react';
 import './CreateUserAccountByAdmin.scss';
 
 import RegistrationForm from '../../components/registration/RegistrationForm';
-import { registerUserAccountbyAdmin } from '../../api/request';
+import { registerAccountbySuper } from '../../api/request';
 import { Form } from 'antd';
 import BackButton from '../../components/Layout/BackButton';
 
-const CreateUserAccountByAdmin = () => {
-  const title = 'Create User Account';
+const CreateAdminAccount = () => {
+  const title = 'Create Admin Account';
+
   const [formfields] = Form.useForm(); // create a form instance
 
   const submitHandler = (values) => {
@@ -18,9 +19,10 @@ const CreateUserAccountByAdmin = () => {
       phone_number: values.phonenumber,
       username: values.username,
       password: values.password,
+      link: 'admin-signup',
     };
     console.log(form);
-    registerUserAccountbyAdmin(form, callback);
+    registerAccountbySuper(form, callback);
   };
 
   const callback = async (res) => {
@@ -45,4 +47,4 @@ const CreateUserAccountByAdmin = () => {
   );
 };
 
-export default CreateUserAccountByAdmin;
+export default CreateAdminAccount;
