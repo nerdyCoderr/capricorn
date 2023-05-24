@@ -133,6 +133,7 @@ exports.getRefCode = async (req, res) => {
       ref_code: 1,
       first_name: 1,
       last_name: 1,
+      username: 1,
       _id: 0,
     });
     if (!admin_ref_codes) {
