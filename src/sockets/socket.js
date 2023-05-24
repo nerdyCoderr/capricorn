@@ -1,6 +1,7 @@
 const socketIO = require("socket.io");
 const { getWatchlist, generateCacheKey } = require("../utils/watchlist");
 const getTransactionOverview = require("../utils/getTransactionOverview");
+const chartData = require("../utils/chartData");
 const User = require("../models/User");
 const Transaction = require("../models/Transaction");
 
@@ -94,6 +95,7 @@ io.on("connection", (socket) => {
 
       if (user.role === "admin" || user.role === "super-admin") {
         socket.join("transactionOverview");
+        socket.join("chartData");
       } else if (user.role === "user") {
         socket.join("watchlist");
       }
@@ -156,7 +158,26 @@ io.on("connection", (socket) => {
           if (user) {
             const trans = await getTransactionOverview(user.username);
             callback({ trans });
-            lastEmitTime = Date.now();
+            return;
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      return { error: error };
+    }
+  });
+
+  socket.on("chartData", async (data, callback) => {
+    try {
+      let room = io.of("/").adapter.rooms.get("chartData");
+      if (room) {
+        for (let id of room) {
+          let s = io.sockets.sockets.get(id);
+          let user = s.user;
+          if (user) {
+            const chart_data = await chartData(user.username, data.days);
+            callback({ chart_data });
             return;
           }
         }

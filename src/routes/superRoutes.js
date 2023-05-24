@@ -13,6 +13,13 @@ router.post(
   superController.adminSignup
 );
 
+router.post(
+  "/accounts/user-signup",
+  authenticate,
+  authorize(["super-admin"]),
+  superController.userSignup
+);
+
 // update user and admin account info
 router.put(
   "/accounts/:username",
