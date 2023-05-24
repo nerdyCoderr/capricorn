@@ -47,6 +47,7 @@ changeStream.on("change", async (change) => {
 io.on("connection", (socket) => {
   console.log(`$User ${socket.id} connected`);
 
+  // session specific socket events
   socket.on("login", async (credentials, callback) => {
     try {
       const { username, password } = credentials;
@@ -118,6 +119,11 @@ io.on("connection", (socket) => {
     socket.disconnect();
   });
 
+  socket.on("disconnect", () => {
+    console.log(`$User ${socket.id} disconnected`);
+  });
+
+  // user specific socket event
   socket.on("watchlist", async (data, callback) => {
     try {
       let room = io.of("/").adapter.rooms.get("watchlist");
@@ -139,6 +145,7 @@ io.on("connection", (socket) => {
     }
   });
 
+  // admin/super-admin specific socket event
   socket.on("admin:transactionOverview", async (data, callback) => {
     try {
       let room = io.of("/").adapter.rooms.get("transactionOverview");
@@ -158,10 +165,6 @@ io.on("connection", (socket) => {
       console.log(error);
       return { error: error };
     }
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`$User ${socket.id} disconnected`);
   });
 });
 

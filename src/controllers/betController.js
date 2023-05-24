@@ -323,7 +323,10 @@ exports.getBets = async (req, res) => {
         bet_query.result = Boolean(bet_result);
       }
 
-      bet_query.ref_code = ref_code;
+      if (ref_code) {
+        bet_query.ref_code = ref_code;
+      }
+
       bet_query.createdAt = createdAt;
     }
 
