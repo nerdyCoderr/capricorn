@@ -1,7 +1,6 @@
 const { batchID } = require("./isWithinTimeRange");
 const User = require("../models/User");
 const Transaction = require("../models/Transaction");
-const getTransactionOverview = require("../utils/getTransactionOverview");
 const getCurrentDateString = require("./getCurrentDateString");
 
 function queryBuilder(
@@ -241,7 +240,6 @@ function resultsBuilder(results, keys) {
 async function chartData(username, days) {
   let chart_data = {};
   let results;
-  let trans;
   let hour;
   let timeFormat;
   let newDateString;
