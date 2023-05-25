@@ -160,11 +160,11 @@ const getTransactionOverview = async (
           latest_transaction: -1,
         },
       },
-      // {
-      //   $project: {
-      //     transactions: 0,
-      //   },
-      // },
+      {
+        $project: {
+          transactions: 0,
+        },
+      },
       {
         $facet: {
           paginatedResults: [],
