@@ -7,7 +7,12 @@ const { authenticate, authorize } = require("../utils/authMiddleware");
 
 // Public routes
 userPublicRoutes.post("/login", userController.login);
-userPublicRoutes.get("/ref-codes", userController.getRefCode);
+userPublicRoutes.get(
+  "/ref-codes",
+  authenticate,
+  authorize(["admin", "super-admin"]),
+  userController.getRefCode
+);
 
 // Private routes
 userPrivateRoutes.put(
