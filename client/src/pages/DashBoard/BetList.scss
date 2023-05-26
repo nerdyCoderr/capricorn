@@ -1,17 +1,6 @@
 .betlistcontainer {
-  background-color: #008080;
-  height: 100%;
-  min-height: 100vh;
-
-  color: #d0efb1;
+  color: white;
   padding: 1rem;
-
-  .title {
-    color: white;
-
-    text-align: center;
-    text-shadow: 1px 1px 2px #000000;
-  }
 
   :where(.css-dev-only-do-not-override-1mqg3i0).ant-input-disabled,
   :where(.css-dev-only-do-not-override-1mqg3i0).ant-input[disabled] {
@@ -22,7 +11,6 @@
     cursor: not-allowed;
     opacity: 1;
   }
-
   .profit-container {
     h5 {
       background-color: white;

@@ -106,7 +106,7 @@ const AdminTransList = () => {
   // };
   const actionHandler = (id) => {
     nav(
-      `/transaction-list?ref_code=${id}&from=${
+      `/dashboard/transaction-list?ref_code=${id}&from=${
         adminData.from ?? filter.from
       }&to=${adminData.to ?? filter.to}`,
     );

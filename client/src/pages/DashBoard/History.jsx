@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import './History.scss';
 import { getBetListUser } from '../../api/request';
@@ -12,9 +11,9 @@ import TableThreeModal from '../../components/BetList/TableThreeModal';
 import useFilter from '../../hooks/useFilter';
 import Filter from '../../components/Filter/Filter';
 import AntTable from '../../components/Table/AntTable';
+import BackButton from '../../components/Layout/BackButton';
 const History = () => {
   dayjs.extend(customParseFormat);
-  const nav = useNavigate();
   const [dataTable, setDataTabble] = useState([]);
   const [transNO, setTransNo] = useState();
   const [isTablethreeOpen, setIsTablethreeOpen] = useState(false);
@@ -114,8 +113,7 @@ const History = () => {
 
   return (
     <div className='historycontainer '>
-      <h6 onClick={() => nav('/dashboard')}>Back</h6>
-      <h1 className='text-center'>Transaction History</h1>
+      <BackButton title='Transaction History' />
       <Filter
         filterType={filterType}
         setFilter={setFilter}

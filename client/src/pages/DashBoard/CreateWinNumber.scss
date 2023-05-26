@@ -5,7 +5,7 @@
     display: none !important;
   }
   .ant-form-item-explain-error {
-    color: white;
+    color: $fontColorSecondary;
   }
   h1 {
     text-shadow: 1px 1px 2px #000000;
@@ -15,7 +15,7 @@
     margin: auto;
 
     label {
-      color: $fontColorPrimary;
+      color: $fontColorSecondary;
       font-weight: 500;
       font-size: 1rem;
     }

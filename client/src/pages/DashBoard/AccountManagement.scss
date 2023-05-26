@@ -1,9 +1,7 @@
-.accountmanagement {
-  background-color: #008080;
-  height: 100%;
-  min-height: 100vh;
+@import '../../index.scss';
 
-  color: #d0efb1;
+.accountmanagement {
+  color: $fontColorSecondary;
   padding: 1rem;
 
   .title {

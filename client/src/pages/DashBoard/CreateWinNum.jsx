@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import GlassLayout from '../../components/Layout/GlassLayout';
-import { MdArrowBackIos } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+
 import './CreateWinNumber.scss';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
@@ -9,10 +7,11 @@ import moment from 'moment';
 import { Button, DatePicker, Form, Input, Select } from 'antd';
 import Table from '../../components/Table/Table';
 import { createWinningNumber, getBetType } from '../../api/request';
+import BackButton from '../../components/Layout/BackButton';
 
 function CreateWinNum() {
   dayjs.extend(customParseFormat);
-  const nav = useNavigate();
+
   const dateFormat = 'YYYY-MM-DD';
 
   const currentDate = moment().format(dateFormat);
@@ -132,16 +131,10 @@ function CreateWinNum() {
     getBetType(callback);
   }, []);
   return (
-    <GlassLayout>
-      <div
-        style={{ textAlign: 'left', marginLeft: '1rem' }}
-        onClick={() => nav('/dashboard')}
-      >
-        <MdArrowBackIos size={25} />
-      </div>
+    <>
+      {' '}
+      <BackButton title='Input Winning Bets' />
       <div className='create-win-num'>
-        {' '}
-        <h1 className='text-center'>Input Winning bets</h1>
         <Form
           onFinish={submitHandler}
           className='createwinNumForm'
@@ -250,14 +243,16 @@ function CreateWinNum() {
             columns={columns}
           />
         </div>
-        <Button
-          type='primary'
-          onClick={createWinBet}
-        >
-          Create Winning Bet
-        </Button>
+        <div className='text-center'>
+          <Button
+            type='primary'
+            onClick={createWinBet}
+          >
+            Create Winning Bet
+          </Button>
+        </div>
       </div>
-    </GlassLayout>
+    </>
   );
 }
 

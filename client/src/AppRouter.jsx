@@ -21,6 +21,7 @@ import AccountManagement from './pages/DashBoard/AccountManagement';
 import CreateAdminAccount from './pages/DashBoard/CreateAdminAccount';
 import CreateUserAccountBySuperAdmin from './pages/DashBoard/CreateUserAccountBySuperAdmin';
 import AccountSettings from './pages/DashBoard/AccountSettings';
+import DashBoardMain from './pages/DashBoard/DashBoardMain';
 
 const AppRouter = () => {
   const [data, setData] = useState({
@@ -46,122 +47,138 @@ const AppRouter = () => {
       <BrowserRouter>
         <Routes>
           <Route
-            path='/create-win-number'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <CreateWinNum />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
             path='/dashboard'
             element={
               <ProtectedRoute isAuth={data && data.isAuth}>
                 <Dashboard />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route
+              index
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <DashBoardMain />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/main'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <DashBoardMain />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/new-bet'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <NewBets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/create-win-number'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <CreateWinNum />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/account-management'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <AccountManagement />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path='/account-management'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <AccountManagement />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path='/dashboard/create-admin-account'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <CreateAdminAccount />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path='/create-admin-account'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <CreateAdminAccount />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path='/dashboard/account-settings'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <AccountSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/create-user-account-by-superadmin'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <CreateUserAccountBySuperAdmin />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path='/account-settings'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <AccountSettings />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/create-user-account-by-superadmin'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <CreateUserAccountBySuperAdmin />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path='/dashboard/hits'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <Hits />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/history'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <History />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path='/hits'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <Hits />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/history'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <History />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/new-bet'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <NewBets />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path='/dashboard/transaction-list'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <BetList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/bet-list'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <BetListSearch />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/admin-trans-list'
+              element={
+                // <ProtectedRoute isAuth={data && data.isAuth}>
+                <AdminTransList />
+                // </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/registration'
+              element={<Registration />}
+            />
+            <Route
+              path='/dashboard/create-user-account-by-admin'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <CreateUserAccountByAdmin />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
 
-          <Route
-            path='/transaction-list'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <BetList />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/bet-list'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <BetListSearch />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/admin-trans-list'
-            element={
-              // <ProtectedRoute isAuth={data && data.isAuth}>
-              <AdminTransList />
-              // </ProtectedRoute>
-            }
-          />
           <Route
             path='/'
             element={<Login />}
-          />
-          <Route
-            path='/registration'
-            element={<Registration />}
-          />
-          <Route
-            path='/create-user-account-by-admin'
-            element={
-              <ProtectedRoute isAuth={data && data.isAuth}>
-                <CreateUserAccountByAdmin />
-              </ProtectedRoute>
-            }
           />
         </Routes>
       </BrowserRouter>

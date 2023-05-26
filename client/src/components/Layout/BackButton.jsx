@@ -11,7 +11,7 @@ const BackButton = ({ title, adminData = undefined }) => {
         className='arrow-back'
         onClick={() => {
           if (adminData?.refcode) {
-            nav(`/admin-trans-list?from=${adminData.from}&to=${adminData.to}`);
+            nav(`/dashboard/admin-trans-list?from=${adminData.from}&to=${adminData.to}`);
           } else {
             nav('/dashboard');
           }

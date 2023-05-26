@@ -3,8 +3,95 @@
 :where(.css-dev-only-do-not-override-1mqg3i0).ant-card .ant-card-head-title {
   color: $fontColorSecondary;
 }
+:where(.css-dev-only-do-not-override-1mqg3i0).ant-drawer .ant-drawer-content {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: #50a3a2;
+  background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  background: -moz-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  background: -o-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+
+  height: 100vh;
+  pointer-events: auto;
+  a {
+    text-decoration: none;
+  }
+}
+:where(.css-dev-only-do-not-override-1mqg3i0)[class^='ant-layout']
+  [class^='ant-layout'],
+:where(.css-dev-only-do-not-override-1mqg3i0)[class*=' ant-layout']
+  [class^='ant-layout'],
+:where(.css-dev-only-do-not-override-1mqg3i0)[class^='ant-layout']
+  [class*=' ant-layout'],
+:where(.css-dev-only-do-not-override-1mqg3i0)[class*=' ant-layout']
+  [class*=' ant-layout'] {
+  box-sizing: border-box;
+  margin: 0 !important;
+}
+:where(.css-dev-only-do-not-override-1mqg3i0).ant-layout {
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  background: $backgroundColor;
+}
+:where(.css-dev-only-do-not-override-1mqg3i0).ant-drawer .ant-drawer-body {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.drawer-custom {
+  background: #59908f;
+  // background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  // background: -moz-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  // background: -o-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+  // background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+
+  border-inline-end: 0px solid rgba(5, 5, 5, 0.06);
+  width: 100px;
+}
+.ant-menu.ant-menu-root {
+  background-color: transparent;
+  border-inline-end: 0px solid rgba(5, 5, 5, 0.06) !important;
+  color: white;
+
+  font-size: 18px;
+  text-decoration: none;
+
+  @media (max-width: 425.98px) {
+    font-size: $mediaquerySmallestFontSize;
+  }
+}
+//when selected
+.ant-menu-item-selected {
+  color: #534c5e !important;
+  transition: none !important;
+}
+.ant-drawer-content-wrapper {
+  background-color: #d0efb1;
+
+  @media (max-width: 425.98px) {
+    width: 250px !important;
+  }
+}
 
 .dashboard {
+  .header-layout {
+    background: #50a3a2;
+    background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+    background: -moz-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+    background: -o-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+    background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+    padding: 0;
+  }
+
+  //////////////////////////////////
   .dashboard__header {
     position: relative;
     .logo {
@@ -20,31 +107,7 @@
       text-shadow: 1px 1px 2px #000000;
     }
   }
-  .dashboard__content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
 
-    h3 {
-      color: #f1e8e8;
-    }
-    .card {
-      justify-content: center;
-      margin: 1rem;
-      min-width: 150px;
-      text-align: center;
-      background-color: #534c5e;
-      color: #d0efb1;
-      p {
-        font-size: 1rem;
-        margin-bottom: 0;
-      }
-      .card-body {
-        padding: 1.5rem 0 0 0;
-      }
-    }
-  }
   .dashboard__totaloverview {
     margin-bottom: 1rem;
     p,
@@ -69,14 +132,6 @@
           max-width: 10rem;
         }
       }
-      &__content {
-        justify-content: center;
-        align-items: flex-start;
-        & .card {
-          margin: 0.5rem !important;
-          width: calc(50% - 1rem);
-        }
-      }
 
       &__totaloverview {
         h4 {
@@ -88,22 +143,6 @@
           .card-body {
             padding: 0.2rem !important;
           }
-        }
-      }
-    }
-  }
-}
-@media (max-width: 375.98px) {
-  .dashboard {
-    .dashboard {
-      &__content {
-        justify-content: flex-start;
-        & .card {
-          height: 120px;
-          width: calc(50% - 1rem);
-          margin: 0.5rem;
-          box-sizing: border-box;
-          min-width: 10px;
         }
       }
     }
