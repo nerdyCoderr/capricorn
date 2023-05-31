@@ -78,6 +78,13 @@ function aggregateBuilder({ transact_query, user_query, admin_query }) {
           {
             $project: {
               password: 0,
+              first_name: 0,
+              last_name: 0,
+              phone_number: 0,
+              createdAt: 0,
+              updatedAt: 0,
+              active: 0,
+              __v: 0,
             },
           },
         ],
@@ -94,21 +101,56 @@ function aggregateBuilder({ transact_query, user_query, admin_query }) {
     },
     {
       $group: {
-        _id: "$ref_code",
+        _id: {
+          ref_code: "$ref_code",
+          user: "$user",
+        },
         transactions: {
           $push: {
             _id: "$_id",
             trans_no: "$trans_no",
-            user: "$user",
+            // user: "$user",
             total_amount: "$total_amount",
             total_win_amount: "$total_win_amount",
             actual_win_amount: "$actual_win_amount",
-            status: "$status",
+            // status: "$status",
             createdAt: "$createdAt",
-            updatedAt: "$updatedAt",
-            batch_id: "$batch_id",
-            __v: "$__v",
+            // updatedAt: "$updatedAt",
+            // batch_id: "$batch_id",
+            // __v: "$__v",
             ref_code: "$ref_code",
+          },
+        },
+        total_amount: {
+          $sum: "$total_amount",
+        },
+        total_win_amount: {
+          $sum: "$total_win_amount",
+        },
+        actual_win_amount: {
+          $sum: "$actual_win_amount",
+        },
+        latest_transaction: {
+          $max: "$createdAt",
+        },
+      },
+    },
+    {
+      $sort: {
+        latest_transaction: -1,
+      },
+    },
+    {
+      $group: {
+        _id: "$_id.ref_code",
+        trans_by_user: {
+          $push: {
+            user: "$_id.user",
+            // transactions: "$transactions",
+            total_amount: "$total_amount",
+            total_win_amount: "$total_win_amount",
+            actual_win_amount: "$actual_win_amount",
+            latest_transaction: "$latest_transaction",
           },
         },
       },
@@ -131,6 +173,13 @@ function aggregateBuilder({ transact_query, user_query, admin_query }) {
           {
             $project: {
               password: 0,
+              first_name: 0,
+              last_name: 0,
+              phone_number: 0,
+              createdAt: 0,
+              updatedAt: 0,
+              active: 0,
+              __v: 0,
             },
           },
         ],
@@ -143,16 +192,16 @@ function aggregateBuilder({ transact_query, user_query, admin_query }) {
     {
       $addFields: {
         total_amount: {
-          $sum: "$transactions.total_amount",
+          $sum: "$trans_by_user.total_amount",
         },
         total_win_amount: {
-          $sum: "$transactions.total_win_amount",
+          $sum: "$trans_by_user.total_win_amount",
         },
         actual_win_amount: {
-          $sum: "$transactions.actual_win_amount",
+          $sum: "$trans_by_user.actual_win_amount",
         },
         latest_transaction: {
-          $max: "$transactions.createdAt",
+          $max: "$trans_by_user.latest_transaction",
         },
       },
     },
@@ -161,11 +210,6 @@ function aggregateBuilder({ transact_query, user_query, admin_query }) {
         latest_transaction: -1,
       },
     },
-    // {
-    //   $project: {
-    //     transactions: 0,
-    //   },
-    // },
     {
       $facet: {
         paginatedResults: [],
@@ -275,7 +319,7 @@ async function chartData(username, days) {
       data_points: chart_data,
     };
   } else {
-    for (let x = 0; x <= days; x++) {
+    for (let x = 0; x < days; x++) {
       minus = x ? 1 : 0;
       date.setDate(date.getDate() - minus);
       newDateString = date.toISOString().split("T")[0];
