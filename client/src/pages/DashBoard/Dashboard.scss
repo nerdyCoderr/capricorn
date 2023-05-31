@@ -31,12 +31,14 @@
   margin: 0 !important;
 }
 :where(.css-dev-only-do-not-override-1mqg3i0).ant-layout {
-  display: flex;
-  flex: auto;
-  flex-direction: column;
-  min-height: 100vh;
-  height: 100%;
-  background: $backgroundColor;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height:100vh;
+  // flex: auto;
+  // flex-direction: column;
+  // min-height: 100vh;
+  // height: 100%;
+  // background: $backgroundColor;
 }
 :where(.css-dev-only-do-not-override-1mqg3i0).ant-drawer .ant-drawer-body {
   flex: 1;
@@ -82,6 +84,9 @@
 }
 
 .dashboard {
+  display: grid;
+  grid-template-rows: auto 1fr; /* First row takes auto height, second row takes the remaining space */
+  height: 100vh; 
   .header-layout {
     background: #50a3a2;
     background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
@@ -93,6 +98,7 @@
 
   //////////////////////////////////
   .dashboard__header {
+    height: 100%;
     position: relative;
     .logo {
       max-width: 15rem;

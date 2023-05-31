@@ -172,19 +172,19 @@ const AdminTransList = () => {
 
       <Space className='d-flex mt-5 text-center profit-container container'>
         <div>
-          <p>Profit</p>
-          <h5>
-            {(amountForm?.grandTotalAmount - amountForm.grandActualWinAmount) |
-              '- -'}
-          </h5>
-        </div>
-        <div>
           <p>Bet Amount</p>
           <h5>{amountForm?.grandTotalAmount | '- -'}</h5>
         </div>
         <div>
           <p> Win Amount</p>
           <h5>{amountForm?.grandActualWinAmount | '- -'}</h5>
+        </div>
+        <div>
+          <p>Profit</p>
+          <h5>
+            {(amountForm?.grandTotalAmount - amountForm.grandActualWinAmount) |
+              '- -'}
+          </h5>
         </div>
       </Space>
       <AntTable
@@ -197,7 +197,8 @@ const AdminTransList = () => {
         isloading={isloading}
         errorResponse={errorResponse}
         totalCountTable={totalCountTable}
-        scroll={{ x: 500, y: 300 }}
+        scroll='auto'
+        overflow='auto'
       />
     </div>
   );

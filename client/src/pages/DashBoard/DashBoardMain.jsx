@@ -5,7 +5,7 @@ import Chart from '../../components/Charts/Chart';
 function DashBoardMain() {
   return (
     <GlassLayout>
-      <div className='dashboard__header'>
+      {/* <div className='dashboard__header'>
         <div className='img-fluid logo'>
           <img
             src='./capricorn_log.png'
@@ -14,8 +14,13 @@ function DashBoardMain() {
           />
         </div>
         <h6 className='title'>Capricorn</h6>
-      </div>
-      <div className='dashboard__content'>
+      </div> */}
+      <div
+        className='dashboard__content'
+        style={{
+          flex: 1,
+        }}
+      >
         <Chart />
         {/* {data.role === 'admin' && (
 <div className='row mx-2 dashboard__totaloverview'>

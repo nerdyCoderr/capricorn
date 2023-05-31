@@ -22,9 +22,11 @@
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
+    "react-indiana-drag-scroll": "^2.2.0",
     "react-router-dom": "^6.10.0",
     "react-scripts": "^5.0.1",
     "react-table": "^7.8.0",
+    "recharts": "^2.6.2",
     "saas": "^1.0.0",
     "sass": "^1.62.0",
     "socket.io-client": "^4.6.1"
