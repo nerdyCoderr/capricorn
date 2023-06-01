@@ -252,7 +252,7 @@ function Chart() {
   return (
     <>
       <div className='top-container'>
-        {(data.role === 'admin' || data.role === 'super') && (
+        {(data.role === 'admin' || data.role === 'super-admin') && (
           <div className='livedata-container'>
             <h3
               style={{

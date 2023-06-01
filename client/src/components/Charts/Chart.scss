@@ -34,6 +34,7 @@
     background-color: whitesmoke;
     // width: auto;
     // padding-top: 20px;
+    overflow: hidden;
     margin-top: 30px;
     border-radius: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a cool-looking box shadow */
@@ -48,9 +49,8 @@
   }
   .splide__list {
     justify-content: center;
-    @media (max-width:425.98px) {
+    @media (max-width: 425.98px) {
       justify-content: left;
-      
     }
   }
   .breakdown-container {
@@ -127,7 +127,7 @@
     }
     .breakdown-container {
       width: 100%;
-      overflow: hidden;
+
       h3 {
         position: relative;
         top: 10px;
