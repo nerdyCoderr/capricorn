@@ -417,21 +417,36 @@ function Chart() {
             Breakdown
           </h3>
           <div className='text-center'>
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '500',
+                margin: '1rem 0 0 0',
+              }}
+            >
+              Total
+            </p>
             <Row
               className='d-flex justify-content-center mt-3'
-              gutter={[10, 10]}
+              gutter={[40, 40]}
             >
               <Col>
-                <h6>Sum of Bet Amt</h6>
-                <p>{breakdownSumtotal?.sumofTotalAmount}</p>
+                <p style={{ fontWeight: '500', fontSize: '16px' }}>Bet Amt</p>
+                <p style={{ fontSize: '18px' }}>
+                  {breakdownSumtotal?.sumofTotalAmount}
+                </p>
               </Col>
               <Col>
-                <h6>Sum of Win Amt</h6>
-                <p>{breakdownSumtotal?.sumofTotalActualWinaAmount}</p>
+                <p style={{ fontWeight: '500', fontSize: '16px' }}> Win Amt</p>
+                <p style={{ fontSize: '18px' }}>
+                  {breakdownSumtotal?.sumofTotalActualWinaAmount}
+                </p>
               </Col>
               <Col>
-                <h6>Sum of Profit</h6>
-                <p>{breakdownSumtotal?.sumofTotalProfit}</p>
+                <p style={{ fontWeight: '500', fontSize: '16px' }}> Profit</p>
+                <p style={{ fontSize: '18px' }}>
+                  {breakdownSumtotal?.sumofTotalProfit}
+                </p>
               </Col>
             </Row>
             <Space className='d-flex justify-content-center'>
@@ -470,15 +485,22 @@ function Chart() {
                         gutter={[16, 16]}
                       >
                         <Col>
-                          <h6>Bet Amount</h6>
+                          <p style={{ fontWeight: '500', fontSize: '16px' }}>
+                            Bet Amount
+                          </p>
                           <p>{data?.total_amount}</p>
                         </Col>
                         <Col>
-                          <h6> Win Amount</h6>
+                          <p style={{ fontWeight: '500', fontSize: '16px' }}>
+                            {' '}
+                            Win Amount
+                          </p>
                           <p>{data?.actual_win_amount}</p>
                         </Col>
                         <Col>
-                          <h6>Profit</h6>
+                          <p style={{ fontWeight: '500', fontSize: '16px' }}>
+                            Profit
+                          </p>
                           <p>{data?.total_amount - data?.actual_win_amount}</p>
                         </Col>
                       </Row>
@@ -505,15 +527,22 @@ function Chart() {
                           gutter={[16, 16]}
                         >
                           <Col>
-                            <h6>Bet Amount</h6>
+                            <p style={{ fontWeight: '500', fontSize: '16px' }}>
+                              Bet Amount
+                            </p>
                             <p>{data?.total_amount}</p>
                           </Col>
                           <Col>
-                            <h6> Win Amount</h6>
+                            <p style={{ fontWeight: '500', fontSize: '16px' }}>
+                              {' '}
+                              Win Amount
+                            </p>
                             <p>{data?.actual_win_amount}</p>
                           </Col>
                           <Col>
-                            <h6>Profit</h6>
+                            <p style={{ fontWeight: '500', fontSize: '16px' }}>
+                              Profit
+                            </p>
                             <p>
                               {data?.total_amount - data?.actual_win_amount}
                             </p>
