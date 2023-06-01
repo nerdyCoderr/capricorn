@@ -214,6 +214,25 @@ function Chart() {
     console.log(start);
   }, [start]);
 
+  const [widthScreen, setWidthScreen] = useState();
+  const [mobile, setMobile] = useState();
+  useEffect(() => {
+    const mobileWidth = ref.current.offsetWidth <= 425.98 ? '15em' : '100%';
+    setMobile(mobileWidth);
+    console.log(mobileWidth);
+    setWidthScreen(ref.current.offsetWidth);
+  }, [widthScreen, window.innerWidth]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobileWidth = ref.current.offsetWidth <= 425.98 ? '15em' : '100%';
+      setMobile(mobileWidth);
+      console.log(mobileWidth);
+      setWidthScreen(ref.current.offsetWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+  }, []);
   useEffect(() => {
     const updateLimitBet = (data) => {
       console.log(data);
@@ -249,47 +268,68 @@ function Chart() {
             >
               Realtime Data
             </h3>
-            <Splide
-              options={{
-                width: '100vw',
-                perPage: 3,
-                arrows: false,
-                gap: 5,
-              }}
-            >
-              <SplideSlide>
-                <Card
-                  style={{ minWidth: '200px' }}
-                  title={<h3>Bet Amount</h3>}
-                  className='p-2 livedata'
-                >
-                  <h5> {resultOverview.grandTotalAmount}</h5>
-                </Card>
-              </SplideSlide>
-              <SplideSlide>
-                <Card
-                  style={{ minWidth: '200px' }}
-                  title={<h3>Win Amount</h3>}
-                  className='p-2 livedata'
-                >
-                  <h5> {resultOverview.grandActualWinAmount}</h5>
-                </Card>
-              </SplideSlide>
-              <SplideSlide>
-                <Card
-                  style={{ minWidth: '200px' }}
-                  title={<h3>Profit</h3>}
-                  className='p-2 livedata'
-                >
-                  <h5>
-                    {resultOverview.grandTotalAmount -
-                      resultOverview.grandActualWinAmount}
-                  </h5>
-                </Card>
-              </SplideSlide>
-            </Splide>
+            <div style={{ width: mobile, margin: '0 auto' }}>
+              <Splide
+                style={{ justifyContent: 'center' }}
+                options={{
+                  drag: true,
+                  width: { mobile },
+                  perPage: 1,
+                  autoWidth: true,
+                  gap: 5,
+                  center: true,
+                  rewind: true,
+                  loop: true,
+                  arrows: mobile === '15em' ? true : false,
+                }}
+              >
+                <SplideSlide>
+                  <Card
+                    style={{ minWidth: '15em' }}
+                    title={<h3>Bet Amount</h3>}
+                    className='p-2 livedata'
+                  >
+                    <h5> {resultOverview.grandTotalAmount}</h5>
+                  </Card>
+                </SplideSlide>
+                <SplideSlide>
+                  <Card
+                    style={{ minWidth: '15em' }}
+                    title={<h3>Win Amount</h3>}
+                    className='p-2 livedata'
+                  >
+                    <h5> {resultOverview.grandActualWinAmount}</h5>
+                  </Card>
+                </SplideSlide>
+                <SplideSlide>
+                  <Card
+                    style={{ minWidth: '15em' }}
+                    title={<h3>Profit</h3>}
+                    className='p-2 livedata'
+                  >
+                    <h5>
+                      {resultOverview.grandTotalAmount -
+                        resultOverview.grandActualWinAmount}
+                    </h5>
+                  </Card>
+                </SplideSlide>
+              </Splide>
+            </div>
           </div>
         )}
+
+        <div className='w-100 mt-5'>
+          <Radio.Group
+            onChange={filterdata}
+            value={filter}
+          >
+            <Radio value={1}>Today</Radio>
+            <Radio value={7}>7 Days</Radio>
+            <Radio value={14}>14 Days</Radio>
+            <Radio value={30}>30 Days</Radio>
+          </Radio.Group>
+        </div>
+
         <section
           className='bar-container'
           ref={ref}
@@ -504,7 +544,7 @@ function Chart() {
           </h3>
           <ResponsiveContainer
             width='100%'
-            height={250}
+            height={mobile ? 300 : 250}
           >
             <PieChart
             // width={730}
@@ -551,17 +591,6 @@ function Chart() {
           </ResponsiveContainer>
         </div>
       </div>
-      <section>
-        <Radio.Group
-          onChange={filterdata}
-          value={filter}
-        >
-          <Radio value={1}>Today</Radio>
-          <Radio value={7}>7 Days</Radio>
-          <Radio value={14}>14 Days</Radio>
-          <Radio value={30}>30 Days</Radio>
-        </Radio.Group>
-      </section>
     </>
   );
 }

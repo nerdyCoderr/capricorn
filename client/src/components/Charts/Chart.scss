@@ -44,6 +44,14 @@
     width: 100%;
     min-height: 250px;
     margin: 0 auto;
+    padding-top: 8px;
+  }
+  .splide__list {
+    justify-content: center;
+    @media (max-width:425.98px) {
+      justify-content: left;
+      
+    }
   }
   .breakdown-container {
     flex: 0 0 38%;
@@ -72,7 +80,7 @@
   background-color: whitesmoke;
   padding-top: 5px;
   border-radius: 20px;
-  margin: 30px auto 10px auto; /* Center the chart horizontally */
+  margin: 10px auto 10px auto; /* Center the chart horizontally */
   // display: flex; /* Center the chart vertically */
   // justify-content: center; /* Center the chart vertically */
   // align-items: center; /* Center the chart vertically */
@@ -107,7 +115,7 @@
     display: block;
     // flex-wrap: wrap;
     width: 100%;
-    // padding: 0 0.8rem;
+    padding: 0 0.5rem;
     margin-bottom: 1rem;
     .pie-container {
       width: 100%;
