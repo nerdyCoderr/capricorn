@@ -1,19 +1,131 @@
-.recharts-wrapper {
-  width: 50px !important;
-  height: 700px;
-}
-.recharts-responsive-container {
-  min-height: 500px;
-  min-width: 700px;
-}
+// .recharts-wrapper {
+//   width: 50px !important;
+//   height: 700px;
+// }
+// .recharts-responsive-container {
+//   min-height: 500px;
+//   min-width: 700px;
+// }
+// .recharts-wrapper {
+//   width: 100%; /* Adjust the width as needed */
+// }
+// /* Example media query for smaller screens */
+// @media (max-width: 768px) {
+//   .chart-container {
+//     width: 100%; /* Adjust the width for smaller screens */
+//   }
+// }
+// .chart-container {
+//   background-color: whitesmoke;
+//   padding-top: 20px;
+//   border-radius: 20px;
+//   width: 80%;
+// }
+.top-container {
+  padding: 0 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
+  margin: 30px auto 0px auto; /* Center the chart horizontally */
+  display: flex; /* Center the chart vertically */
+  justify-content: space-between;
+  .pie-container,
+  .breakdown-container,
+  .livedata-container {
+    background-color: whitesmoke;
+    // width: auto;
+    // padding-top: 20px;
+    margin-top: 30px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a cool-looking box shadow */
+    transition: transform 0.2s ease-in-out; /* Add transition for the hover effect */
+  }
 
-.recharts-wrapper {
-  width: 100%; /* Adjust the width as needed */
+  .livedata-container {
+    width: 100%;
+    min-height: 250px;
+    margin: 0 auto;
+  }
+  .breakdown-container {
+    flex: 0 0 38%;
+    .breakdown-scroll {
+      overflow-y: auto;
+      max-height: 200px;
+      overflow-x: hidden;
+      border-bottom-left-radius: 0.8rem;
+      border-bottom-right-radius: 0.8rem;
+      .breakdown {
+        background-color: white;
+        padding: 0.5rem 0;
+        margin: 0 0.5rem;
+        border-radius: 0.8rem;
+      }
+    }
+  }
+  .pie-container {
+    flex: 0 0 58%;
+  }
 }
-
-/* Example media query for smaller screens */
-@media (max-width: 768px) {
-  .chart-container {
-    width: 100%; /* Adjust the width for smaller screens */
+.bar-container {
+  // width: 100%;
+  // overflow-x: auto;
+  flex: 0 0 100%;
+  background-color: whitesmoke;
+  padding-top: 5px;
+  border-radius: 20px;
+  margin: 30px auto 10px auto; /* Center the chart horizontally */
+  // display: flex; /* Center the chart vertically */
+  // justify-content: center; /* Center the chart vertically */
+  // align-items: center; /* Center the chart vertically */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a cool-looking box shadow */
+  transition: transform 0.2s ease-in-out; /* Add transition for the hover effect */
+  // scrollbar-width: thin;
+  // scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+.bar-container:hover,
+.pie-container:hover,
+.breakdown-container:hover {
+  transform: scale(1.02); /* Apply a slight scale transformation on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Modify the box shadow on hover */
+}
+// .chart-container::-webkit-scrollbar {
+//   width: 100px;
+// }
+// .chart-container::-webkit-scrollbar-track {
+//   background-color: var(--scrollbar-track);
+// }
+// .chart-container::-webkit-scrollbar-thumb {
+//   background-color: var(--scrollbar-thumb);
+//   border-radius: 4px;
+// }
+// /* Define the scrollbar colors using CSS custom properties */
+// :root {
+//   --scrollbar-track: #f1f1f1;
+//   --scrollbar-thumb: #888;
+// }
+@media (max-width: 475.98px) {
+  .top-container {
+    display: block;
+    // flex-wrap: wrap;
+    width: 100%;
+    // padding: 0 0.8rem;
+    margin-bottom: 1rem;
+    .pie-container {
+      width: 100%;
+      margin-left: 0px;
+      h3 {
+        position: relative;
+        top: 10px;
+      }
+    }
+    .breakdown-container {
+      width: 100%;
+      h3 {
+        position: relative;
+        top: 10px;
+      }
+    }
+    .bar-container {
+      width: 100%;
+    }
   }
 }

@@ -1,34 +1,25 @@
-/* eslint-disable no-unused-vars */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import './Dashboard.scss';
 import { useNavigate } from 'react-router-dom';
 import userContext from '../../context/userContext';
-import GlassLayout from '../../components/Layout/GlassLayout';
-import Chart from '../../components/Charts/Chart';
 import io from 'socket.io-client';
 import config from '../../api/config';
 
 import { Link, Outlet } from 'react-router-dom';
-import { Button, Drawer, Layout, Menu, Space } from 'antd';
+import { Button, Drawer, Layout, Menu } from 'antd';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
 
-const { Sider, Header, Content } = Layout;
+const { Header, Content } = Layout;
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { data, socket, setSocket } = useContext(userContext);
 
-  const [resultOverview, setResultOverview] = useState({
-    total: 1,
-    grandTotalAmount: 0,
-    grandTotalWinAmount: 0,
-    grandActualWinAmount: 0,
-  });
   const [open, setOpen] = useState(false);
 
   const logout = () => {
@@ -38,23 +29,6 @@ const Dashboard = () => {
     setSocket(newsocket);
     navigate('/');
   };
-
-  useEffect(() => {
-    const updateLimitBet = (data) => {
-      console.log(data);
-      setResultOverview(data.trans);
-    };
-
-    socket.emit('admin:transactionOverview', '', updateLimitBet);
-
-    socket.on('admin:transactionOverview', (data) => setResultOverview(data));
-
-    return () => {
-      socket.off('admin:transactionOverview', (data) =>
-        setResultOverview(data),
-      );
-    };
-  }, []);
 
   return (
     <div className='dashboard'>
