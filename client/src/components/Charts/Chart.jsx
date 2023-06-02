@@ -27,6 +27,7 @@ import { Button, Card, Col, Radio, Row, Space } from 'antd';
 import userContext from '../../context/userContext';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/splide/dist/css/themes/splide-default.min.css';
+import { AutoScroll } from '@splidejs/splide-extension-auto-scroll';
 
 function Chart() {
   const { socket, data } = useContext(userContext);
@@ -199,7 +200,7 @@ function Chart() {
   const filterdata = (e) => {
     if (ref.current.offsetWidth && e.target.value) {
       const width = ref.current.offsetWidth;
-      const datalength = e.target.value;
+      const datalength = e.target.value === 1 ? 16 : e.target.value;
       console.log(datalength);
       const x = width < 768.98 ? width / 768 : 1;
       const y = datalength - parseInt(x * datalength);
@@ -215,24 +216,23 @@ function Chart() {
   }, [start]);
 
   const [widthScreen, setWidthScreen] = useState();
-  const [mobile, setMobile] = useState();
-  useEffect(() => {
+  const [mobile, setMobile] = useState('');
+
+  const handleResize = () => {
     const mobileWidth = ref.current.offsetWidth <= 425.98 ? '15em' : '100%';
     setMobile(mobileWidth);
     console.log(mobileWidth);
     setWidthScreen(ref.current.offsetWidth);
+  };
+
+  useLayoutEffect(() => {
+    handleResize();
   }, [widthScreen, window.innerWidth]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const mobileWidth = ref.current.offsetWidth <= 425.98 ? '15em' : '100%';
-      setMobile(mobileWidth);
-      console.log(mobileWidth);
-      setWidthScreen(ref.current.offsetWidth);
-    };
-
+  useLayoutEffect(() => {
     window.addEventListener('resize', handleResize);
   }, []);
+
   useEffect(() => {
     const updateLimitBet = (data) => {
       console.log(data);
@@ -272,16 +272,31 @@ function Chart() {
               <Splide
                 style={{ justifyContent: 'center' }}
                 options={{
-                  drag: true,
+                  // autoplay: true,
+                  type: mobile == '15em' ? 'loop' : 'slide',
+                  drag: 'free',
+                  focus: mobile == '15em' ? 'center' : undefined,
                   width: { mobile },
-                  perPage: 1,
+                  perPage: mobile === '15em' ? 1 : 3,
+                  pagination: true,
                   autoWidth: true,
                   gap: 5,
                   center: true,
-                  rewind: true,
-                  loop: true,
+                  // rewind: true,
+                  // loop: true,
                   arrows: mobile === '15em' ? true : false,
+                  loop: true,
+                  autoScroll: {
+                    // autoStart: true,
+                    // autoplay: true,
+                    pauseOnHover: true,
+                    pauseOnFocus: true,
+                    rewind: true,
+                    loop: true,
+                    speed: 0.7,
+                  },
                 }}
+                extensions={{ AutoScroll }}
               >
                 <SplideSlide>
                   <Card
@@ -289,7 +304,7 @@ function Chart() {
                     title={<h3>Bet Amount</h3>}
                     className='p-2 livedata'
                   >
-                    <h5> {resultOverview.grandTotalAmount}</h5>
+                    <h2> {resultOverview.grandTotalAmount}</h2>
                   </Card>
                 </SplideSlide>
                 <SplideSlide>
@@ -298,7 +313,7 @@ function Chart() {
                     title={<h3>Win Amount</h3>}
                     className='p-2 livedata'
                   >
-                    <h5> {resultOverview.grandActualWinAmount}</h5>
+                    <h2> {resultOverview.grandActualWinAmount}</h2>
                   </Card>
                 </SplideSlide>
                 <SplideSlide>
@@ -307,10 +322,10 @@ function Chart() {
                     title={<h3>Profit</h3>}
                     className='p-2 livedata'
                   >
-                    <h5>
+                    <h2>
                       {resultOverview.grandTotalAmount -
                         resultOverview.grandActualWinAmount}
-                    </h5>
+                    </h2>
                   </Card>
                 </SplideSlide>
               </Splide>
@@ -318,17 +333,36 @@ function Chart() {
           </div>
         )}
 
-        <div className='w-100 mt-5'>
-          <Radio.Group
-            onChange={filterdata}
-            value={filter}
-          >
-            <Radio value={1}>Today</Radio>
-            <Radio value={7}>7 Days</Radio>
-            <Radio value={14}>14 Days</Radio>
-            <Radio value={30}>30 Days</Radio>
-          </Radio.Group>
-        </div>
+        <Row
+          justify='center'
+          style={{
+            backgroundColor: 'whitesmoke',
+            color: 'whitesmoke',
+            marginTop: '30px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            borderRadius: '20px',
+            padding: '4px',
+            width: '100%',
+            maxWidth: '400px',
+            border: '1px solid #7F7F7F',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+          }}
+        >
+          <Col xs={24}>
+            <div>
+              <Radio.Group
+                onChange={filterdata}
+                value={filter}
+              >
+                <Radio value={1}>Today</Radio>
+                <Radio value={7}>7 Days</Radio>
+                <Radio value={14}>14 Days</Radio>
+                <Radio value={30}>30 Days</Radio>
+              </Radio.Group>
+            </div>
+          </Col>
+        </Row>
 
         <section
           className='bar-container'
@@ -373,7 +407,7 @@ function Chart() {
               <Brush
                 key={1}
                 values={start}
-                height={20}
+                height={30}
                 stroke='#8884d8'
                 data={chartData.combinedAdminData}
                 startIndex={start}
@@ -427,7 +461,7 @@ function Chart() {
               Total
             </p>
             <Row
-              className='d-flex justify-content-center mt-3'
+              className='d-flex justify-content-center mt-2'
               gutter={[40, 40]}
             >
               <Col>
@@ -457,6 +491,9 @@ function Chart() {
                     user: false,
                   });
                 }}
+                style={{
+                  width: '70px',
+                }}
               >
                 Admin
               </Button>
@@ -466,6 +503,9 @@ function Chart() {
                     admin: false,
                     user: true,
                   });
+                }}
+                style={{
+                  width: '70px',
                 }}
               >
                 User
@@ -479,29 +519,37 @@ function Chart() {
                       className='breakdown mt-3'
                       key={index}
                     >
-                      <p>Username: {data?.admin}</p>
+                      <p style={{ fontWeight: '500', fontSize: '16px' }}>
+                        Username: {data?.admin}
+                      </p>
                       <Row
                         className='d-flex justify-content-center'
-                        gutter={[16, 16]}
+                        gutter={[40, 40]}
                       >
                         <Col>
                           <p style={{ fontWeight: '500', fontSize: '16px' }}>
-                            Bet Amount
+                            Bet Amt
                           </p>
-                          <p>{data?.total_amount}</p>
+                          <p style={{ fontSize: '18px' }}>
+                            {data?.total_amount}
+                          </p>
                         </Col>
                         <Col>
                           <p style={{ fontWeight: '500', fontSize: '16px' }}>
                             {' '}
-                            Win Amount
+                            Win Amt
                           </p>
-                          <p>{data?.actual_win_amount}</p>
+                          <p style={{ fontSize: '18px' }}>
+                            {data?.actual_win_amount}
+                          </p>
                         </Col>
                         <Col>
                           <p style={{ fontWeight: '500', fontSize: '16px' }}>
                             Profit
                           </p>
-                          <p>{data?.total_amount - data?.actual_win_amount}</p>
+                          <p style={{ fontSize: '18px' }}>
+                            {data?.total_amount - data?.actual_win_amount}
+                          </p>
                         </Col>
                       </Row>
                     </div>
@@ -517,33 +565,37 @@ function Chart() {
                       className='breakdown mt-3'
                       key={index}
                     >
-                      <p>
+                      <p style={{ fontWeight: '500', fontSize: '16px' }}>
                         <span className='font-weight-bold'>Username:</span>{' '}
                         {data?.name}
                       </p>
                       <div>
                         <Row
                           className='d-flex justify-content-center'
-                          gutter={[16, 16]}
+                          gutter={[40, 40]}
                         >
                           <Col>
                             <p style={{ fontWeight: '500', fontSize: '16px' }}>
-                              Bet Amount
+                              Bet Amt
                             </p>
-                            <p>{data?.total_amount}</p>
+                            <p style={{ fontSize: '18px' }}>
+                              {data?.total_amount}
+                            </p>
                           </Col>
                           <Col>
                             <p style={{ fontWeight: '500', fontSize: '16px' }}>
                               {' '}
-                              Win Amount
+                              Win Amt
                             </p>
-                            <p>{data?.actual_win_amount}</p>
+                            <p style={{ fontSize: '18px' }}>
+                              {data?.actual_win_amount}
+                            </p>
                           </Col>
                           <Col>
                             <p style={{ fontWeight: '500', fontSize: '16px' }}>
                               Profit
                             </p>
-                            <p>
+                            <p style={{ fontSize: '18px' }}>
                               {data?.total_amount - data?.actual_win_amount}
                             </p>
                           </Col>

@@ -133,7 +133,7 @@ const RegistrationForm = ({
         )}
         <Form.Item
           name='password'
-          label='password'
+          label='Password'
           rules={[
             {
               required: true,
