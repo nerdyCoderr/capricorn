@@ -48,7 +48,7 @@ const BetList = () => {
   });
   const dateFormat = 'YYYY-MM-DD';
   const currentDate = moment().format(dateFormat);
- 
+
   const params = '1';
   const filterType = 'trans_list';
   const dateparams = `&from=${adminData.from ?? currentDate}&to=${
@@ -224,15 +224,15 @@ const BetList = () => {
           filter={filter}
           filterType={filterType}
         />
-        <Space className='d-flex mt-5 text-center profit-container container'>
-          <div>
-            <p>Profit</p>
-            <h5>
-              {(amountForm?.grandTotalAmount -
-                amountForm.grandActualWinAmount) |
-                '- -'}
-            </h5>
-          </div>
+        <Space
+          style={{
+            maxWidth: '1280px',
+            margin: 'auto',
+            width: '100%',
+            paddingLeft: '0',
+          }}
+          className='d-flex mt-5 text-center profit-container container'
+        >
           <div>
             <p>Bet Amount</p>
             <h5>{amountForm?.grandTotalAmount | '- -'}</h5>
@@ -240,6 +240,14 @@ const BetList = () => {
           <div>
             <p> Win Amount</p>
             <h5>{amountForm?.grandActualWinAmount | '- -'}</h5>
+          </div>
+          <div>
+            <p>Profit</p>
+            <h5>
+              {(amountForm?.grandTotalAmount -
+                amountForm.grandActualWinAmount) |
+                '- -'}
+            </h5>
           </div>
         </Space>
         <AntTable

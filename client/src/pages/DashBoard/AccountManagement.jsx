@@ -38,6 +38,7 @@ function AccountManagement() {
         title: 'Action',
         dataIndex: 'action',
         key: 'action',
+        width: 150,
       },
     ],
     [],
@@ -189,11 +190,6 @@ function AccountManagement() {
     };
     return (
       <div className=' '>
-        {role === 'admin' && (
-          <Button className='btn- bg-primary text-white mt-1 w-100'>
-            View
-          </Button>
-        )}
         <Button
           className='btn- bg-primary text-white mt-1 w-100'
           onClick={() => {
@@ -208,7 +204,7 @@ function AccountManagement() {
             setIsViewEditModal(true);
           }}
         >
-          Update
+          View/Update
         </Button>
         <Button
           className={`${

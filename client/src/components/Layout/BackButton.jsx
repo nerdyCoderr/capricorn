@@ -6,18 +6,23 @@ import './BackButton.scss';
 const BackButton = ({ title, adminData = undefined }) => {
   const nav = useNavigate();
   return (
-    <div className='header-backbutton container'>
+    <div className='header-backbutton'>
       <div
         className='arrow-back'
         onClick={() => {
           if (adminData?.refcode) {
-            nav(`/dashboard/admin-trans-list?from=${adminData.from}&to=${adminData.to}`);
+            nav(
+              `/dashboard/admin-trans-list?from=${adminData.from}&to=${adminData.to}`,
+            );
           } else {
             nav('/dashboard');
           }
         }}
       >
-        <MdArrowBackIos size={25} color='white' />
+        <MdArrowBackIos
+          size={25}
+          color='white'
+        />
       </div>
       <div className='title-container'>
         <h1 className='title'>{title}</h1>

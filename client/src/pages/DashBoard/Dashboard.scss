@@ -10,11 +10,14 @@
   //drawer icons
 .ant-menu
   .ant-menu-submenu-title
-  .ant-menu-item-icon
+.ant-menu-item-icon
   svg {
   display: inline-block;
   font-size: 28px;
   color: #53e3a6;
+}
+.ant-menu.ant-menu-item-active:hover {
+  color: white !important;
 }
 .ant-drawer .ant-drawer-content {
   width: 100%;
@@ -34,14 +37,10 @@
   }
 }
 
-[class^='ant-layout']
-  [class^='ant-layout'],
-[class*=' ant-layout']
-  [class^='ant-layout'],
-[class^='ant-layout']
-  [class*=' ant-layout'],
-[class*=' ant-layout']
-  [class*=' ant-layout'] {
+[class^='ant-layout'] [class^='ant-layout'],
+[class*=' ant-layout'] [class^='ant-layout'],
+[class^='ant-layout'] [class*=' ant-layout'],
+[class*=' ant-layout'] [class*=' ant-layout'] {
   box-sizing: border-box;
   margin: 0 !important;
 }
@@ -61,11 +60,8 @@
   overflow: auto;
 }
 
-.ant-menu-light.ant-menu-inline
-  .ant-menu-item,
-.ant-menu-light
-  > .ant-menu.ant-menu-inline
-  .ant-menu-item {
+.ant-menu-light.ant-menu-inline .ant-menu-item,
+.ant-menu-light > .ant-menu.ant-menu-inline .ant-menu-item {
   position: relative;
   height: 59px;
 }
@@ -101,6 +97,9 @@
   color: #534c5e !important;
   transition: none !important;
 }
+.ant-menu-item a:hover {
+  color: white !important;
+}
 .ant-drawer-content-wrapper {
   background-color: #d0efb1;
 
@@ -133,6 +132,32 @@
       font-size: 4rem;
       text-align: center;
       text-shadow: 1px 1px 2px #000000;
+    }
+  }
+
+  .dashboard-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+
+    h3 {
+      color: #f1e8e8;
+    }
+    .card {
+      justify-content: center;
+      margin: 1rem;
+      min-width: 150px;
+      text-align: center;
+      background-color: #534c5e;
+      color: #d0efb1;
+      p {
+        font-size: 1rem;
+        margin-bottom: 0;
+      }
+      .card-body {
+        padding: 1.5rem -0 0 0;
+      }
     }
   }
 

@@ -269,7 +269,7 @@ const getAccountList = (params, callback = null) => {
       },
     })
     .then((res) => {
-      message.success(res.data.message);
+      // message.success(res.data.message);
       callback(res);
     })
     .catch((err) => {
@@ -288,7 +288,7 @@ const getBetList = (params, callback = null) => {
       },
     })
     .then((res) => {
-      message.success(res.data.message);
+      // message.success(res.data.message);
       callback(res);
     })
     .catch((err) => {
@@ -307,7 +307,7 @@ const getAdminTransList = (params, callback = null) => {
       },
     })
     .then((res) => {
-      message.success(res.data.message);
+      // message.success(res.data.message);
       callback(res);
     })
     .catch((err) => {
@@ -326,7 +326,7 @@ const getBetListUser = (params, callback = null) => {
       },
     })
     .then((res) => {
-      message.success(res.data.message);
+      // message.success(res.data.message);
       callback(res);
     })
     .catch((err) => {

@@ -4,8 +4,8 @@ import './CreateWinNumber.scss';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import moment from 'moment';
-import { Button, DatePicker, Form, Input, Select } from 'antd';
-import Table from '../../components/Table/Table';
+import { Button, DatePicker, Form, Input, Select, Table } from 'antd';
+
 import { createWinningNumber, getBetType } from '../../api/request';
 import BackButton from '../../components/Layout/BackButton';
 
@@ -28,25 +28,24 @@ function CreateWinNum() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Date',
-        accessor: 'date', // accessor is the "key" in the data
+        title: 'Bet Number',
+        dataIndex: 'bet_number', // dataIndex is the "key" in the data
       },
       {
-        Header: 'Batch Type',
-        accessor: 'batch_type',
+        title: 'Bet Type',
+        dataIndex: 'bet_type_id', // dataIndex is the "key" in the data
       },
       {
-        Header: 'Bet Type',
-        accessor: 'bet_type_id', // accessor is the "key" in the data
+        title: 'Batch Type',
+        dataIndex: 'batch_type',
       },
       {
-        Header: 'Bet Number',
-        accessor: 'bet_number', // accessor is the "key" in the data
+        title: 'Date',
+        dataIndex: 'date', // dataIndex is the "key" in the data
       },
-
       {
-        Header: 'Action',
-        accessor: 'action',
+        title: 'Action',
+        dataIndex: 'action',
       },
     ],
     [],
@@ -114,6 +113,7 @@ function CreateWinNum() {
     createWinningNumber(dataTable, callbackWinNumber);
   };
   const newDatable = React.useMemo(() => {
+    console.log(dataTable);
     const reconstructedList = dataTable.map((item) => {
       return {
         date: item.createdAt,
@@ -121,7 +121,7 @@ function CreateWinNum() {
         batch_type: item.batch_id,
         bet_type: item.bet_type,
         bet_type_id: item.bet_id,
-        action: <button onClick={() => deleteHandler(item.id)}>delete</button>,
+        action: <Button onClick={() => deleteHandler(item.id)}>Delete</Button>,
       };
     });
     return { data: reconstructedList };
@@ -133,8 +133,8 @@ function CreateWinNum() {
   return (
     <>
       {' '}
-      <BackButton title='Input Winning Bets' />
       <div className='create-win-num'>
+        <BackButton title='Input Winning Bets' />
         <Form
           onFinish={submitHandler}
           className='createwinNumForm'
@@ -230,6 +230,7 @@ function CreateWinNum() {
             <Input />
           </Form.Item>
           <Button
+            style={{ height: '50px', fontSize: '18px' }}
             className='w-100'
             type='primary'
             htmlType='submit'
@@ -237,16 +238,27 @@ function CreateWinNum() {
             SUBMIT
           </Button>
         </Form>
-        <div style={{ height: '200px', margin: '0.5rem', overflowY: 'scroll' }}>
+        <div className='ant-table-container container mt-3'>
           <Table
+            dataSource={newDatable?.data}
+            columns={columns}
+            scroll={{ x: 450, y: 200 }}
+            pagination={false}
+          />
+        </div>
+
+        {/* <div style={{ height: '200px', margin: '0.5rem', overflowY: 'scroll' }}>
+          <Tabless
             dataTable={newDatable}
             columns={columns}
           />
-        </div>
-        <div className='text-center'>
+        </div> */}
+        <div className='text-center mt-3'>
           <Button
+            style={{ height: '50px', fontSize: '18px' }}
             type='primary'
             onClick={createWinBet}
+            disabled={dataTable.length <= 0 ? true : false}
           >
             Create Winning Bet
           </Button>

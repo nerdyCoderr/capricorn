@@ -22,6 +22,7 @@ const NewBets = () => {
   // eslint-disable-next-line no-unused-vars
   const [remainingBetAmount, setRemainingBetAmount] = useState();
   const [isBetLimit, setIsBetLimit] = useState(false);
+  const [realtime, setRealTime] = useState();
 
   const [formData, setFormData] = useState({
     bet_number: '',
@@ -228,6 +229,12 @@ const NewBets = () => {
   };
 
   useEffect(() => {
+    setTimeout(() => {
+      setRealTime(Moment(date).format('LTS'));
+    }, [1000]);
+  }, [realtime]);
+
+  useEffect(() => {
     checklimit();
   }, [formData]);
 
@@ -320,10 +327,16 @@ const NewBets = () => {
               { required: true, message: 'Please select your bet type!' },
             ]}
           >
-            <Select onChange={onTypeChange} allowClear>
+            <Select
+              onChange={onTypeChange}
+              allowClear
+            >
               {betTypeOptions ? (
                 betTypeOptions.map((item) => (
-                  <Select.Option key={item._id} value={item.bet_type}>
+                  <Select.Option
+                    key={item._id}
+                    value={item.bet_type}
+                  >
                     {item.type}
                   </Select.Option>
                 ))

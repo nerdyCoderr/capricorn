@@ -60,6 +60,7 @@ const Dashboard = () => {
           >
             {data.role !== 'user' && (
               <Menu.Item
+                className='menuItems'
                 key='20'
                 icon={<AreaChartOutlined />}
               >
@@ -69,6 +70,7 @@ const Dashboard = () => {
             {data.role === 'super-admin' && (
               <>
                 <Menu.Item
+                  className='menuItems'
                   key='0'
                   icon={<FileDoneOutlined style={{ fontSize: '40px' }} />}
                 >
@@ -131,6 +133,7 @@ const Dashboard = () => {
             {data.role === 'admin' && (
               <>
                 <Menu.Item
+                  className='menuItems'
                   key='8'
                   icon={<FileDoneOutlined />}
                 >

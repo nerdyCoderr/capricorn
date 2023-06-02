@@ -76,7 +76,6 @@ const Filter = ({
   const isForBetlistOrTransactionlist = (filterType === 'bet_list') |
     (filterType === 'trans_list') && (
     <>
-      {' '}
       <div className='filter__container-fields'>
         <p>Batch Type</p>
         <Select
@@ -133,7 +132,7 @@ const Filter = ({
         />
       </div>
       <div className='filter__container-fields'>
-        <p>Role</p>
+        <p>Admin/User</p>
         <div className='switch'>
           <Switch
             size='large'
@@ -207,7 +206,6 @@ const Filter = ({
               {!filterType === 'superadmin' ||
                 (filterType === 'trans_list' && (
                   <>
-                    {' '}
                     <div className='filter__container-fields'>
                       <p>From</p>
                       <DatePicker

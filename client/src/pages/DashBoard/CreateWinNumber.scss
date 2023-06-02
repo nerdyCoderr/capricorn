@@ -1,6 +1,7 @@
 @import '../../index.scss';
 
 .create-win-num {
+  padding: 1rem;
   .ant-form-item-required::before {
     display: none !important;
   }
