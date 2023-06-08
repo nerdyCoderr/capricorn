@@ -42,7 +42,7 @@ function TableThreeModal({
     ],
     [],
   );
-  console.log(data);
+
   const { isloading, onPrevious, onFirst, onLast, onNext, callbackresponse } =
     usePagination(params, dataTable, actioncall, otherparams, dateparams);
 
@@ -69,7 +69,7 @@ function TableThreeModal({
       };
     });
     const newdata = { ...callbackresponse, data: reconstructedList };
-    console.log(newdata);
+
     setDataTabble(newdata);
   }, [callbackresponse]);
 

@@ -11,7 +11,6 @@ const CreateUserAccountByAdmin = () => {
   const [formfields] = Form.useForm(); // create a form instance
 
   const submitHandler = (values) => {
-    console.log(values);
     const form = {
       first_name: values.firstname,
       last_name: values.lastname,
@@ -19,15 +18,13 @@ const CreateUserAccountByAdmin = () => {
       username: values.username,
       password: values.password,
     };
-    console.log(form);
+
     registerUserAccountbyAdmin(form, callback);
   };
 
   const callback = async (res) => {
-    console.log(res);
-    const { data, status } = await res;
-    console.log(status);
-    console.log(data);
+    const { status } = await res;
+
     if ((status === 200) | (status === 201)) {
       formfields.resetFields();
     }

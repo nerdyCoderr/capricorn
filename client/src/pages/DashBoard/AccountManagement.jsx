@@ -104,7 +104,7 @@ function AccountManagement() {
       username: data.user,
       active: active,
     };
-    console.log(newdata);
+
     updateAdminUserAccount(newdata, callbackUpdateAccounts);
   };
 
@@ -122,9 +122,7 @@ function AccountManagement() {
       onOk() {
         activateDeactivateAccount(data);
       },
-      onCancel() {
-        console.log('Cancel');
-      },
+      onCancel() {},
     });
   };
 
@@ -158,7 +156,6 @@ function AccountManagement() {
   });
 
   const submitHandler = (values) => {
-    console.log(values);
     const form = {
       first_name: values.first_name,
       last_name: values.last_name,
@@ -167,7 +164,7 @@ function AccountManagement() {
       password: values.password,
       ref_code: values.ref_code,
     };
-    console.log(form);
+
     updateAdminUserAccount(form, callbackUpdateAccounts);
   };
 
@@ -194,7 +191,7 @@ function AccountManagement() {
           className='btn- bg-primary text-white mt-1 w-100'
           onClick={() => {
             const name = data.fullname.split(' ');
-            console.log(name);
+
             setDataViewEdit({
               ...data,
               first_name: name[0],
@@ -254,7 +251,6 @@ function AccountManagement() {
   };
 
   const callbackList = async (res) => {
-    console.log(await res);
     setDataTabble(processResponseData(await res.data));
   };
   useEffect(() => {
@@ -268,9 +264,7 @@ function AccountManagement() {
     }
   }, [callbackfilterRes]);
 
-  useEffect(() => {
-    console.log(dataViewEdit);
-  }, [dataViewEdit]);
+  useEffect(() => {}, [dataViewEdit]);
   return (
     <div className='accountmanagement'>
       <BackButton title={'Account Management'} />

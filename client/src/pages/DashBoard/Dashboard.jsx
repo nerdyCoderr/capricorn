@@ -71,6 +71,13 @@ const Dashboard = () => {
               <>
                 <Menu.Item
                   className='menuItems'
+                  key='13'
+                  icon={<FileDoneOutlined style={{ fontSize: '40px' }} />}
+                >
+                  <Link to='/dashboard/win-num-history'>Win Num History</Link>
+                </Menu.Item>
+                <Menu.Item
+                  className='menuItems'
                   key='0'
                   icon={<FileDoneOutlined style={{ fontSize: '40px' }} />}
                 >

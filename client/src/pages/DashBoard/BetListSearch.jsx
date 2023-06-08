@@ -80,7 +80,6 @@ const BetListSearch = () => {
   const dateparams = `&from=${currentDate}&to=${currentDate}`;
 
   const actionHandlertwo = (trans_no) => {
-    console.log(trans_no);
     setIsTable2Open(false);
     setIsTablethreeOpen(true);
     setTrans_no(trans_no);
@@ -88,9 +87,7 @@ const BetListSearch = () => {
 
   const handleColumnClick = (record, e) => {
     const columnIndex = e.target.cellIndex;
-    console.log('🚀 ~ file: BetListSearch.jsx:103 ~ handleColumnClick ~ e:', e);
 
-    console.log(columnIndex);
     if (columnIndex === 4) {
       setData(record);
       setTrans_no(record?.trans_no);

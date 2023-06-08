@@ -79,6 +79,7 @@ const TabletwoModal = ({
       open={isTable2Open}
       onOk={handleOk}
       onCancel={handleCancel}
+      footer={null}
       title={
         <div>
           <div>USERNAME:</div>

@@ -115,10 +115,7 @@ function Chart() {
     }
     barchartData = barchartData.reverse();
     combinedPieAdminData = datasorter(combinedPieAdminData);
-    console.log(
-      '🚀 ~ file: Chart.jsx:127 ~ datapointsHandler ~ combinedPieAdminData:',
-      combinedPieUserData,
-    );
+
     combinedPieUserData = datasorter(combinedPieUserData);
     setChartData({ barchartData, combinedPieAdminData, combinedPieUserData });
   };
@@ -152,9 +149,9 @@ function Chart() {
   }, [filter]);
   useLayoutEffect(() => {
     socket.emit('chartData', { days: 1 }, datapointsHandler);
-    socket.on('chartData', (data) => console.log(data));
+    socket.on('chartData', () => {});
     return () => {
-      socket.off('chartData', (data) => console.log(data));
+      socket.off('chartData', () => {});
     };
   }, []);
   useEffect(() => {
@@ -170,15 +167,6 @@ function Chart() {
     );
     setColor(chartData?.combinedPieUserData?.map(generateRandomColor));
     setColorAdmin(chartData?.combinedPieAdminData?.map(generateRandomColor));
-    // if (ref.current.offsetWidth && chartData?.barchartData?.length) {
-    //   const width = ref.current.offsetWidth;
-    //   const datalength = chartData?.barchartData?.length;
-    //   const x = width < 768 ? width / 768 : 1;
-    //   const y = datalength - parseInt(x * datalength);
-    //   setStart(y);
-    //   const start1 = start;
-    //   console.log('🚀 ~ file: Chart.jsx:161 ~ useEffect ~ start:', start1);
-    // }
   }, [chartData]);
 
   useEffect(() => {
@@ -201,19 +189,15 @@ function Chart() {
     if (ref.current.offsetWidth && e.target.value) {
       const width = ref.current.offsetWidth;
       const datalength = e.target.value === 1 ? 16 : e.target.value;
-      console.log(datalength);
+
       const x = width < 768.98 ? width / 768 : 1;
       const y = datalength - parseInt(x * datalength);
       setStart(y);
-      const start1 = start;
-      console.log('🚀 ~ file: Chart.jsx:161 ~ useEffect ~ start:', start1);
     }
     setFilter(e.target.value);
   };
 
-  useEffect(() => {
-    console.log(start);
-  }, [start]);
+  useEffect(() => {}, [start]);
 
   const [widthScreen, setWidthScreen] = useState();
   const [mobile, setMobile] = useState('');
@@ -235,7 +219,6 @@ function Chart() {
 
   useEffect(() => {
     const updateLimitBet = (data) => {
-      console.log(data);
       setResultOverview(data.trans);
     };
 

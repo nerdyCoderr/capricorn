@@ -40,7 +40,7 @@ const History = () => {
   );
 
   const dateFormat = 'YYYY-MM-DD';
-
+  const filterType = 'winHistory';
   const currentDate = moment().format(dateFormat);
 
   const params = '2';
@@ -72,7 +72,6 @@ const History = () => {
     setIsTablethreeOpen(true);
     setTransNo(trans_no);
   };
-  const filterType = 'transaction_history';
   const handleColumnClick = (row) => {
     setData(row.original);
   };
@@ -84,7 +83,7 @@ const History = () => {
   const processResponseData = (response) => {
     const { data, total } = response;
     setTotalCountTable(total);
-    console.log(data);
+
     const reconstructedList = data?.map((data) => {
       return {
         total_amount: data?.total_amount,
@@ -105,7 +104,6 @@ const History = () => {
 
   useEffect(() => {
     if (callbackfilterRes) {
-      console.log(callbackfilterRes);
       const processedData = processResponseData(callbackfilterRes);
       setDataTabble(processResponseData(processedData));
     }

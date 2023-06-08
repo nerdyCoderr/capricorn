@@ -11,7 +11,6 @@ const CreateUserAccountBySuperAdmin = () => {
   const [formfields] = Form.useForm(); // create a form instance
   const [refCodesTypes, setReCodeTypes] = useState();
   const submitHandler = (values) => {
-    console.log(values);
     const form = {
       first_name: values.firstname,
       last_name: values.lastname,
@@ -21,15 +20,13 @@ const CreateUserAccountBySuperAdmin = () => {
       ref_code: values.ref_code,
       link: 'user-signup',
     };
-    console.log(form);
+
     registerAccountbySuper(form, callback);
   };
 
   const callback = async (res) => {
-    console.log(res);
-    const { data, status } = await res;
-    console.log(status);
-    console.log(data);
+    const { status } = await res;
+
     if ((status === 200) | (status === 201)) {
       formfields.resetFields();
     }
@@ -37,7 +34,7 @@ const CreateUserAccountBySuperAdmin = () => {
 
   const callbackRefcodes = async (res) => {
     const { data } = await res;
-    console.log(data);
+
     setReCodeTypes(data?.admin_ref_codes);
   };
 

@@ -296,6 +296,25 @@ const getBetList = (params, callback = null) => {
     });
 };
 
+const getWinNumberHistory = (params, callback = null) => {
+  const newToken = token();
+
+  api
+    .get(`/super/win-numbers/${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': newToken,
+      },
+    })
+    .then((res) => {
+      // message.success(res.data.message);
+      callback(res);
+    })
+    .catch((err) => {
+      callback(err.response);
+    });
+};
+
 const getAdminTransList = (params, callback = null) => {
   const newToken = token();
 
@@ -365,7 +384,6 @@ const updateAdminUserAccount = (params, callback = null) => {
 
 const getTransactionNO = (params, callback = null) => {
   const newToken = token();
-  console.log(params);
 
   api
     .get('/bets/get_bets', {
@@ -381,12 +399,13 @@ const getTransactionNO = (params, callback = null) => {
     })
     .catch((err) => {
       if (err) {
-        console.log(err);
+        callback(err.response);
       }
     });
 };
 
 export {
+  getWinNumberHistory,
   updateAccountInfo,
   getAccountInfo,
   getRefCodes,

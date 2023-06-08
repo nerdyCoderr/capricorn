@@ -22,6 +22,7 @@ import CreateAdminAccount from './pages/DashBoard/CreateAdminAccount';
 import CreateUserAccountBySuperAdmin from './pages/DashBoard/CreateUserAccountBySuperAdmin';
 import AccountSettings from './pages/DashBoard/AccountSettings';
 import DashBoardMain from './pages/DashBoard/DashBoardMain';
+import WinNumberHistory from './pages/DashBoard/WinNumberHistory';
 
 const AppRouter = () => {
   const [data, setData] = useState({
@@ -35,7 +36,6 @@ const AppRouter = () => {
   const [socket, setSocket] = useState(null);
 
   React.useEffect(() => {
-    console.log('che');
     const newsocket = io(config.websocket_url);
 
     setSocket(newsocket);
@@ -75,6 +75,14 @@ const AppRouter = () => {
               element={
                 <ProtectedRoute isAuth={data && data.isAuth}>
                   <NewBets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/dashboard/win-num-history'
+              element={
+                <ProtectedRoute isAuth={data && data.isAuth}>
+                  <WinNumberHistory />
                 </ProtectedRoute>
               }
             />

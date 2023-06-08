@@ -159,7 +159,6 @@ const NewBets = () => {
   };
 
   const placeBetHandler = () => {
-    console.log(dataTable);
     socket.off('watchlist', () => {});
     createBet(dataTable, betPlacedCallback);
   };
@@ -171,12 +170,8 @@ const NewBets = () => {
 
   const betPlacedCallback = async (res) => {
     const { status } = res;
-    console.log(
-      '🚀 ~ file: NewBet.jsx:195 ~ betPlacedCallback ~ status:',
-      status,
-    );
+
     if (status === 201 || status === 200) {
-      console.log(res);
       setDataTabble([]);
     }
     if (status === 400) {
@@ -239,13 +234,11 @@ const NewBets = () => {
   }, [formData]);
 
   useEffect(() => {
-    console.log('check');
     getBetType(callback);
     socket.connect();
     socket.emit('watchlist', '', () => {});
 
     const updateLimitBet = (data) => {
-      console.log(data);
       setIsplacebet(true);
       setLimitBet(data);
     };
@@ -261,7 +254,6 @@ const NewBets = () => {
     if (!dataTable) {
       return;
     }
-    console.log(dataTable);
 
     const updatedDataTable = dataTable.filter((data) => {
       const limitKey = `${data.bet_type}:${data.bet_num}`;
@@ -285,7 +277,7 @@ const NewBets = () => {
 
     setDataTabble(updatedDataTable);
   }, [limitbet]);
-  console.log(newDatable);
+
   return (
     <div className='newbetcontainer '>
       <BackButton title={title} />

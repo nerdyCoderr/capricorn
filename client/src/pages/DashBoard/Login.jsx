@@ -34,8 +34,6 @@ const Login = () => {
     }
   };
   const submitHandler = (values) => {
-    console.log(values);
-
     socket.emit('login', values, callback);
   };
 

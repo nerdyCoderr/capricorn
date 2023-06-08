@@ -118,6 +118,73 @@ const Filter = ({
       </>
     ) : null;
 
+  const isForWinHistory =
+    filterType === 'winHistory' ? (
+      <>
+        <div className='filter__container-fields'>
+          <p>Batch Type</p>
+          <Select
+            className='w-100'
+            value={filter.batch_id}
+            onChange={onBatchChange}
+            allowClear
+          >
+            <Select.Option
+              key={1}
+              value={1}
+            >
+              6:00 am - 2:10 pm
+            </Select.Option>
+            <Select.Option
+              key={2}
+              value={2}
+            >
+              2:10 pm - 4:45 pm
+            </Select.Option>
+            <Select.Option
+              key={3}
+              value={3}
+            >
+              5:10 pm - 8:45 pm
+            </Select.Option>
+          </Select>
+        </div>
+        <div className='filter__container-fields'>
+          <p>Bet type</p>
+          <Select
+            className='w-100'
+            value={filter.bet_type}
+            onChange={onTypeChange}
+            allowClear
+          >
+            {betTypeOptions ? (
+              betTypeOptions.map((item) => (
+                <Select.Option
+                  key={item._id}
+                  value={item.bet_type}
+                >
+                  {item.bet_type}
+                </Select.Option>
+              ))
+            ) : (
+              <></>
+            )}
+          </Select>
+        </div>
+        <div className='filter__container-fields'>
+          <p>Bet Number</p>
+          <Input
+            value={filter?.bet_num}
+            onChange={(e) => {
+              setFilter((prev) => {
+                return { ...prev, bet_num: e.target.value };
+              });
+            }}
+          />
+        </div>
+      </>
+    ) : null;
+
   const isForSuperAdmin = filterType === 'superadmin' && (
     <>
       <div className='filter__container-fields'>
@@ -138,7 +205,6 @@ const Filter = ({
             size='large'
             checked={filter.role === 'admin' ? false : true}
             onChange={(e) => {
-              console.log(e ? 'user' : 'admin');
               setFilter((prev) => {
                 return { ...prev, role: e ? 'user' : 'admin' };
               });
@@ -203,33 +269,35 @@ const Filter = ({
 
           <div className='filter shadow-lg'>
             <div className='filter__container'>
-              {!filterType === 'superadmin' ||
-                (filterType === 'trans_list' && (
-                  <>
-                    <div className='filter__container-fields'>
-                      <p>From</p>
-                      <DatePicker
-                        value={dayjs(filter.from, dateFormat)}
-                        onChange={onChangeFrom}
-                        defaultValue={dayjs(currentDate, dateFormat)}
-                        format={dateFormat}
-                      />
-                    </div>
-                    <div className='filter__container-fields'>
-                      <p>To</p>
-                      <DatePicker
-                        value={dayjs(filter.to, dateFormat)}
-                        onChange={onChangeTo}
-                        defaultValue={dayjs(currentDate, dateFormat)}
-                        format={dateFormat}
-                      />
-                    </div>
-                  </>
-                ))}
+              {(!filterType === 'superadmin' ||
+                filterType === 'trans_list' ||
+                filterType === 'winHistory') && (
+                <>
+                  <div className='filter__container-fields'>
+                    <p>From</p>
+                    <DatePicker
+                      value={dayjs(filter.from, dateFormat)}
+                      onChange={onChangeFrom}
+                      defaultValue={dayjs(currentDate, dateFormat)}
+                      format={dateFormat}
+                    />
+                  </div>
+                  <div className='filter__container-fields'>
+                    <p>To</p>
+                    <DatePicker
+                      value={dayjs(filter.to, dateFormat)}
+                      onChange={onChangeTo}
+                      defaultValue={dayjs(currentDate, dateFormat)}
+                      format={dateFormat}
+                    />
+                  </div>
+                </>
+              )}
               {isForBetlist}
               {isForBetlistOrTransactionlist}
               {isForTableFour}
               {isForSuperAdmin}
+              {isForWinHistory}
             </div>
           </div>
         </div>

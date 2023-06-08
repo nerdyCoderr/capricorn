@@ -60,7 +60,6 @@ function CreateWinNum() {
   };
 
   const onTypeChange = (value) => {
-    console.log(value);
     betTypeOptions.find((item) => {
       if (item._id === value) {
         return setFormData((prev) => {
@@ -90,7 +89,6 @@ function CreateWinNum() {
   };
 
   const submitHandler = () => {
-    console.log(formData);
     const newdata = {
       id: Math.floor(Math.random() * 1000000),
       createdAt: formData.date,
@@ -99,12 +97,12 @@ function CreateWinNum() {
       bet_type: formData.bet_type,
       bet_id: formData.bet_id,
     };
-    console.log(newdata);
+
     setDataTabble([...dataTable, newdata]);
   };
   const callbackWinNumber = async (res) => {
     const { status } = await res;
-    console.log(res);
+
     if (status === 200 || status === 201) {
       setDataTabble([]);
     }
@@ -113,7 +111,6 @@ function CreateWinNum() {
     createWinningNumber(dataTable, callbackWinNumber);
   };
   const newDatable = React.useMemo(() => {
-    console.log(dataTable);
     const reconstructedList = dataTable.map((item) => {
       return {
         date: item.createdAt,

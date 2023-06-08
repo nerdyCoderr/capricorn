@@ -13,7 +13,6 @@ const AccountSettings = () => {
   const [formfields] = Form.useForm(); // create a form instance
   const [accountInfo, setAccountInfo] = useState();
   const submitHandler = (values) => {
-    console.log(values);
     let newform;
     const form = {
       first_name: values.firstname,
@@ -21,7 +20,7 @@ const AccountSettings = () => {
       phone_number: values.phonenumber,
       password: values.password,
     };
-    console.log(form);
+
     if (data?.role === 'super-admin') {
       newform = { ...form, link: 'super' };
     }
@@ -36,10 +35,8 @@ const AccountSettings = () => {
   };
 
   const callback = async (res) => {
-    console.log(res);
     const { data, status } = await res;
-    console.log(status);
-    console.log(data);
+
     if ((status === 200) | (status === 201)) {
       if (data?.role === 'super-admin') {
         getAccountInfo('super', callbackInfo);
@@ -55,7 +52,7 @@ const AccountSettings = () => {
 
   const callbackInfo = async (res) => {
     const { data } = await res;
-    console.log(data);
+
     setAccountInfo(data?.user);
   };
   useEffect(() => {
@@ -65,7 +62,6 @@ const AccountSettings = () => {
       phonenumber: accountInfo?.phone_number,
       username: accountInfo?.username,
     });
-    console.log('check');
   }, [accountInfo]);
   useEffect(() => {
     if (data?.role === 'super-admin') {

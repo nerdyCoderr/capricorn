@@ -11,7 +11,6 @@ import userContext from '../../context/userContext';
 function DashBoardMain() {
   const { data } = useContext(userContext);
   const navigate = useNavigate();
-  console.log(data);
 
   return (
     <GlassLayout>

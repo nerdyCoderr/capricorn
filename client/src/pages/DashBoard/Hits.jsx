@@ -72,18 +72,13 @@ const Hits = () => {
   const dateparams = `&from=${currentDate}&to=${currentDate}`;
 
   const actionHandlertwo = (trans_no) => {
-    console.log(trans_no);
     setIsTable2Open(false);
     setIsTablethreeOpen(true);
     setTrans_no(trans_no);
   };
 
   const handleColumnClick = (row, column) => {
-    console.log(column);
-    console.log(row);
-
     if (column.Header === 'Transaction No.') {
-      console.log(row?.original);
       setData(row?.original);
       setTrans_no(row?.original?.trans_no);
       setIsTablethreeOpen(true);

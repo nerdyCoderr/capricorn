@@ -15,13 +15,12 @@ const Registration = () => {
       last_name: values.lastname,
       phone_number: values.phonenumber,
     };
-    console.log(form);
+
     registerUserAccount(form, callback);
   };
   const callback = async (res) => {
-    const { data, status } = await res;
-    console.log(status);
-    console.log(data);
+    const { status } = await res;
+
     if ((status === 200) | (status === 201)) {
       navigate('/');
     }

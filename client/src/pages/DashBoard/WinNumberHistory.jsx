@@ -1,37 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import './AdminTransList.scss';
+import './WinNumberHistory.scss';
 import BackButton from '../../components/Layout/BackButton';
 import AntTable from '../../components/Table/AntTable';
 import usePagination from '../../hooks/usePagination';
 import useFilter from '../../hooks/useFilter';
 import moment from 'moment';
-import { getAdminTransList } from '../../api/request';
+import { getWinNumberHistory } from '../../api/request';
 import Filter from '../../components/Filter/Filter';
-import { Button, Space } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Space } from 'antd';
 
-const AdminTransList = () => {
-  const title = 'Admin Trans. List';
-  const nav = useNavigate();
+function WinNumberHistory() {
+  const title = 'Win Number History';
+
   const dateFormat = 'YYYY-MM-DD';
-
-  const adminData = React.useMemo(() => {
-    const url = new URL(window.location.href);
-    const searchParams = url.searchParams;
-    const refcode = searchParams.get('ref_code');
-    const from = searchParams.get('from');
-    const to = searchParams.get('to');
-    return { refcode: refcode, from: from, to: to };
-  }, []);
-
   const currentDate = moment().format(dateFormat);
-
-  const params = '0';
-  const filterType = 'trans_list';
+  const params = '';
+  const filterType = 'winHistory';
   const [totalCountTable, setTotalCountTable] = useState(0);
-  const dateparams = `&from=${adminData.from ?? currentDate}&to=${
-    adminData.to ?? currentDate
-  }`;
+  const dateparams = `&from=${currentDate}&to=${currentDate}`;
 
   const [dataTable, setDataTabble] = useState([]);
   const [amountForm, setAmountForm] = useState({
@@ -39,46 +25,6 @@ const AdminTransList = () => {
     grandTotalWinAmount: '',
     grandActualWinAmount: '',
   });
-
-  const columns = React.useMemo(
-    () => [
-      {
-        title: 'Username',
-        dataIndex: 'username',
-        key: 'username',
-        fixed: 'left',
-        width: 100,
-      },
-      {
-        title: 'Fullname',
-        dataIndex: 'full_name',
-        key: 'total_bet_amt',
-      },
-      {
-        title: 'Bet Amt',
-        dataIndex: 'total_bet_amt',
-        key: 'total_bet_amt',
-      },
-      {
-        title: 'Win Amt',
-        dataIndex: 'actual_win_amt',
-        key: 'actual_win_amt',
-      },
-      {
-        title: 'Date',
-        dataIndex: 'date',
-        key: 'date',
-      },
-      {
-        title: 'Action',
-        dataIndex: 'action',
-        key: 'action',
-        width: 100,
-      },
-    ],
-    [],
-  );
-
   const {
     isloading,
     onPrevious,
@@ -87,7 +33,7 @@ const AdminTransList = () => {
     onNext,
     callbackresponse,
     errorResponse,
-  } = usePagination(params, dataTable, getAdminTransList, null, dateparams);
+  } = usePagination(params, dataTable, getWinNumberHistory, null, dateparams);
 
   const {
     setFilter,
@@ -98,19 +44,28 @@ const AdminTransList = () => {
     resetHandler,
     filter,
     callbackfilterRes,
-  } = useFilter(params, currentDate, getAdminTransList);
-
-  // const handleKey = (Key) => (event) => {
-  //   setTableData({ ...tableData, [Key]: event.target.value });
-  //   return;
-  // };
-  const actionHandler = (id) => {
-    nav(
-      `/dashboard/transaction-list?ref_code=${id}&from=${
-        adminData.from ?? filter.from
-      }&to=${adminData.to ?? filter.to}`,
-    );
-  };
+  } = useFilter(params, currentDate, getWinNumberHistory);
+  const columns = React.useMemo(
+    () => [
+      {
+        title: 'Bet Number',
+        dataIndex: 'bet_number',
+        key: 'bet_number',
+        fixed: 'left',
+      },
+      {
+        title: 'Bet Type',
+        dataIndex: 'bet_type',
+        key: 'bet_type',
+      },
+      {
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
+      },
+    ],
+    [],
+  );
 
   const processResponseData = (response) => {
     const {
@@ -129,16 +84,9 @@ const AdminTransList = () => {
     });
 
     const reconstructedList = data?.map((item) => ({
-      date: moment(item?.admin?.latest_transaction).format(dateFormat),
-      full_name: item?.admin?.first_name + ' ' + item?.admin?.last_name,
-      total_bet_amt: item?.total_amount,
-      username: item?.admin?.username,
-      actual_win_amt: item?.actual_win_amount,
-      action: (
-        <Button onClick={() => actionHandler(item?.admin?.ref_code)}>
-          View
-        </Button>
-      ),
+      date: moment(item?.createdAt).format(dateFormat),
+      bet_number: item?.bet_num,
+      bet_type: item?.bet_type?.bet_type,
     }));
 
     return { ...response, data: reconstructedList };
@@ -156,9 +104,8 @@ const AdminTransList = () => {
   }, [callbackfilterRes]);
 
   return (
-    <div className='adminTranslist'>
+    <div className='win-number-history'>
       <BackButton title={title} />
-
       <Filter
         setFilter={setFilter}
         filterHandler={filterHandler}
@@ -169,7 +116,6 @@ const AdminTransList = () => {
         filter={filter}
         filterType={filterType}
       />
-
       <Space className='d-flex mt-5 text-center profit-container container'>
         <div>
           <p>Profit</p>
@@ -187,6 +133,7 @@ const AdminTransList = () => {
           <h5>{amountForm?.grandActualWinAmount | '- -'}</h5>
         </div>
       </Space>
+
       <AntTable
         dataTable={dataTable}
         columns={columns}
@@ -201,6 +148,6 @@ const AdminTransList = () => {
       />
     </div>
   );
-};
+}
 
-export default AdminTransList;
+export default WinNumberHistory;
