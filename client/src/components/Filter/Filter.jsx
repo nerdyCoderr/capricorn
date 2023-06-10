@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import moment from 'moment';
 import './filter.scss';
+
 const Filter = ({
   setFilter,
   filterHandler,
@@ -271,6 +272,7 @@ const Filter = ({
             <div className='filter__container'>
               {(!filterType === 'superadmin' ||
                 filterType === 'trans_list' ||
+                filterType === 'bet_list' ||
                 filterType === 'winHistory') && (
                 <>
                   <div className='filter__container-fields'>

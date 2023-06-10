@@ -13,6 +13,8 @@ function TableThreeModal({
   data,
   onCancel,
   dateSearch,
+  setIsTable2Open,
+  filterType,
 }) {
   const [dataTable, setDataTabble] = useState([]);
   const [totalCountTable, setTotalCountTable] = useState(0);
@@ -74,6 +76,7 @@ function TableThreeModal({
   }, [callbackresponse]);
 
   const handleOk = () => {
+    setIsTable2Open(true);
     setIsTablethreeOpen(false);
   };
 
@@ -89,16 +92,20 @@ function TableThreeModal({
       }
       open={isTablethreeOpen}
       onCancel={onCancel}
-      footer={[
-        <Button
-          size='middle'
-          key='submit'
-          type='primary'
-          onClick={handleOk}
-        >
-          OK
-        </Button>,
-      ]}
+      footer={
+        filterType === 'trans_list'
+          ? [
+              <Button
+                size='middle'
+                key='submit'
+                type='primary'
+                onClick={handleOk}
+              >
+                OK
+              </Button>,
+            ]
+          : null
+      }
     >
       {isloading ? (
         <p>loading</p>

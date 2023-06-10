@@ -200,6 +200,7 @@ const BetListSearch = () => {
             data={data}
             onCancel={onCancel3}
             dateSearch={filter}
+            filterType={filterType}
           />
         )}
         <BackButton title={title} />

@@ -138,7 +138,6 @@ const BetList = () => {
     setData2(record);
   };
   const onCancel3 = () => {
-    setIsTable2Open(true);
     setIsTablethreeOpen(false);
   };
   const processResponseData = (response) => {
@@ -207,6 +206,7 @@ const BetList = () => {
             trans_no={trans_no}
             data={data2}
             onCancel={onCancel3}
+            filterType={filterType}
           />
         )}
         <BackButton
