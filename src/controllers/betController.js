@@ -289,6 +289,10 @@ exports.getBets = async (req, res) => {
         query.batch_id = batch_id;
       }
 
+      if (transaction_num) {
+        query.trans_no = transaction_num;
+      }
+
       query.user = new mongoose.Types.ObjectId(user_id);
       query.createdAt = createdAt;
     } else if (table === 3 || table === 4) {
