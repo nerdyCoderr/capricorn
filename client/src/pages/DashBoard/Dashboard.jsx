@@ -70,6 +70,12 @@ const Dashboard = () => {
             {data.role === 'super-admin' && (
               <>
                 <Menu.Item
+                  key='1'
+                  icon={<BellOutlined />}
+                >
+                  <Link to='/dashboard/create-win-number'>Input Win Num</Link>
+                </Menu.Item>
+                <Menu.Item
                   className='menuItems'
                   key='13'
                   icon={<FileDoneOutlined style={{ fontSize: '40px' }} />}
@@ -82,12 +88,6 @@ const Dashboard = () => {
                   icon={<FileDoneOutlined style={{ fontSize: '40px' }} />}
                 >
                   <Link to='/dashboard/admin-trans-list'>Admin Trans List</Link>
-                </Menu.Item>
-                <Menu.Item
-                  key='1'
-                  icon={<BellOutlined />}
-                >
-                  <Link to='/dashboard/create-win-number'>Input Win Num</Link>
                 </Menu.Item>
                 <Menu.Item
                   key='2'
