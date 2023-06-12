@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const cron = require("node-cron");
+const { copyDataToCloud } = require("./utils/cloudBackup");
 
 dotenv.config();
 
@@ -69,4 +71,9 @@ io.attach(httpServer);
 
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+cron.schedule("0 0 * * *", () => {
+  console.log("Running data copy process...");
+  copyDataToCloud(process.env.MONGODB_URI_CLOUD);
 });
