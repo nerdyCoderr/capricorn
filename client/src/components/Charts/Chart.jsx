@@ -150,10 +150,13 @@ function Chart() {
   useLayoutEffect(() => {
     socket.emit('chartData', { days: 1 }, datapointsHandler);
     socket.on('chartData', () => {});
+    setColor(Array(30).fill(null).map(generateRandomColor));
+    setColorAdmin(Array(30).fill(null).map(generateRandomColor));
     return () => {
       socket.off('chartData', () => {});
     };
   }, []);
+
   useEffect(() => {
     setMaxValue(
       Math.max(
@@ -165,8 +168,6 @@ function Chart() {
         ...(chartData?.barchartData?.map((item) => item.profit) || []),
       ),
     );
-    setColor(chartData?.combinedPieUserData?.map(generateRandomColor));
-    setColorAdmin(chartData?.combinedPieAdminData?.map(generateRandomColor));
   }, [chartData]);
 
   useEffect(() => {
@@ -203,10 +204,10 @@ function Chart() {
   const [mobile, setMobile] = useState('');
 
   const handleResize = () => {
-    const mobileWidth = ref.current.offsetWidth <= 425.98 ? '15em' : '100%';
+    const mobileWidth = ref?.current?.offsetWidth <= 425.98 ? '15em' : '100%';
     setMobile(mobileWidth);
     console.log(mobileWidth);
-    setWidthScreen(ref.current.offsetWidth);
+    setWidthScreen(ref?.current?.offsetWidth);
   };
 
   useLayoutEffect(() => {
