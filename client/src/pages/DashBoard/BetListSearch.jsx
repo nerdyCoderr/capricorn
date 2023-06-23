@@ -94,7 +94,7 @@ const BetListSearch = () => {
   const handleColumnClick = (record, e) => {
     const columnIndex = e.target.cellIndex;
 
-    if (columnIndex === 4) {
+    if (columnIndex === 5) {
       setData(record);
       setTrans_no(record?.trans_no);
       setIsTablethreeOpen(true);
