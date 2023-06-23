@@ -82,6 +82,7 @@ const useFilter = (params, currentDate, actioncall, otherparams = null) => {
       bet_num: '',
       username: '',
       role: 'admin',
+      win_result_switch: false,
     });
   };
 

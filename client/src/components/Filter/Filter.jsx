@@ -315,7 +315,7 @@ const Filter = ({
       <div className='switch'>
         <Switch
           size='large'
-          value={filter.bet_result}
+          checked={filter.bet_result}
           onChange={(e) => {
             setFilter((prev) => {
               return { ...prev, bet_result: e ? 1 : 0 };
@@ -334,7 +334,12 @@ const Filter = ({
   return (
     <div className='filter-frame'>
       <div>
-        <h6 className='filter-h6'>FILTER</h6>
+        <h6
+          className='filter-h6'
+          style={{ color: 'white!important' }}
+        >
+          FILTER
+        </h6>
         <Switch
           size='large'
           checked={isFilter}
