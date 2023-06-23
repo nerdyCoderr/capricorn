@@ -117,6 +117,57 @@ const Filter = ({
       </div>
     </>
   );
+  const isForModal3 = filterType === 'modal3' && (
+    <>
+      <div className='filter__container-fields'>
+        <p>Bet type</p>
+        <Select
+          className='w-100'
+          value={filter.bet_type}
+          onChange={onTypeChange}
+          allowClear
+        >
+          {betTypeOptions ? (
+            betTypeOptions.map((item) => (
+              <Select.Option
+                key={item._id}
+                value={item.bet_type}
+              >
+                {item.bet_type}
+              </Select.Option>
+            ))
+          ) : (
+            <></>
+          )}
+        </Select>
+      </div>
+      <div className='filter__container-fields'>
+        <p>Bet Number</p>
+        <Input
+          value={filter?.bet_num}
+          onChange={(e) => {
+            setFilter((prev) => {
+              return { ...prev, bet_num: e.target.value };
+            });
+          }}
+        />
+      </div>
+      <div className='filter__container-fields'>
+        <p> Win Result</p>
+        <div className='switch'>
+          <Switch
+            size='large'
+            value={filter.bet_result}
+            onChange={(e) => {
+              setFilter((prev) => {
+                return { ...prev, bet_result: e ? 1 : 0 };
+              });
+            }}
+          />
+        </div>
+      </div>
+    </>
+  );
   const isForBetlistOrTransactionlist =
     (filterType === 'bet_list') | (filterType === 'trans_list') ? (
       <>
@@ -344,6 +395,7 @@ const Filter = ({
               {isForSuperAdmin}
               {isForWinHistory}
               {isForModal2}
+              {isForModal3}
             </div>
           </div>
         </div>

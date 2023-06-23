@@ -5,6 +5,11 @@ import { Button, Modal } from 'antd';
 import usePagination from '../../hooks/usePagination';
 import './TableThreeModal.scss';
 import AntTable from '../Table/AntTable';
+import Filter from '../Filter/Filter';
+import moment from 'moment';
+import useFilter from '../../hooks/useFilter';
+import { getAdminTransList, getBetList } from '../../api/request';
+
 function TableThreeModal({
   isTablethreeOpen,
   setIsTablethreeOpen,
@@ -21,7 +26,15 @@ function TableThreeModal({
   const params = '3';
 
   const dateparams = `&from=${dateSearch?.from}&to=${dateSearch?.to}`;
-  const otherparams = `&trans_no=${trans_no}`;
+  const otherparams = {
+    userID: `&trans_no=${trans_no}`,
+    from: dateSearch?.from,
+    to: dateSearch?.to,
+  };
+  const dateFormat = 'YYYY-MM-DD';
+  const filterTypeModal = 'modal3';
+  const currentDate = moment().format(dateFormat);
+
   const columns = React.useMemo(
     () => [
       {
@@ -45,11 +58,42 @@ function TableThreeModal({
     [],
   );
 
-  const { isloading, onPrevious, onFirst, onLast, onNext, callbackresponse } =
-    usePagination(params, dataTable, actioncall, otherparams, dateparams);
+  const adminData = React.useMemo(() => {
+    const url = new URL(window.location.href);
+    const searchParams = url.searchParams;
+    const refcode = searchParams.get('ref_code');
+    const from = searchParams.get('from');
+    const to = searchParams.get('to');
+    return { refcode: refcode, from: from, to: to };
+  }, []);
 
-  useEffect(() => {
-    const { data, total } = callbackresponse;
+  const { isloading, onPrevious, onFirst, onLast, onNext, callbackresponse } =
+    usePagination(
+      params,
+      dataTable,
+      actioncall,
+      otherparams?.userID,
+      dateparams,
+    );
+
+  const {
+    setFilter,
+    filterHandler,
+    onBatchChange,
+    onChangeTo,
+    onChangeFrom,
+    resetHandler,
+    filter,
+    callbackfilterRes,
+  } = useFilter(
+    params,
+    currentDate,
+    adminData?.refcode ? getAdminTransList : getBetList,
+    otherparams,
+  );
+
+  const processResponseData = (response) => {
+    const { data, total } = response;
     setTotalCountTable(total);
     const reconstructedList = data?.map((data) => {
       let betNum;
@@ -70,10 +114,20 @@ function TableThreeModal({
         win_amt: data?.result ? data?.win_amt : 0,
       };
     });
-    const newdata = { ...callbackresponse, data: reconstructedList };
 
-    setDataTabble(newdata);
+    return { ...response, data: reconstructedList };
+  };
+
+  useEffect(() => {
+    setDataTabble(processResponseData(callbackresponse));
   }, [callbackresponse]);
+
+  useEffect(() => {
+    if (callbackfilterRes) {
+      const processedData = processResponseData(callbackfilterRes);
+      setDataTabble(processedData);
+    }
+  }, [callbackfilterRes]);
 
   const handleOk = () => {
     setIsTable2Open(true);
@@ -81,49 +135,61 @@ function TableThreeModal({
   };
 
   return (
-    <Modal
-      className='modal-container'
-      width={1000}
-      title={
-        <div>
-          <div>Transaction No:</div>
-          <div>{data?.trans_no}</div>
-        </div>
-      }
-      open={isTablethreeOpen}
-      onCancel={onCancel}
-      footer={
-        filterType === 'trans_list'
-          ? [
-              <Button
-                size='middle'
-                key='submit'
-                type='primary'
-                onClick={handleOk}
-              >
-                OK
-              </Button>,
-            ]
-          : null
-      }
-    >
-      {isloading ? (
-        <p>loading</p>
-      ) : (
-        <div className='mt-3'>
-          <AntTable
-            dataTable={dataTable}
-            columns={columns}
-            onNext={onNext}
-            onPrevious={onPrevious}
-            onFirst={onFirst}
-            onLast={onLast}
-            totalCountTable={totalCountTable}
-            scroll={{ x: 450, y: 400 }}
-          />
-        </div>
-      )}
-    </Modal>
+    <>
+      <Modal
+        className='modal-container'
+        width={1000}
+        title={
+          <div>
+            <div>Transaction No:</div>
+            <div>{data?.trans_no}</div>
+          </div>
+        }
+        open={isTablethreeOpen}
+        onCancel={onCancel}
+        footer={
+          filterType === 'trans_list'
+            ? [
+                <Button
+                  size='middle'
+                  key='submit'
+                  type='primary'
+                  onClick={handleOk}
+                >
+                  OK
+                </Button>,
+              ]
+            : null
+        }
+      >
+        <Filter
+          setFilter={setFilter}
+          filterHandler={filterHandler}
+          onBatchChange={onBatchChange}
+          onChangeTo={onChangeTo}
+          onChangeFrom={onChangeFrom}
+          resetHandler={resetHandler}
+          filter={filter}
+          filterType={filterTypeModal}
+        />
+        {isloading ? (
+          <p>loading</p>
+        ) : (
+          <div className='mt-3'>
+            <AntTable
+              dataTable={dataTable}
+              columns={columns}
+              onNext={onNext}
+              onPrevious={onPrevious}
+              onFirst={onFirst}
+              onLast={onLast}
+              totalCountTable={totalCountTable}
+              scroll={{ x: 450, y: 400 }}
+            />
+          </div>
+        )}
+      </Modal>
+    </>
   );
 }
 
