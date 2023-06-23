@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
-const useFilter = (params, currentDate, actioncall) => {
+const useFilter = (params, currentDate, actioncall, otherparams = null) => {
+  console.log(otherparams);
   const [filter, setFilter] = useState({
     trans_no: '',
     batch_id: '',
-    from: currentDate,
-    to: currentDate,
+    from: otherparams ? otherparams?.from : currentDate,
+    to: otherparams ? otherparams?.to : currentDate,
     bet_result: '',
     bet_type: '',
     bet_num: '',
@@ -60,6 +61,7 @@ const useFilter = (params, currentDate, actioncall) => {
       betResult: betResult ? `&bet_result=${betResult}` : '',
       username: username ? `&username=${username}` : '',
       role: role ? `&role=${role}` : '',
+      otherparams: otherparams ? otherparams?.userID : '',
     };
 
     const query = Object.values(queryParams).join('');

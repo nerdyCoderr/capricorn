@@ -48,14 +48,20 @@ const BetListSearch = () => {
         dataIndex: 'bet_type',
         width: 40,
       },
+
       {
         title: 'Number',
         dataIndex: 'bet_num',
         width: 40,
       },
       {
-        title: 'Amount',
+        title: 'Bet Amount',
         dataIndex: 'bet_amt',
+        width: 40,
+      },
+      {
+        title: 'Win Amount',
+        dataIndex: 'actual_amount',
         width: 40,
       },
 
@@ -152,6 +158,8 @@ const BetListSearch = () => {
         bet_num: betNum,
         bet_amt: data?.bet_amt,
         trans_no: data?.transaction?.trans_no,
+        win_amount: data?.transaction?.win_amount,
+        actual_amount: data?.transaction?.actual_win_amount,
         fullname: data?.user?.first_name + ' ' + data?.user?.last_name,
         user_id: data?.user?._id,
         trans_id: data?.transaction?._id,

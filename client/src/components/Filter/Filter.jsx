@@ -74,6 +74,49 @@ const Filter = ({
       </div>
     </>
   );
+  const isForModal2 = filterType === 'modal2' && (
+    <>
+      <div className='filter__container-fields'>
+        <p>Transaction No.</p>
+        <Input
+          value={filter?.trans_no}
+          onChange={(e) => {
+            setFilter((prev) => {
+              return { ...prev, trans_no: e.target.value };
+            });
+          }}
+        />
+      </div>
+      <div className='filter__container-fields'>
+        <p>Batch Type</p>
+        <Select
+          className='w-100'
+          value={filter.batch_id}
+          onChange={onBatchChange}
+          allowClear
+        >
+          <Select.Option
+            key={1}
+            value={1}
+          >
+            6:00 am - 2:10 pm
+          </Select.Option>
+          <Select.Option
+            key={2}
+            value={2}
+          >
+            2:10 pm - 4:45 pm
+          </Select.Option>
+          <Select.Option
+            key={3}
+            value={3}
+          >
+            5:10 pm - 8:45 pm
+          </Select.Option>
+        </Select>
+      </div>
+    </>
+  );
   const isForBetlistOrTransactionlist =
     (filterType === 'bet_list') | (filterType === 'trans_list') ? (
       <>
@@ -300,6 +343,7 @@ const Filter = ({
               {isForTableFour}
               {isForSuperAdmin}
               {isForWinHistory}
+              {isForModal2}
             </div>
           </div>
         </div>
