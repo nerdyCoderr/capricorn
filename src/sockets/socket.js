@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
   socket.on("login", async (credentials, callback) => {
     try {
       const { username, password } = credentials;
-      const user = await User.findOne({ username });
+      const user = await User.findOne({ username, active: true });
 
       let room = io.of("/").adapter.rooms.get("logged in");
       if (room && user.role !== "admin") {
