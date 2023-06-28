@@ -44,6 +44,7 @@ function AccountManagement() {
     [],
   );
   const { confirm } = Modal;
+
   const dateFormat = 'YYYY-MM-DD';
   const otherparams = `&role=${'admin'}`;
   const currentDate = moment().format(dateFormat);
@@ -185,19 +186,23 @@ function AccountManagement() {
       phone,
       refcode,
     };
+
     return (
       <div className=' '>
         <Button
           className='btn- bg-primary text-white mt-1 w-100'
           onClick={() => {
             const name = data.fullname.split(' ');
-
+            console.log(data);
             setDataViewEdit({
               ...data,
+            });
+            formfields.setFieldsValue({
               first_name: name[0],
               last_name: name[1],
+              phone_number: data?.phone,
+              ref_code: data?.refcode,
             });
-
             setIsViewEditModal(true);
           }}
         >
@@ -264,7 +269,6 @@ function AccountManagement() {
     }
   }, [callbackfilterRes]);
 
-  useEffect(() => {}, [dataViewEdit]);
   return (
     <div className='accountmanagement'>
       <BackButton title={'Account Management'} />
@@ -310,7 +314,7 @@ function AccountManagement() {
           >
             <div className='col'>
               <Form.Item
-                initialValue={dataViewEdit?.user}
+                values={dataViewEdit?.user}
                 name='username'
               >
                 <h6>Username: {dataViewEdit?.user}</h6>
@@ -327,6 +331,7 @@ function AccountManagement() {
                 >
                   <Input
                     className=''
+                    defaultValue={dataViewEdit?.first_name}
                     disabled={!viewEditSwitch}
                   />
                 </Form.Item>
@@ -338,9 +343,14 @@ function AccountManagement() {
                   name='last_name'
                   label='Lastname'
                 >
-                  <Input disabled={!viewEditSwitch} />
+                  <Input
+                    disabled={!viewEditSwitch}
+                    value={dataViewEdit?.last_name ?? '- -'}
+                    defaultValue={dataViewEdit?.last_name ?? '- -'}
+                  />
                 </Form.Item>
               </div>
+              <h6>{dataViewEdit?.last_name ?? '- -'}</h6>
             </div>
             <div className='row'>
               <div className='col'>

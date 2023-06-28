@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Form, Button, Input, Select, Table } from 'antd';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { Form, Button, Input, Select, Table, message } from 'antd';
 
 import Moment from 'moment';
 import './NewBet.scss';
@@ -8,7 +8,7 @@ import { createBet, getBetType, openNotification } from '../../api/request';
 
 import userContext from '../../context/userContext';
 import BackButton from '../../components/Layout/BackButton';
-
+import moment from 'moment';
 const NewBets = () => {
   const { socket } = useContext(userContext);
   const date = new Date();
@@ -35,6 +35,13 @@ const NewBets = () => {
   const [betnumberRestrictionInput, setBetnumberRestrictionInput] = useState();
   const [limitbet, setLimitBet] = useState([]);
   const [isPlacebet, setIsplacebet] = useState(false);
+  const dateFormat = 'YYYY-MM-DD';
+
+  const currentDate = moment().format(dateFormat);
+
+  const datenow = useMemo(() => {
+    return currentDate.split('-');
+  }, [currentDate]);
 
   const columns = React.useMemo(
     () => [
@@ -79,7 +86,10 @@ const NewBets = () => {
     if (bet_type === '4D') {
       betNum = bet_number.toString().padStart(4, '0');
     }
-
+    if (bet_number === datenow[2]) {
+      message.error('this number exceed the current limit');
+      return;
+    }
     const newdata = {
       id: Math.floor(Math.random() * 1000000),
       bet_amt: +formData.bet_amount,

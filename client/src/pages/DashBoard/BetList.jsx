@@ -52,9 +52,16 @@ const BetList = () => {
   const params = '1';
   const filterType = 'trans_list';
   const dateparams = `&from=${adminData.from ?? currentDate}&to=${
-    adminData.from ?? currentDate
+    adminData.to ?? currentDate
   }`;
   const otherparams = `&ref_code=${adminData.refcode}`;
+  // other params for admin use
+
+  const otherparams2 = {
+    from: adminData.from ?? currentDate,
+    to: adminData.to ?? currentDate,
+    refcode: `&ref_code=${adminData.refcode}`,
+  };
   const {
     isloading,
     onPrevious,
@@ -84,6 +91,7 @@ const BetList = () => {
     params,
     currentDate,
     adminData?.refcode ? getAdminTransList : getBetList,
+    adminData?.refcode ? otherparams2 : null,
   );
 
   const columns = React.useMemo(

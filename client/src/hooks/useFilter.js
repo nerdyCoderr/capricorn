@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 const useFilter = (params, currentDate, actioncall, otherparams = null) => {
-  console.log(otherparams);
   const [filter, setFilter] = useState({
     trans_no: '',
     batch_id: '',
@@ -62,6 +61,7 @@ const useFilter = (params, currentDate, actioncall, otherparams = null) => {
       username: username ? `&username=${username}` : '',
       role: role ? `&role=${role}` : '',
       otherparams: otherparams ? otherparams?.userID : '',
+      refcode: otherparams?.refcode ?? '',
     };
 
     const query = Object.values(queryParams).join('');
